@@ -1,0 +1,45 @@
+{
+  "back": "Back to Orders",
+
+  "subtotal": "Subtotal",
+  "shipping": "Shipping",
+  "tax": "Tax",
+  "discount": "Discount",
+  "total": "Total",
+
+  "payment": {
+    "cash": "Cash on Delivery",
+    "card": "Credit Card",
+    "paypal": "PayPal"
+  },
+
+  "status": {
+    "pending": "Pending",
+    "processing": "Processing",
+    "shipped": "Shipped",
+    "delivered": "Delivered",
+    "cancelled": "Cancelled"
+  },
+
+  "success": {
+    "title": "Order Placed Successfully",
+    "message": "Thank you! Your order has been placed successfully. We will notify you once it has been shipped.",
+    "orderNumber": "Order Number",
+    "status": "Status",
+    "total": "Total",
+    "date": "Order Date",
+    "viewOrder": "View Order",
+    "continueShopping": "Continue Shopping",
+    "notFound": "Order not found."
+  },
+
+  "details": {
+    "title": "Order Details",
+    "summary": "Order Summary",
+    "items": "Items",
+    "shipping": "Shipping Address",
+    "payment": "Payment Method",
+    "quantity": "Quantity",
+    "notFound": "Order not found."
+  }
+}

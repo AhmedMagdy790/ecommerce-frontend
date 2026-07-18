@@ -1,0 +1,92 @@
+{
+  "title": "Checkout",
+  "placeOrder": {
+    "button": "Place Order",
+    "processing": "Processing your order...",
+    "secure": "Secure checkout"
+  },
+
+  "progress": {
+    "cart": "Cart",
+    "checkout": "Checkout",
+    "payment": "Payment",
+    "success": "Success"
+  },
+
+   "contact": {
+    "title": "Contact Information",
+    "fullName": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number"
+  },
+
+  "billing": {
+    "title": "Billing Address",
+    "sameAsShipping": "Billing address is the same as shipping address",
+    "fullName": "Full Name",
+    "address": "Address",
+    "city": "City",
+    "country": "Country",
+    "postalCode": "Postal Code"
+  },
+
+
+  "checkout": {
+    "billing": "Billing Address",
+    "shipping": "Shipping Address",
+    "payment": "Payment Method",
+    "orderSummary": "Order Summary",
+    "completeOrder": "Complete Order"
+  },
+
+  "payment": {
+    "title": "Payment Method",
+
+    "cash": {
+      "title": "Cash on Delivery",
+      "description": "Pay when your order is delivered."
+    },
+
+    "card": {
+      "title": "Credit / Debit Card",
+      "description": "Pay securely using your card."
+    },
+
+    "bank": {
+      "title": "Bank Transfer",
+      "description": "Transfer the amount to our bank account."
+    }
+  },
+    "shippingAddress": {
+    "title": "Shipping Address",
+    "fullName": "Full Name",
+    "phone": "Phone Number",
+    "country": "Country",
+    "city": "City",
+    "addressLine1": "Address Line 1",
+    "addressLine2": "Apartment, Suite, etc. (Optional)",
+    "postalCode": "Postal Code"
+  },
+  "shipping": {
+    "title": "Shipping Method",
+    "free": "Free",
+
+    "standard": {
+      "title": "Standard Shipping",
+      "description": "Affordable delivery for everyday orders.",
+      "estimated": "Estimated delivery: 3–5 business days"
+    },
+
+    "express": {
+      "title": "Express Shipping",
+      "description": "Fast delivery for urgent orders.",
+      "estimated": "Estimated delivery: 1–2 business days"
+    },
+
+    "pickup": {
+      "title": "Store Pickup",
+      "description": "Pick up your order from our store.",
+      "estimated": "Usually ready within 24 hours"
+    }
+  }
+}

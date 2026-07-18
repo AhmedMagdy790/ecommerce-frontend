@@ -1,0 +1,74 @@
+{
+  "title": "My Profile",
+  "account": "My Account",
+  "personalInformation": "Personal Information",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "fullName": "Full Name",
+  "username": "Username",
+  "email": "Email Address",
+  "phone": "Phone Number",
+  "dateOfBirth": "Date of Birth",
+  "gender": "Gender",
+
+  "address": {
+    "title": "Address",
+    "billing": "Billing Address",
+    "shipping": "Shipping Address",
+    "country": "Country",
+    "state": "State",
+    "city": "City",
+    "postalCode": "Postal Code",
+    "street": "Street Address",
+    "apartment": "Apartment, suite, etc."
+  },
+
+  "orders": {
+    "title": "My Orders",
+    "history": "Order History",
+    "track": "Track Order",
+    "details": "Order Details",
+    "invoice": "Download Invoice"
+  },
+
+  "wishlist": {
+    "title": "Wishlist",
+    "empty": "Your wishlist is empty."
+  },
+
+  "security": {
+    "title": "Security",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "twoFactor": "Two-Factor Authentication"
+  },
+
+  "payment": {
+    "title": "Payment Methods",
+    "savedCards": "Saved Cards",
+    "addCard": "Add New Card"
+  },
+
+  "notifications": {
+    "title": "Notifications",
+    "email": "Email Notifications",
+    "sms": "SMS Notifications",
+    "push": "Push Notifications"
+  },
+
+  "actions": {
+    "edit": "Edit Profile",
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "delete": "Delete Account",
+    "logout": "Logout"
+  },
+
+  "messages": {
+    "updated": "Profile updated successfully.",
+    "passwordChanged": "Password changed successfully.",
+    "accountDeleted": "Account deleted successfully."
+  }
+}

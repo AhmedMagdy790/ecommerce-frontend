@@ -1,0 +1,72 @@
+{
+  "hero": {
+    "split": {
+      "title": "Discover Our New Collection",
+      "description": "Carefully selected products for your lifestyle",
+      "primaryAction": "Shop Now",
+      "secondaryAction": "Learn More",
+      "imageAlt": "Product collection"
+    },
+    "luxury": {
+      "title": "A Luxury Shopping Experience",
+      "description": "Premium designs with exceptional quality",
+      "button": "Explore Collection",
+      "imageAlt": "Luxury products"
+    }
+  },
+    "categories": {
+    "title": "Shop By Category",
+    "items": {
+      "men": "Men",
+      "women": "Women",
+      "shoes": "Shoes",
+      "accessories": "Accessories",
+      "electronics": "Electronics",
+      "home": "Home"
+    }
+  },
+
+  "featuredProducts": {
+    "title": "Featured Products",
+    "viewAll": "View All"
+  },
+
+  "promoBanner": {
+    "title": "Special Offers Just For You",
+    "description": "Enjoy exclusive deals and limited-time discounts.",
+    "button": "Shop Now"
+  },
+
+  "bestSellers": {
+    "title": "Best Sellers",
+    "viewAll": "View All"
+  },
+
+  "newArrivals": {
+    "title": "New Arrivals",
+    "viewAll": "View All"
+  },
+
+  "whyChooseUs": {
+    "title": "Why Choose Us",
+    "fastShipping": "Fast Shipping",
+    "securePayment": "Secure Payment",
+    "qualityProducts": "Quality Products",
+    "support": "Customer Support"
+  },
+
+  "testimonials": {
+    "title": "What Our Customers Say"
+  },
+
+  "newsletter": {
+    "title": "Subscribe To Our Newsletter",
+    "description": "Get updates about new products and special offers.",
+    "placeholder": "Enter your email",
+    "button": "Subscribe"
+  },
+
+  "brandLogos": {
+    "title": "Trusted Brands"
+  }
+}

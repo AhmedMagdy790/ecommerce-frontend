@@ -1,0 +1,43 @@
+{
+  "title": "Shop All Products",
+  "description": "Discover our complete collection of carefully selected products.",
+
+  "filters": {
+    "categories": "Categories",
+    "price": "Price",
+    "apply": "Apply Filters",
+    "clear": "Clear Filters"
+  },
+
+  "sort": {
+    "label": "Sort by",
+    "newest": "Newest",
+    "priceLow": "Price: Low to High",
+    "priceHigh": "Price: High to Low",
+    "popular": "Best Selling",
+    "rating": "Highest Rated"
+  },
+
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page"
+  },
+
+  "products": {
+    "showing": "Showing {{from}} - {{to}} of {{total}} products",
+    "empty": "No products available",
+    "addToCart": "Add to Cart",
+    "viewDetails": "View Details"
+  },
+
+  "categories": {
+    "all": "All Products",
+    "men": "Men",
+    "women": "Women",
+    "shoes": "Shoes",
+    "accessories": "Accessories",
+    "electronics": "Electronics",
+    "home": "Home"
+  }
+}

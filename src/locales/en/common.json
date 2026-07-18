@@ -1,0 +1,209 @@
+{
+  "app": {
+    "name": "Shop",
+    "description": "Online Shopping Store"
+  },
+
+  "topbar": {
+    "freeShipping": "Free shipping on orders over $100",
+    "summerSale": "Summer Sale! Up to 50% off selected items.",
+    "welcome": "Welcome to our online store.",
+    "newCollection": "Discover our new collection.",
+    "limitedOffer": "Limited-time offer. Shop now!",
+    "shopNow": "Shop Now",
+    "learnMore": "Learn More"
+  },
+
+  "navigation": {
+    "home": "Home",
+    "shop": "Shop",
+    "categories": "Categories",
+    "wishlist": "Wishlist",
+    "profile": "Profile",
+    "orders": "Orders"
+  },
+  
+  "nav": {
+    "home": "Home",
+    "shop": "Shop",
+    "products": "Products",
+    "categories": "Categories",
+    "brands": "Brands",
+    "deals": "Deals",
+    "offers": "Offers",
+    "newArrivals": "New Arrivals",
+    "bestSellers": "Best Sellers",
+    "wishlist": "Wishlist",
+    "cart": "Cart",
+    "checkout": "Checkout",
+    "orders": "Orders",
+    "profile": "Profile",
+    "dashboard": "Dashboard",
+    "contact": "Contact",
+    "about": "About Us",
+    "faq": "FAQ",
+    "blog": "Blog"
+  },
+
+  "buttons": {
+    "add": "Add",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "update": "Update",
+    "create": "Create",
+    "search": "Search",
+    "filter": "Filter",
+    "reset": "Reset",
+    "clear": "Clear",
+    "close": "Close",
+    "continue": "Continue",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "buyNow": "Buy Now",
+    "addToCart": "Add to Cart",
+    "addToWishlist": "Add to Wishlist",
+    "remove": "Remove",
+    "view": "View",
+    "viewAll": "View All",
+    "loadMore": "Load More",
+    "apply": "Apply",
+    "checkout": "Checkout",
+    "placeOrder": "Place Order",
+    "retry": "Retry"
+  },
+  
+  "search": {
+    "title": "Search",
+    "placeholder": "Search products...",
+    "startTyping": "Start typing to search...",
+    "searchingFor": "Searching for",
+    "noResults": "No results found",
+    "noResultsDescription": "We couldn't find any products matching \"{{query}}\"."
+  },
+
+  "product": {
+    "price": "Price",
+    "oldPrice": "Old Price",
+    "discount": "Discount",
+    "rating": "Rating",
+    "reviews": "Reviews",
+    "stock": "Stock",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "quantity": "Quantity",
+    "sku": "SKU",
+    "brand": "Brand",
+    "category": "Category",
+    "description": "Description",
+    "specifications": "Specifications",
+    "relatedProducts": "Related Products"
+  },
+
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "tax": "Tax",
+    "discount": "Discount",
+    "total": "Total",
+    "coupon": "Coupon Code",
+    "applyCoupon": "Apply Coupon",
+    "continueShopping": "Continue Shopping"
+  },
+
+
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password?",
+    "rememberMe": "Remember Me"
+  },
+
+  "profile": {
+    "account": "My Account",
+    "settings": "Settings",
+    "addresses": "Addresses",
+    "paymentMethods": "Payment Methods",
+    "security": "Security"
+  },
+
+  "orders": {
+    "title": "My Orders",
+    "order": "Order",
+    "status": "Status",
+    "date": "Date",
+    "total": "Total",
+    "details": "Order Details"
+  },
+
+  "status": {
+    "pending": "Pending",
+    "processing": "Processing",
+    "shipped": "Shipped",
+    "delivered": "Delivered",
+    "cancelled": "Cancelled",
+    "paid": "Paid",
+    "failed": "Failed"
+  },
+
+  "messages": {
+    "success": "Operation completed successfully.",
+    "error": "Something went wrong.",
+    "loading": "Loading...",
+    "empty": "No data available.",
+    "addedToCart": "Product added to cart.",
+    "removedFromCart": "Product removed from cart.",
+    "orderPlaced": "Your order has been placed successfully."
+  },
+
+  "validation": {
+    "required": "This field is required.",
+    "invalidEmail": "Please enter a valid email.",
+    "minLength": "Minimum {{count}} characters.",
+    "maxLength": "Maximum {{count}} characters."
+  },
+
+  "footer": {
+    "about": "About",
+    "privacy": "Privacy Policy",
+    "terms": "Terms & Conditions",
+    "returns": "Returns",
+    "shipping": "Shipping Policy",
+    "support": "Support",
+    "newsletter": "Newsletter",
+    "subscribe": "Subscribe",
+    "copyright": "All rights reserved."
+  },
+
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+
+  "language": {
+    "english": "English",
+    "arabic": "Arabic"
+  },
+
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "showing": "Showing",
+    "of": "of"
+  },
+
+  "errors": {
+    "404": "Page not found",
+    "500": "Internal server error",
+    "network": "Network error"
+  }
+}

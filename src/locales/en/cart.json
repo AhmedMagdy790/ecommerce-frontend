@@ -1,0 +1,20 @@
+{
+  "title": "Shopping Cart",
+  "description": "Review your items before proceeding to checkout.",
+  "empty": "Your cart is currently empty.",
+  "continue_shopping": "Continue Shopping",
+  "summary": {
+    "title": "Order Summary",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "tax": "Tax",
+    "total": "Total",
+    "checkout": "Proceed to Checkout"
+  },
+   "subtotal": "Subtotal",
+  "shipping": "Shipping",
+  "tax": "Tax",
+  "discount": "Discount",
+  "total": "Total",
+  "checkout": "Proceed to Checkout"
+}

@@ -1,0 +1,100 @@
+{
+  "hero": {
+    "split": {
+      "title": "اكتشف مجموعتنا الجديدة",
+      "description": "منتجات مختارة بعناية لتناسب أسلوب حياتك",
+      "primaryAction": "تسوق الآن",
+      "secondaryAction": "اعرف المزيد",
+      "imageAlt": "مجموعة المنتجات"
+    },
+    "luxury": {
+      "title": "تجربة تسوق فاخرة",
+      "description": "تصميمات مميزة وجودة استثنائية",
+      "button": "اكتشف المجموعة",
+      "imageAlt": "منتجات فاخرة"
+    }
+  },
+   "categories": {
+    "title": "تسوق حسب الفئة",
+    "items": {
+      "men": "رجالي",
+      "women": "نسائي",
+      "shoes": "أحذية",
+      "accessories": "إكسسوارات",
+      "electronics": "إلكترونيات",
+      "home": "المنزل"
+    }
+  },
+
+  "featuredProducts": {
+    "title": "منتجات مميزة",
+    "viewAll": "عرض الكل"
+  },
+
+  "promoBanner": {
+    "title": "عروض خاصة لك",
+    "description": "استمتع بخصومات حصرية وعروض لفترة محدودة.",
+    "button": "تسوق الآن"
+  },
+
+  "bestSellers": {
+    "title": "الأكثر مبيعًا",
+    "viewAll": "عرض الكل"
+  },
+
+  "newArrivals": {
+    "title": "وصل حديثًا",
+    "viewAll": "عرض الكل"
+  },
+
+  "whyChooseUs": {
+    "title": "لماذا تختارنا؟",
+
+    "fastShipping": "شحن سريع",
+    "fastShippingDesc": "نوفر لك خدمة شحن سريعة وآمنة.",
+
+    "securePayment": "دفع آمن",
+    "securePaymentDesc": "طرق دفع موثوقة ومحمية.",
+
+    "qualityProducts": "منتجات عالية الجودة",
+    "qualityProductsDesc": "نختار منتجاتنا بعناية لنضمن أفضل تجربة.",
+
+    "support": "دعم العملاء",
+    "supportDesc": "فريقنا جاهز لمساعدتك في أي وقت."
+  },
+
+ "testimonials": {
+    "title": "ماذا يقول عملاؤنا؟",
+
+    "users": {
+      "ahmed": {
+        "name": "أحمد",
+        "role": "عميل",
+        "comment": "تجربة ممتازة، المنتجات بجودة عالية والشحن كان سريعًا."
+      },
+
+      "sara": {
+        "name": "سارة",
+        "role": "عميلة",
+        "comment": "التصميم جميل والخدمة ممتازة، سأطلب مرة أخرى."
+      }
+    }
+  },
+
+ "newsletter": {
+    "title": "اشترك في النشرة البريدية",
+    "description": "احصل على آخر الأخبار والعروض الخاصة مباشرة إلى بريدك الإلكتروني.",
+    "placeholder": "أدخل بريدك الإلكتروني",
+    "button": "اشتراك"
+  },
+
+  "brandLogos": {
+    "title": "علامات تجارية موثوقة"
+  },
+
+  "brands": {
+    "nike": "نايك",
+    "adidas": "أديداس",
+    "apple": "آبل"
+  }
+}
