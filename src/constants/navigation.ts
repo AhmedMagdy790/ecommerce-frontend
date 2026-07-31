@@ -20,3 +20,14 @@ export const NAV_LINKS = [
     href: "/contact",
   },
 ];
+
+export const ROUTES = {
+  HOME: "/",
+  LOGIN: "/auth/login",
+  REGISTER: "/register",
+  PROFILE: "/profile",
+  CART: "/cart",
+  CHECKOUT: "/checkout",
+  ORDERS: "/my-orders",
+  SETTINGS: "/settings"
+} as const;

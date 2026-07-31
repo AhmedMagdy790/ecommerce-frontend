@@ -205,5 +205,27 @@
     "404": "Page not found",
     "500": "Internal server error",
     "network": "Network error"
-  }
+  },
+
+
+  "loading": "Loading...",
+  "error": "Something went wrong",
+  "save": "Save",
+  "cancel": "Cancel",
+  "logout": "Logout",
+  "edit": "Edit",
+  "delete": "Delete",
+  "default": "Default",
+  "settings": {
+    "title": "Account Settings",
+    "theme": "Appearance",
+    "light": "Light Mode",
+    "dark": "Dark Mode"
+  },
+  "support": { "title": "Support" },
+  "about": { "contact": "contact" },
+  "welcome_user": "Welcome, {{name}}",
+  "sign_in": "Sign In",
+  "signed_in_as": "Signed in as",
+  "sign_out": "Sign Out"
 }

@@ -1,32 +1,41 @@
 {
   "app": {
-    "name": "المتجر",
+    "name": "متجر",
     "description": "متجر تسوق إلكتروني"
   },
 
   "topbar": {
-    "freeShipping": "شحن مجاني للطلبات التي تزيد عن 100 دولار.",
-    "summerSale": "تخفيضات الصيف! خصومات تصل إلى 50% على منتجات مختارة.",
-    "welcome": "مرحبًا بك في متجرنا الإلكتروني.",
-    "newCollection": "اكتشف مجموعتنا الجديدة.",
-    "limitedOffer": "عرض لفترة محدودة، تسوق الآن!",
+    "freeShipping": "شحن مجاني للطلبات التي تزيد عن 100$",
+    "summerSale": "تخفيضات الصيف! خصم يصل إلى 50% على منتجات مختارة.",
+    "welcome": "مرحباً بكم في متجرنا الإلكتروني.",
+    "newCollection": "اكتشف تشكيلتنا الجديدة.",
+    "limitedOffer": "عرض لفترة محدودة. تسوق الآن!",
     "shopNow": "تسوق الآن",
     "learnMore": "اعرف المزيد"
   },
 
+  "navigation": {
+    "home": "الرئيسية",
+    "shop": "المتجر",
+    "categories": "الأقسام",
+    "wishlist": "المفضلة",
+    "profile": "الملف الشخصي",
+    "orders": "الطلبات"
+  },
+  
   "nav": {
     "home": "الرئيسية",
     "shop": "المتجر",
     "products": "المنتجات",
-    "categories": "التصنيفات",
-    "brands": "العلامات التجارية",
+    "categories": "الأقسام",
+    "brands": "الماركات",
     "deals": "العروض",
     "offers": "التخفيضات",
-    "newArrivals": "وصل حديثًا",
-    "bestSellers": "الأكثر مبيعًا",
+    "newArrivals": "وصول جديد",
+    "bestSellers": "الأكثر مبيعاً",
     "wishlist": "المفضلة",
-    "cart": "سلة التسوق",
-    "checkout": "إتمام الطلب",
+    "cart": "السلة",
+    "checkout": "إتمام الشراء",
     "orders": "الطلبات",
     "profile": "الملف الشخصي",
     "dashboard": "لوحة التحكم",
@@ -53,41 +62,41 @@
     "back": "رجوع",
     "next": "التالي",
     "submit": "إرسال",
-    "buyNow": "اشترِ الآن",
-    "addToCart": "أضف إلى السلة",
-    "addToWishlist": "أضف إلى المفضلة",
+    "buyNow": "اشتري الآن",
+    "addToCart": "أضف للسلة",
+    "addToWishlist": "أضف للمفضلة",
     "remove": "إزالة",
     "view": "عرض",
     "viewAll": "عرض الكل",
-    "loadMore": "عرض المزيد",
+    "loadMore": "تحميل المزيد",
     "apply": "تطبيق",
-    "checkout": "إتمام الطلب",
+    "checkout": "إتمام الشراء",
     "placeOrder": "تأكيد الطلب",
     "retry": "إعادة المحاولة"
   },
   
   "search": {
-    "title": "البحث",
-    "placeholder": "ابحث عن المنتجات...",
-    "startTyping": "ابدأ بالكتابة للبحث...",
-    "searchingFor": "جارٍ البحث عن",
-    "noResults": "لم يتم العثور على نتائج",
-    "noResultsDescription": "لم نعثر على أي منتجات تطابق \"{{query}}\"."
+    "title": "بحث",
+    "placeholder": "البحث عن منتجات...",
+    "startTyping": "ابدأ الكتابة للبحث...",
+    "searchingFor": "جاري البحث عن",
+    "noResults": "لا توجد نتائج",
+    "noResultsDescription": "لم نتمكن من العثور على أي منتجات تطابق \"{{query}}\"."
   },
 
   "product": {
     "price": "السعر",
-    "oldPrice": "السعر قبل الخصم",
+    "oldPrice": "السعر القديم",
     "discount": "الخصم",
     "rating": "التقييم",
-    "reviews": "المراجعات",
+    "reviews": "التقييمات",
     "stock": "المخزون",
     "inStock": "متوفر",
     "outOfStock": "غير متوفر",
     "quantity": "الكمية",
     "sku": "رمز المنتج",
-    "brand": "العلامة التجارية",
-    "category": "التصنيف",
+    "brand": "الماركة",
+    "category": "القسم",
     "description": "الوصف",
     "specifications": "المواصفات",
     "relatedProducts": "منتجات ذات صلة"
@@ -96,33 +105,14 @@
   "cart": {
     "title": "سلة التسوق",
     "empty": "سلة التسوق فارغة",
-    "subtotal": "الإجمالي الفرعي",
+    "subtotal": "المجموع الفرعي",
     "shipping": "الشحن",
     "tax": "الضريبة",
     "discount": "الخصم",
-    "total": "الإجمالي",
-    "coupon": "كود الخصم",
-    "applyCoupon": "تطبيق الكوبون",
+    "total": "المجموع الكلي",
+    "coupon": "رمز القسيمة",
+    "applyCoupon": "تطبيق القسيمة",
     "continueShopping": "متابعة التسوق"
-  },
-
-  "billing": {
-    "title": "عنوان الفاتورة",
-    "sameAsShipping": "عنوان الفاتورة هو نفس عنوان الشحن",
-    "fullName": "الاسم الكامل",
-    "address": "العنوان",
-    "city": "المدينة",
-    "country": "الدولة",
-    "postalCode": "الرمز البريدي"
-  },
-
-   "navigation": {
-    "home": "الرئيسية",
-    "shop": "المتجر",
-    "categories": "الأقسام",
-    "wishlist": "المفضلة",
-    "profile": "حسابي",
-    "orders": "طلباتي"
   },
 
   "auth": {
@@ -140,7 +130,7 @@
     "account": "حسابي",
     "settings": "الإعدادات",
     "addresses": "العناوين",
-    "paymentMethods": "وسائل الدفع",
+    "paymentMethods": "طرق الدفع",
     "security": "الأمان"
   },
 
@@ -149,7 +139,7 @@
     "order": "الطلب",
     "status": "الحالة",
     "date": "التاريخ",
-    "total": "الإجمالي",
+    "total": "المجموع",
     "details": "تفاصيل الطلب"
   },
 
@@ -157,8 +147,8 @@
     "pending": "قيد الانتظار",
     "processing": "قيد المعالجة",
     "shipped": "تم الشحن",
-    "delivered": "تم التسليم",
-    "cancelled": "تم الإلغاء",
+    "delivered": "تم التوصيل",
+    "cancelled": "ملغي",
     "paid": "مدفوع",
     "failed": "فشل"
   },
@@ -166,16 +156,16 @@
   "messages": {
     "success": "تمت العملية بنجاح.",
     "error": "حدث خطأ ما.",
-    "loading": "جارٍ التحميل...",
-    "empty": "لا توجد بيانات.",
-    "addedToCart": "تمت إضافة المنتج إلى السلة.",
-    "removedFromCart": "تمت إزالة المنتج من السلة.",
-    "orderPlaced": "تم إرسال طلبك بنجاح."
+    "loading": "جاري التحميل...",
+    "empty": "لا توجد بيانات متاحة.",
+    "addedToCart": "تم إضافة المنتج إلى السلة.",
+    "removedFromCart": "تم إزالة المنتج من السلة.",
+    "orderPlaced": "تم إنشاء طلبك بنجاح."
   },
 
   "validation": {
     "required": "هذا الحقل مطلوب.",
-    "invalidEmail": "يرجى إدخال بريد إلكتروني صحيح.",
+    "invalidEmail": "يرجى إدخال بريد إلكتروني صالح.",
     "minLength": "الحد الأدنى {{count}} أحرف.",
     "maxLength": "الحد الأقصى {{count}} أحرف."
   },
@@ -184,11 +174,11 @@
     "about": "من نحن",
     "privacy": "سياسة الخصوصية",
     "terms": "الشروط والأحكام",
-    "returns": "سياسة الإرجاع",
+    "returns": "الإرجاع",
     "shipping": "سياسة الشحن",
     "support": "الدعم",
     "newsletter": "النشرة البريدية",
-    "subscribe": "اشترك",
+    "subscribe": "اشتراك",
     "copyright": "جميع الحقوق محفوظة."
   },
 
@@ -212,7 +202,28 @@
 
   "errors": {
     "404": "الصفحة غير موجودة",
-    "500": "خطأ في الخادم",
-    "network": "خطأ في الاتصال بالشبكة"
-  }
+    "500": "خطأ داخلي في الخادم",
+    "network": "خطأ في الشبكة"
+  },
+
+  "loading": "جاري التحميل...",
+  "error": "حدث خطأ ما",
+  "save": "حفظ",
+  "cancel": "إلغاء",
+  "logout": "تسجيل الخروج",
+  "edit": "تعديل",
+  "delete": "حذف",
+  "default": "افتراضي",
+  "settings": {
+    "title": "إعدادات الحساب",
+    "theme": "المظهر",
+    "light": "الوضع الفاتح",
+    "dark": "الوضع الداكن"
+  },
+  "support": { "title": "الدعم" },
+  "about": { "contact": "اتصل بنا" },
+  "welcome_user": "أهلاً، {{name}}",
+  "sign_in": "تسجيل الدخول",
+  "signed_in_as": "مسجل الدخول باسم",
+  "sign_out": "تسجيل الخروج"
 }

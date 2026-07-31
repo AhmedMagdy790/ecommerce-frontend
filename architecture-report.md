@@ -1,158 +1,364 @@
 # تقرير هيكلية المشروع
 
 ## شجرة المجلدات (src)
-```
+```text
 src
- |App.tsx
- |assets
- | |hero.png
- | |react.svg
- | |vite.svg
- |components
- | |Admin
- | |cart
- | |Cart
- | | |CartItem.tsx
- | | |CartList.tsx
- | | |CartSummary.tsx
- | | |CartTotals.tsx
- | | |CheckoutButton.tsx
- | | |CouponForm.tsx
- | | |EmptyCart.tsx
- | | |ShippingCalculator.tsx
- | |Checkout
- | | |BillingAddress.tsx
- | | |CheckoutContact.tsx
- | | |CheckoutProgress.tsx
- | | |CheckoutSummary.tsx
- | | |OrderNotes.tsx
- | | |PaymentMethod.tsx
- | | |PlaceOrderButton.tsx
- | | |ShippingAddress.tsx
- | | |ShippingMethod.tsx
- | |Common
- | | |Header.tsx
- | |Layout
- | | |CartDrawer.tsx
- | | |Footer.tsx
- | | |Navbar
- | | |Topbar.tsx
- | | |UserLayout.tsx
- | |Products
- | | |GenderCollectionSection.tsx
- | |Search
- | | |index.ts
- | | |SearchBrandCard.tsx
- | | |SearchButton.tsx
- | | |SearchCategoryCard.tsx
- | | |SearchEmpty.tsx
- | | |SearchInput.tsx
- | | |SearchLoading.tsx
- | | |SearchModal.tsx
- | | |SearchProductCard.tsx
- | | |SearchResults.tsx
- | |ui
- | | |Button.tsx
- | | |Skeleton.tsx
- |config
- | |app.ts
- | |site.ts
- |constants
- | |navigation.ts
- |context
- | |AuthProvider.tsx
- | |CartProvider.tsx
- | |DirectionProvider.tsx
- | |LanguageProvider_old.tsx
- | |SettingsProvider.tsx
- | |ThemeContext.tsx
- |data
- | |hero.ts
- | |search.ts
- | |topbar.ts
- |hooks
- | |useAuth.ts
- | |useLanguage.ts
- | |useSettings.ts
- | |useTheme.ts
- |i18n
- | |index.ts
- |index.css
- |locales
- | |ar
- | | |auth.json
- | | |cart.json
- | | |checkout.json
- | | |common.json
- | | |home.json
- | | |order.json
- | | |product.json
- | | |profile.json
- | | |shop.json
- | |en
- | | |admin.json
- | | |auth.json
- | | |cart.json
- | | |checkout.json
- | | |common.json
- | | |home.json
- | | |order.json
- | | |product.json
- | | |profile.json
- | | |shop.json
- | |index.ts
- |main.tsx
- |mocks
- | |user.ts
- |pages
- | |Auth
- | | |ForgotPasswordPage.tsx
- | | |LoginPage.tsx
- | | |RegisterPage.tsx
- | | |ResetPasswordPage.tsx
- | |Cart
- | | |CartPage.tsx
- | |Category
- | | |CategoryPage.tsx
- | |Checkout
- | | |CheckoutPage.tsx
- | |Errors
- | | |NotFoundPage.tsx
- | |Home
- | | |components
- | | |data
- | | |HomePage.tsx
- | | |services
- | |Order
- | | |components
- | | |MyOrdersPage.tsx
- | | |OrderDetailsPage.tsx
- | | |OrderSuccessPage.tsx
- | |Product
- | | |components
- | | |ProductPage.tsx
- | |Profile
- | | |components
- | | |ProfilePage.tsx
- | |Search
- | | |components
- | | |SearchPage.tsx
- | |Shop
- | | |components
- | | |ShopPage.tsx
- | |Wishlist
- | | |components
- | | |WishlistPage.tsx
- |providers
- | |AppProviders.tsx
- | |QueryProvider.tsx
- |routes
- | |index.tsx
- |services
- | |checkoutService.ts
- |styles
- | |theme.css
- | |variables.css
- |types
- | |sections.ts
+src/api
+src/api/axios-instance.ts
+src/api/client.ts
+src/api/endpoints.ts
+src/api/error.ts
+src/api/interceptors.ts
+src/api/types.ts
+src/app
+src/app/bootstrap
+src/app/bootstrap/AuthBootstrap.tsx
+src/app/Guard
+src/app/Guard/AdminGuard.tsx
+src/app/layouts
+src/app/layouts/AuthLayout.tsx
+src/app/layouts/DashboardLayout.tsx
+src/app/layouts/UserLayout.tsx
+src/app/shell
+src/app/shell/AppHeader.tsx
+src/app/shell/AppLayout.tsx
+src/app/shell/Backdrop.tsx
+src/app/shell/CartDrawer.tsx
+src/app/shell/Footer.tsx
+src/app/shell/Navbar
+src/app/shell/SidebarWidget.tsx
+src/app/shell/Topbar.tsx
+src/App.tsx
+src/assets
+src/assets/icons
+src/assets/icons/alert-hexa.svg
+src/assets/icons/alert.svg
+src/assets/icons/angle-down.svg
+src/assets/icons/angle-left.svg
+src/assets/icons/angle-right.svg
+src/assets/icons/angle-up.svg
+src/assets/icons/arrow-down.svg
+src/assets/icons/arrow-right.svg
+src/assets/icons/arrow-up.svg
+src/assets/icons/audio.svg
+src/assets/icons/bolt.svg
+src/assets/icons/box-cube.svg
+src/assets/icons/box-line.svg
+src/assets/icons/box.svg
+src/assets/icons/calendar.svg
+src/assets/icons/calender-line.svg
+src/assets/icons/chat.svg
+src/assets/icons/check-circle.svg
+src/assets/icons/check-line.svg
+src/assets/icons/chevron-down.svg
+src/assets/icons/chevron-left.svg
+src/assets/icons/chevron-up.svg
+src/assets/icons/close-line.svg
+src/assets/icons/close.svg
+src/assets/icons/copy.svg
+src/assets/icons/docs.svg
+src/assets/icons/dollar-line.svg
+src/assets/icons/download.svg
+src/assets/icons/envelope.svg
+src/assets/icons/eye-close.svg
+src/assets/icons/eye.svg
+src/assets/icons/file.svg
+src/assets/icons/folder.svg
+src/assets/icons/grid.svg
+src/assets/icons/group.svg
+src/assets/icons/horizontal-dots.svg
+src/assets/icons/index.ts
+src/assets/icons/info-error.svg
+src/assets/icons/info-hexa.svg
+src/assets/icons/info.svg
+src/assets/icons/list.svg
+src/assets/icons/lock.svg
+src/assets/icons/mail-line.svg
+src/assets/icons/moredot.svg
+src/assets/icons/page.svg
+src/assets/icons/paper-plane.svg
+src/assets/icons/pencil.svg
+src/assets/icons/pie-chart.svg
+src/assets/icons/plug-in.svg
+src/assets/icons/plus.svg
+src/assets/icons/shooting-star.svg
+src/assets/icons/table.svg
+src/assets/icons/task-icon.svg
+src/assets/icons/time.svg
+src/assets/icons/trash.svg
+src/assets/icons/user-circle.svg
+src/assets/icons/user-line.svg
+src/assets/icons/videos.svg
+src/assets/images
+src/assets/images/backgrounds
+src/assets/images/logos
+src/assets/images/products
+src/assets/images/profile
+src/assets/images/svgs
+src/config
+src/config/app.ts
+src/config/config.ts
+src/config/site.ts
+src/constants
+src/constants/navigation.ts
+src/constants/profile-tabs.ts
+src/context
+src/context/AuthProvider.tsx
+src/context/CartProvider.tsx
+src/context/DirectionProvider.tsx
+src/context/LanguageProvider_old.tsx
+src/context/NotificationProvider.tsx
+src/context/SettingsProvider.tsx
+src/context/SidebarContext.tsx
+src/context/ThemeContext.tsx
+src/context/useIsMobile.ts
+src/data
+src/data/hero.ts
+src/data/search.ts
+src/data/topbar.ts
+src/features
+src/features/auth
+src/features/auth/api
+src/features/auth/components
+src/features/auth/hooks
+src/features/auth/pages
+src/features/auth/services
+src/features/auth/store
+src/features/auth/types
+src/features/brand
+src/features/brand/types
+src/features/cart
+src/features/cart/components
+src/features/cart/hooks
+src/features/cart/index.ts
+src/features/cart/services
+src/features/cart/types
+src/features/category
+src/features/category/types
+src/features/checkout
+src/features/checkout/adapters
+src/features/checkout/components
+src/features/checkout/forms
+src/features/checkout/hooks
+src/features/checkout/pages
+src/features/checkout/schemas
+src/features/checkout/types
+src/features/dashboard
+src/features/dashboard/auth
+src/features/dashboard/cart
+src/features/dashboard/category
+src/features/dashboard/checkout
+src/features/dashboard/city
+src/features/dashboard/context
+src/features/dashboard/country
+src/features/dashboard/couriers
+src/features/dashboard/customer
+src/features/dashboard/dashboard
+src/features/dashboard/home
+src/features/dashboard/inventory
+src/features/dashboard/misc
+src/features/dashboard/navbar
+src/features/dashboard/orders
+src/features/dashboard/payment
+src/features/dashboard/products
+src/features/dashboard/productsVariant
+src/features/dashboard/profile
+src/features/dashboard/public
+src/features/dashboard/search
+src/features/dashboard/styleGuide
+src/features/notification
+src/features/notification/components
+src/features/notification/hook
+src/features/notification/services
+src/features/notification/types.ts
+src/features/order
+src/features/order/components
+src/features/order/hook
+src/features/order/services
+src/features/order/types
+src/features/product
+src/features/product/adapters
+src/features/product/api
+src/features/product/components
+src/features/product/hook
+src/features/product/index.ts
+src/features/product/services
+src/features/product/types
+src/features/search
+src/features/search/component
+src/hooks
+src/hooks/useAuth.ts
+src/hooks/useCartCalculations.ts
+src/hooks/useLanguage.ts
+src/hooks/useModal.ts
+src/hooks/useSettings.ts
+src/hooks/useTheme.ts
+src/i18n
+src/i18n/index.ts
+src/index.css
+src/lib
+src/lib/echo.ts
+src/lib/format.ts
+src/lib/logger.ts
+src/lib/utils.ts
+src/locales
+src/locales/ar
+src/locales/ar/auth.json
+src/locales/ar/cart.json
+src/locales/ar/checkout.json
+src/locales/ar/common.json
+src/locales/ar/dir.json
+src/locales/ar/home.json
+src/locales/ar/index.ts
+src/locales/ar/order.json
+src/locales/ar/product.json
+src/locales/ar/profile.json
+src/locales/ar/shop.json
+src/locales/en
+src/locales/en/admin.json
+src/locales/en/auth.json
+src/locales/en/cart.json
+src/locales/en/checkout.json
+src/locales/en/common.json
+src/locales/en/dir.json
+src/locales/en/home.json
+src/locales/en/index.ts
+src/locales/en/order.json
+src/locales/en/product.json
+src/locales/en/profile.json
+src/locales/en/shop.json
+src/locales/languages.ts
+src/main.tsx
+src/mocks
+src/mocks/user.ts
+src/pages
+src/pages/Auth
+src/pages/Auth/ForgotPasswordPage.tsx
+src/pages/Auth/LoginPage.tsx
+src/pages/Auth/RegisterPage.tsx
+src/pages/Auth/ResetPasswordPage.tsx
+src/pages/Cart
+src/pages/Cart/CartPage.tsx
+src/pages/Cart/hook
+src/pages/Category
+src/pages/Category/CategoryPage.tsx
+src/pages/Errors
+src/pages/Errors/NotFoundPage.tsx
+src/pages/Home
+src/pages/Home/adapters
+src/pages/Home/components
+src/pages/Home/data
+src/pages/Home/HomePage.tsx
+src/pages/Home/hook
+src/pages/Home/registry.ts
+src/pages/Home/services
+src/pages/Home/types
+src/pages/Order
+src/pages/Order/components
+src/pages/Order/MyOrdersPage.tsx
+src/pages/Order/OrderDetailsPage.tsx
+src/pages/Order/OrderSuccessPage.tsx
+src/pages/Product
+src/pages/Product/adapters
+src/pages/Product/components
+src/pages/Product/hooks
+src/pages/Product/ProductPage.tsx
+src/pages/Profile
+src/pages/Profile/components
+src/pages/Profile/hooks
+src/pages/Profile/ProfilePage.tsx
+src/pages/Profile/schemas
+src/pages/Profile/types
+src/pages/Search
+src/pages/Search/components
+src/pages/Search/SearchPage.tsx
+src/pages/Shop
+src/pages/Shop/components
+src/pages/Shop/ShopPage.tsx
+src/pages/Wishlist
+src/pages/Wishlist/components
+src/pages/Wishlist/WishlistPage.tsx
+src/providers
+src/providers/AppProviders.tsx
+src/providers/QueryProvider.tsx
+src/routes
+src/routes/auth.routes.tsx
+src/routes/index.tsx
+src/routes/public.routes.tsx
+src/services
+src/services/checkoutService.ts
+src/services/locationService.ts
+src/services/paymentService.ts
+src/services/shippingService.ts
+src/services/testEventService.ts
+src/shared
+src/shared/components
+src/shared/components/BaseModal.tsx
+src/shared/components/Button.tsx
+src/shared/components/confirmModal
+src/shared/components/Container.tsx
+src/shared/components/CustomSelect.tsx
+src/shared/components/dashboard
+src/shared/components/DataTable
+src/shared/components/Footer.tsx
+src/shared/components/ImageCropperModal.tsx
+src/shared/components/InputNumber.tsx
+src/shared/components/Input.tsx
+src/shared/components/MainLayout.tsx
+src/shared/components/Modal.tsx
+src/shared/components/Navbar.tsx
+src/shared/components/NavLink.tsx
+src/shared/components/NavMenu.tsx
+src/shared/components/PageMeta.tsx
+src/shared/components/ProductCard.tsx
+src/shared/components/RadioGroup.tsx
+src/shared/components/RootErrorFallback.tsx
+src/shared/components/RouteDebugger.tsx
+src/shared/components/SearchBar.tsx
+src/shared/components/sidebar
+src/shared/components/Spinner.tsx
+src/shared/components/StatusOverlay
+src/shared/components/TestEventButton.tsx
+src/shared/components/Textarea.tsx
+src/shared/components/ThemeToggle.tsx
+src/shared/components/ui
+src/shared/context
+src/shared/context/LanguageContext.tsx
+src/shared/context/typeLanguageContext.ts
+src/shared/hooks
+src/shared/hooks/useCart.tsx
+src/shared/types
+src/shared/types/location.ts
+src/shared/types/media.ts
+src/shared/types/pagination.ts
+src/shared/types/payment.ts
+src/shared/types/shipping.ts
+src/shared/types/storeType.ts
+src/shared/types/svg.d.ts
+src/shared/types/ThemeContext.ts
+src/shared/types/types.ts
+src/shared/types/userType.ts
+src/shared/types/variant.ts
+src/shared/utils
+src/shared/utils/cn.ts
+src/shared/utils/currency.ts
+src/shared/utils/getCroppedImg.ts
+src/shared/utils/handleServerError.ts
+src/shared/utils/helper.ts
+src/shared/utils/localizedText.ts
+src/shared/utils/localize.ts
+src/shared/utils/shipping.ts
+src/store
+src/store/authStore.ts
+src/store/useSettingsStore.ts
+src/styles
+src/styles/components.css
+src/styles/reset.css
+src/styles/theme.css
+src/types
+src/types/api.ts
+src/types/cart.ts
+src/types/category.ts
+src/types/hero.ts
+src/types/sections.ts
 ```

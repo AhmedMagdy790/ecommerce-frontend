@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { useLang } from "@/shared/context/LanguageContext";
 
-// Define the domain type
 interface Brand {
   id: string;
   name: string;
@@ -8,7 +8,6 @@ interface Brand {
   link?: string;
 }
 
-// Flat Props: No 'data' wrapper
 interface BrandLogosProps {
   title: string;
   brands: Brand[];
@@ -16,15 +15,21 @@ interface BrandLogosProps {
 
 export default function BrandLogos({ title, brands = [] }: BrandLogosProps) {
   const { t } = useTranslation("home");
+  const { lang } = useLang();
+
+  const getLocalizedText = (text: string) => {
+    if (!text) return "";
+    return t(text);
+  };
 
   if (!brands.length) return null;
 
   return (
     <section className="px-6 py-16">
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-[var(--container-xl)]">
         {/* Header */}
-        <h2 className="mb-10 text-center text-3xl font-bold text-text-primary md:text-4xl">
-          {t(title)}
+        <h2 className="mb-10 text-center text-3xl font-bold text-[var(--color-text-primary)] md:text-4xl">
+          {getLocalizedText(title)}
         </h2>
 
         {/* Logos Grid */}
@@ -33,11 +38,11 @@ export default function BrandLogos({ title, brands = [] }: BrandLogosProps) {
             <a
               key={brand.id}
               href={brand.link || "#"}
-              className="flex h-24 items-center justify-center rounded-2xl border border-border bg-surface p-5 transition hover:shadow-md"
+              className="flex h-24 items-center justify-center rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-background-surface)] p-5 transition hover:shadow-md"
             >
               <img
                 src={brand.logo}
-                alt={t(brand.name)}
+                alt={getLocalizedText(brand.name)}
                 className="max-h-12 max-w-full object-contain grayscale transition hover:grayscale-0"
                 loading="lazy"
               />

@@ -1,29 +1,20 @@
-import { useCallback } from "react";
-import { useTranslation } from "react-i18next";
-
-export type Language = "en" | "ar";
+import { useLang } from "@/shared/context/LanguageContext";
 
 export function useLanguage() {
-  const { i18n } = useTranslation();
+  const { lang, changeLanguage, t, translate } = useLang();
 
-  const language = (i18n.resolvedLanguage || i18n.language) as Language;
-
-  const setLanguage = useCallback(
-    async (language: Language) => {
-      await i18n.changeLanguage(language);
-    },
-    [i18n]
-  );
-
-  const toggleLanguage = useCallback(async () => {
-    await i18n.changeLanguage(language === "ar" ? "en" : "ar");
-  }, [i18n, language]);
+  // الحفاظ على التوافق مع الكود القديم
+  const toggleLanguage = () => {
+    changeLanguage(lang === "ar" ? "en" : "ar");
+  };
 
   return {
-    language,
-    isArabic: language === "ar",
-    isEnglish: language === "en",
-    setLanguage,
+    language: lang,
+    isArabic: lang === "ar",
+    isEnglish: lang === "en",
+    setLanguage: changeLanguage,
     toggleLanguage,
+    t,          // للترجمة العامة (UI)
+    translate,  // لترجمة بيانات الـ API
   };
 }

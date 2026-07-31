@@ -1,12 +1,17 @@
 #!/bin/bash
 
-echo "# تقرير هيكلية المشروع" > architecture-report.md
-echo "" >> architecture-report.md
-echo "## شجرة المجلدات (src)" >> architecture-report.md
-echo '```' >> architecture-report.md
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
 
-# استخدام find لعرض الملفات مع تجاهل المجلدات غير المرغوبة
-find src -maxdepth 3 -not -path '*/.*' | sort | sed 's/[^-][^\/]*\// |/g' >> architecture-report.md
+OUTPUT="architecture-report.md"
 
-echo '```' >> architecture-report.md
-echo "✅ تم توليد architecture-report.md بنجاح."
+echo "# تقرير هيكلية المشروع" > "$OUTPUT"
+echo "" >> "$OUTPUT"
+echo "## شجرة المجلدات (src)" >> "$OUTPUT"
+echo '```text' >> "$OUTPUT"
+
+find src -maxdepth 3 -not -path '*/.*' | sort >> "$OUTPUT"
+
+echo '```' >> "$OUTPUT"
+
+echo "✅ تم توليد $OUTPUT بنجاح."

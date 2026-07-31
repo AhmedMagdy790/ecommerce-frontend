@@ -1,74 +1,30 @@
 {
-  "title": "My Profile",
-  "account": "My Account",
-  "personalInformation": "Personal Information",
-  "firstName": "First Name",
-  "lastName": "Last Name",
-  "fullName": "Full Name",
-  "username": "Username",
-  "email": "Email Address",
-  "phone": "Phone Number",
-  "dateOfBirth": "Date of Birth",
-  "gender": "Gender",
-
-  "address": {
-    "title": "Address",
-    "billing": "Billing Address",
-    "shipping": "Shipping Address",
-    "country": "Country",
-    "state": "State",
-    "city": "City",
-    "postalCode": "Postal Code",
-    "street": "Street Address",
-    "apartment": "Apartment, suite, etc."
+  "title": "Account Settings",
+  "description": "Manage your personal account preferences and control security and order settings",
+  "tabs": {
+    "info": {
+      "label": "Personal Information",
+      "description": "Manage your name, email, and phone number"
+    },
+    "security": {
+      "label": "Security & Password",
+      "description": "Password and two-factor authentication"
+    },
+    "orders": {
+      "label": "Order History",
+      "description": "Track the status of your previous orders"
+    }
   },
-
-  "orders": {
-    "title": "My Orders",
-    "history": "Order History",
-    "track": "Track Order",
-    "details": "Order Details",
-    "invoice": "Download Invoice"
-  },
-
-  "wishlist": {
-    "title": "Wishlist",
-    "empty": "Your wishlist is empty."
-  },
-
-  "security": {
-    "title": "Security",
-    "changePassword": "Change Password",
-    "currentPassword": "Current Password",
-    "newPassword": "New Password",
-    "confirmPassword": "Confirm Password",
-    "twoFactor": "Two-Factor Authentication"
-  },
-
-  "payment": {
-    "title": "Payment Methods",
-    "savedCards": "Saved Cards",
-    "addCard": "Add New Card"
-  },
-
-  "notifications": {
-    "title": "Notifications",
-    "email": "Email Notifications",
-    "sms": "SMS Notifications",
-    "push": "Push Notifications"
-  },
-
-  "actions": {
-    "edit": "Edit Profile",
-    "save": "Save Changes",
-    "cancel": "Cancel",
-    "delete": "Delete Account",
-    "logout": "Logout"
-  },
-
-  "messages": {
-    "updated": "Profile updated successfully.",
-    "passwordChanged": "Password changed successfully.",
-    "accountDeleted": "Account deleted successfully."
+  "sections": {
+    "security": {
+      "title": "Security Settings",
+      "description": "Secure your account by regularly updating your password.",
+      "comingSoon": "Password change and Two-Factor Authentication (2FA) features will be available soon."
+    },
+    "orders": {
+      "title": "Order History",
+      "description": "View and track all your purchase orders.",
+      "empty": "No previous orders yet."
+    }
   }
 }

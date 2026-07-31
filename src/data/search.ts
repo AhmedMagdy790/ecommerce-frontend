@@ -1,5 +1,5 @@
-import type { SearchProduct } from "@/components/Search/SearchProductCard";
-import type { SearchCategory } from "@/components/Search/SearchCategoryCard";
+import type { SearchProduct } from "@/features/search/component/SearchProductCard";
+import type { SearchCategory } from "@/features/search/component/SearchCategoryCard";
 
 export const fakeProducts: SearchProduct[] = [
   {

@@ -1,4 +1,4 @@
-import { SettingsContext } from "@/context/SettingsProvider";
+import { SettingsContext } from "@/app/providers/SettingsProvider";
 import { useContext } from "react";
 
 export function useSettings() {

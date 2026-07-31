@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
 
-interface VariantOption {
-  name: string;
-  value: string;
-}
+// interface VariantOption {
+//   name: string;
+//   value: string;
+// }
 
 interface ProductVariantsProps {
   data: {

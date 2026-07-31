@@ -1,51 +1,115 @@
 // src/pages/Home/components/sections/Categories.tsx
-import type { Category } from "@/types/category";
-import { useTranslation } from "react-i18next";
 
+import type { Section } from "../SectionRenderer";
+import { useTranslation } from "react-i18next";
+import { useLang } from "@/shared/context/LanguageContext";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 
 interface CategoriesProps {
-  title: string;
-  categories: Category[];
+  section: Section & {
+    data?: any[];
+    categories?: any[];
+  };
 }
 
-export default function Categories({ title, categories = [] }: CategoriesProps) {
+export default function Categories({ section }: CategoriesProps) {
   const { t } = useTranslation("home");
+  const { lang, isRTL } = useLang();
 
-  // Defensive check: If no categories exist, don't render an empty section
+  // Support section.data, categories, or items
+  const rawItems = section.data || section.categories || section.items || [];
+  
+  const categories = rawItems.map((item: any) => ({
+    id: item.id,
+    name: item.name || item.title,
+    image: item.image || item.media?.[0]?.url || "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
+    link: item.link || `/categories/${item.slug}`,
+  }));
+
+  // Helper to safely extract localized text
+  const getLocalizedText = (textObj: any) => {
+    if (!textObj) return "";
+    if (typeof textObj === "string") return textObj;
+    return textObj[lang] || textObj.en || textObj.ar || "";
+  };
+
   if (!categories.length) return null;
 
-  return (
-    <section className="px-6 py-16">
-      <div className="mx-auto max-w-7xl">
-        <h2 className="mb-10 text-3xl font-bold text-text-primary md:text-4xl">
-          {t(title)}
-        </h2>
+  const sectionTitle = getLocalizedText(section.name || section.title) || (lang === "ar" ? "تصفح حسب التصنيف" : "Shop by Category");
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.map((category) => (
-            <a
-              key={category.id}
-              href={category.link || "#"}
-              className="group relative block aspect-[4/3] overflow-hidden rounded-2xl bg-surface-secondary"
+  return (
+    <section 
+      dir={isRTL ? "rtl" : "ltr"}
+      className="w-full py-[var(--spacing-16)] px-[var(--spacing-4)] sm:px-[var(--spacing-6)] lg:px-[var(--spacing-8)] bg-[var(--color-background)]"
+    >
+      <div className="mx-auto max-w-[var(--container-2xl)]">
+        
+        {/* Section Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-[var(--spacing-10)] gap-[var(--spacing-4)]">
+          <div>
+            <span className="text-[var(--text-xs)] font-[var(--font-semibold)] text-[var(--color-primary)] uppercase tracking-wider block mb-[var(--spacing-2)]" style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}>
+              {lang === "ar" ? "الأقسام المميزة" : "Featured Categories"}
+            </span>
+            <h2 
+              className="text-[var(--text-3xl)] sm:text-[var(--text-4xl)] font-[var(--font-bold)] tracking-tight text-[var(--color-text-primary)]"
+              style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
             >
-              <img
-                src={category.image}
-                alt={t(category.name)}
-                className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
-                loading="lazy"
-              />
-              
-              {/* Overlay for better text visibility */}
-              <div className="absolute inset-0 bg-black/20 transition duration-300 group-hover:bg-black/30" />
-              
-              <div className="absolute bottom-6 left-6">
-                <h3 className="text-xl font-bold text-white">
-                  {t(category.name)}
-                </h3>
-              </div>
-            </a>
-          ))}
+              {sectionTitle}
+            </h2>
+          </div>
+
+          <a
+            href="/categories"
+            className="inline-flex items-center gap-[var(--spacing-2)] text-[var(--text-sm)] font-[var(--font-semibold)] text-[var(--color-primary)] transition-all hover:opacity-80 group w-fit"
+            style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+          >
+            <span>{lang === "ar" ? "عرض كل التصنيفات" : "View All Categories"}</span>
+            {isRTL ? (
+              <ArrowLeft size={16} className="transition-transform duration-300 group-hover:-translate-x-1" />
+            ) : (
+              <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
+            )}
+          </a>
         </div>
+
+        {/* Categories Grid */}
+        <div className="grid grid-cols-1 gap-[var(--spacing-6)] sm:grid-cols-2 lg:grid-cols-3">
+          {categories.map((category) => {
+            const categoryName = getLocalizedText(category.name);
+
+            return (
+              <a
+                key={category.id}
+                href={category.link}
+                className="group relative block aspect-[16/10] sm:aspect-[4/3] overflow-hidden rounded-[var(--radius-3xl)] bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] transition-all duration-[var(--duration-normal)] ease-[var(--ease-default)] hover:-translate-y-1.5 hover:shadow-[var(--shadow-xl)] hover:border-[var(--color-primary)]/40"
+              >
+                <img
+                  src={category.image}
+                  alt={categoryName || "Category Image"}
+                  className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-1000 ease-[var(--ease-default)] group-hover:scale-110"
+                  loading="lazy"
+                />
+                
+                {/* Cinematic Overlays */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent transition-opacity duration-300 group-hover:from-black/90" />
+                
+                <div className="absolute inset-x-0 bottom-0 p-[var(--spacing-6)] sm:p-[var(--spacing-8)] flex items-end justify-between">
+                  <h3 
+                    className="text-[var(--text-xl)] sm:text-[var(--text-2xl)] font-[var(--font-bold)] text-white tracking-tight"
+                    style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+                  >
+                    {categoryName}
+                  </h3>
+
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20 backdrop-blur-md text-white border border-white/30 transition-transform duration-300 group-hover:scale-110 group-hover:bg-[var(--color-primary)] group-hover:border-transparent">
+                    {isRTL ? <ArrowLeft size={18} /> : <ArrowRight size={18} />}
+                  </span>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+
       </div>
     </section>
   );
