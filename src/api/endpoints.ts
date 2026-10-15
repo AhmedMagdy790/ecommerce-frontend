@@ -2,7 +2,7 @@ export const API_ENDPOINTS = {
   auth: {
     login: "/auth/login",
     register: "/auth/register",
-    logout: "/logout",
+    logout: "/auth/logout",
     refresh: "/auth/refresh",
     rotateRefresh: "/auth/rotate-refresh",
     me: "/auth/me",
@@ -37,6 +37,13 @@ export const API_ENDPOINTS = {
     list: "/cart",
     add: "/cart",
     destroy: (id: string | number) => `/cart/${id}`,
+    clear: "/cart/clea"
+  },
+
+  wishlist: {
+    list: "/wishlist",
+    add: "/wishlist",
+    destroy: (id: string | number) => `/wishlist/${id}`
   },
 
   checkout: {
@@ -50,18 +57,22 @@ export const API_ENDPOINTS = {
   shipping: {
     options: "/shipping/options",
     calculate: "/shipping/calculate",
+    availableRates: (cityId: string | number) => `/shipping/cities/${cityId}/rates`,
   },
 
   orders: {
     index: "/orders",
-    myOrders: "/my-orders",
-    create: "/orders",
+    myOrders: "/orders/my-orders",
     details: (id: string | number) => `/orders/${id}`,
     cancel: (id: string | number) => `/orders/${id}/cancel`,
   },
 
   pages: {
     bySlug: (slug: string) => `/pages/${slug}`,
+  },
+  
+  navigation: {
+    show: (location: string) => `/navigation/${location}`,
   },
 
   sections: {
@@ -92,17 +103,26 @@ export const API_ENDPOINTS = {
       toggleStatus: (id: string | number) => `/admin/products/${id}/toggle-status`,
     },
     variants: {
+      index: "/admin/variants",
       store: "/admin/variants",
-      trashed: "/admin/variants/trashed",
       details: (id: string | number) => `/admin/variants/${id}`,
       update: (id: string | number) => `/admin/variants/${id}`,
+      destroy: (id: string | number) => `/admin/variants/${id}`, // Soft delete
+      trashed: "/admin/variants/trashed",
       forceDelete: (id: string | number) => `/admin/variants/${id}/force`,
       restore: (id: string | number) => `/admin/variants/${id}/restore`,
-      stock: (id: string | number) => `/admin/variants/${id}/stock`,
       toggleStatus: (id: string | number) => `/admin/variants/${id}/toggle-status`,
+    },
+    inventories: {
+      list: "/admin/inventories", // or relative to your baseURL
+      store: "/admin/inventories",
+      details: (id: string | number) => `/admin/inventories/${id}`,
+      update: (id: string | number) => `/admin/inventories/${id}`,
+      delete: (id: string | number) => `/admin/inventories/${id}`,
     },
     orders: {
       list: "/admin/orders",
+      store: "/admin/orders",
       trashed: "/admin/orders/trashed",
       details: (id: string | number) => `/admin/orders/${id}`,
       update: (id: string | number) => `/admin/orders/${id}`,
@@ -119,6 +139,30 @@ export const API_ENDPOINTS = {
       patch: (id: string | number) => `/admin/customers/${id}`,
       destroy: (id: string | number) => `/admin/customers/${id}`,
     },
+
+    managers: {
+      list: "/admin/managers",
+      store: "/admin/managers",
+      details: (id: string | number) => `/admin/managers/${id}`,
+      update: (id: string | number) => `/admin/managers/${id}`,
+      patch: (id: string | number) => `/admin/managers/${id}`,
+      destroy: (id: string | number) => `/admin/managers/${id}`,
+
+      toggle: (id: string | number) => `/admin/managers/${id}/toggle-status`,
+
+
+      getRoles: (id: string | number) => `/admin/managers/${id}/roles`,
+      updateRoles: (id: string | number) => `/admin/managers/${id}/roles`,
+    },
+
+    roles: {
+      list: "/admin/roles",
+      permissionsList: "/admin/roles/permissions",
+      details: (id: string | number) => `/admin/roles/${id}`,
+      updatePermissions: (id: string | number) =>
+        `/admin/roles/${id}/permissions`,
+    },
+
     couriers: {
       list: "/admin/couriers",
       store: "/admin/couriers",
@@ -130,6 +174,8 @@ export const API_ENDPOINTS = {
       toggle: (id: string | number) => `/admin/couriers/${id}/toggle`,
     },
     cities: {
+      index: () => `/admin/countries/cities`,
+      listByCountry: (id: string | number) => `/admin/countries/${id}/cities-list`,
       store: "/admin/cities",
       update: (id: string | number) => `/admin/cities/${id}`,
       destroy: (id: string | number) => `/admin/cities/${id}`,
@@ -143,6 +189,7 @@ export const API_ENDPOINTS = {
       update: (id: string | number) => `/admin/countries/${id}`,
       destroy: (id: string | number) => `/admin/countries/${id}`,
       toggle: (id: string | number) => `/admin/countries/${id}/toggle`,
+      countrieImport: () => `/admin/countries/import`
     },
     pages: {
       list: "/admin/pages",
@@ -153,6 +200,22 @@ export const API_ENDPOINTS = {
       destroy: (id: string | number) => `/admin/pages/${id}`,
       status: (id: string | number) => `/admin/pages/${id}/status`,
     },
+    navigation: {
+      list: "/admin/navigation",
+      store: "/admin/navigation",
+      details: (id: string | number) => `/admin/navigation/${id}`,
+      update: (id: string | number) => `/admin/navigation/${id}`,
+      patch: (id: string | number) => `/admin/navigation/${id}`,
+      destroy: (id: string | number) => `/admin/navigation/${id}`,
+      status: (id: string | number) => `/admin/navigation/${id}/toggle-status`, 
+      getLocations: () => `/admin/navigation/locations`,
+      
+      items: {
+        store: (menuId: string | number) => `/admin/navigation/${menuId}/items`,
+        update: (itemId: string | number) => `/admin/navigation/items/${itemId}`,
+        destroy: (itemId: string | number) => `/admin/navigation/items/${itemId}`,
+      },
+    },
     sections: {
       list: "/admin/sections",
       store: "/admin/sections",
@@ -161,23 +224,43 @@ export const API_ENDPOINTS = {
       patch: (id: string | number) => `/admin/sections/${id}`,
       destroy: (id: string | number) => `/admin/sections/${id}`,
       status: (id: string | number) => `/admin/sections/${id}/status`,
+      
+      // === أضف مسارات عناصر الأقسام هنا ===
+      items: {
+        list: (sectionId: string | number) => `/admin/sections/${sectionId}/items`,
+        store: (sectionId: string | number) => `/admin/sections/${sectionId}/items`,
+        reorder: (sectionId: string | number) => `/admin/sections/${sectionId}/items/reorder`,
+        details: (itemId: string | number) => `/admin/section-items/${itemId}`,
+        update: (itemId: string | number) => `/admin/section-items/${itemId}`,
+        patch: (itemId: string | number) => `/admin/section-items/${itemId}`,
+        destroy: (itemId: string | number) => `/admin/section-items/${itemId}`,
+      },
     },
+
     shipping: {
       listRates: "/admin/shipping/rates",
+      storeRate: (cityId: string | number) => `/admin/shipping/cities/${cityId}/rates`,
+      updateRate: (cityId: string | number, rateId: string | number) => `/admin/shipping/cities/${cityId}/rates/${rateId}`,
       deleteRate: (rateId: string | number) => `/admin/shipping/rates/${rateId}`,
       toggleRateStatus: (id: string | number) => `/admin/shipping/rates/${id}/status`,
       getCityOptions: (cityId: string | number) => `/admin/shipping/cities/${cityId}/options`,
-      updateRate: (cityId: string | number, rateId: string | number) => `/admin/shipping/cities/${cityId}/rates/${rateId}`,
     },
+
     paymentGateways: {
       list: "/admin/payment-gateways",
+      trashed: "/admin/payment-gateways/trashed",
       store: "/admin/payment-gateways",
+      show: (id: string | number) => `/admin/payment-gateways/${id}`,
       update: (id: string | number) => `/admin/payment-gateways/${id}`,
       edit: (id: string | number) => `/admin/payment-gateways/${id}`,
       destroy: (id: string | number) => `/admin/payment-gateways/${id}`,
+      restore: (id: string | number) => `/admin/payment-gateways/${id}/restore`,
+      forceDestroy: (id: string | number) => `/admin/payment-gateways/${id}/force`,
       toggleStatus: (id: string | number) => `/admin/payment-gateways/${id}/toggle-status`,
       toggleTestMode: (id: string | number) => `/admin/payment-gateways/${id}/toggle-test-mode`,
+      paymentGatewayOptions: "/admin/payment-gateways/options",
     },
+    
     settings: {
       getAll: "/admin/settings",
       update: "/admin/settings"
@@ -190,8 +273,7 @@ export const API_ENDPOINTS = {
   
 
   geo: {
-    countries: "/countries",
-    cities: (countryId: string | number) => `/countries/${countryId}/cities`,
-    shippingCouriers: (cityId: string | number) => `/cities/${cityId}/shipping-couriers`,
+    countries: "/locations/countries",
+    cities: (countryId: string | number) => `/locations/countries/${countryId}/cities`,
   }
 };

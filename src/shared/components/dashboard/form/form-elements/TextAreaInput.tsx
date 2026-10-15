@@ -5,7 +5,7 @@ import Label from "../Label";
 
 export default function TextAreaInput() {
   const [message, setMessage] = useState("");
-  const [messageTwo, setMessageTwo] = useState("");
+  const [messageTwo, setMessageTwo] = useState<string>("");
   return (
     <ComponentCard title="Textarea input field">
       <div className="space-y-6">
@@ -14,7 +14,7 @@ export default function TextAreaInput() {
           <Label>Description</Label>
           <TextArea
             value={message}
-            onChange={(value) => setMessage(value)}
+            onChange={(value) => setMessage(value.target.value)}
             rows={6}
           />
         </div>
@@ -31,8 +31,7 @@ export default function TextAreaInput() {
           <TextArea
             rows={6}
             value={messageTwo}
-            error
-            onChange={(value) => setMessageTwo(value)}
+            onChange={(value) => setMessageTwo(value.target.value)}
             hint="Please enter a valid message."
           />
         </div>

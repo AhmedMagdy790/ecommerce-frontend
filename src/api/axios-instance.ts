@@ -1,20 +1,18 @@
 // src/api/axios-instance.ts
-import axios, { type AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
+import axios, { type InternalAxiosRequestConfig } from 'axios';
 import { env } from '@/config/config';
 import { setupInterceptors } from './interceptors';
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore } from '@/features/auth/model/store/useAuthStore';
 
-const axiosInstance: AxiosInstance = axios.create({
+const axiosInstance = axios.create({
   baseURL: `${env.API_BASE_URL}/api/v1`,
   withCredentials: true,
   timeout: 10000,
   headers: {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
+    Accept: "application/json",
     "X-Requested-With": "XMLHttpRequest",
   },
 });
-
 
 const getCookie = (name: string): string | undefined => {
   const value = `; ${document.cookie}`;
@@ -25,13 +23,11 @@ const getCookie = (name: string): string | undefined => {
 
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-
     const xsrfToken = getCookie("XSRF-TOKEN");
 
     if (xsrfToken) {
       config.headers["X-XSRF-TOKEN"] = decodeURIComponent(xsrfToken);
     }
-
 
     const accessToken = useAuthStore.getState().accessToken;
 
@@ -39,6 +35,10 @@ axiosInstance.interceptors.request.use(
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
 
+    const currentLang = localStorage.getItem("app_lang") || "ar";
+    
+    console.log(currentLang)
+    config.headers["Accept-Language"] = currentLang;
 
     return config;
   },
@@ -46,8 +46,5 @@ axiosInstance.interceptors.request.use(
 );
 
 setupInterceptors(axiosInstance);
-
-
-
 
 export default axiosInstance;

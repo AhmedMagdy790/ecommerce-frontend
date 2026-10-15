@@ -1,48 +1,63 @@
-import React from "react";
+// src/shared/components/DataTable/DataTable.tsx
+import React, { useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import type { Column, DataTableProps } from "./types";
 import { useDataTable } from "./Hook/useDataTable";
-import { TableActions } from "./TableActions";
-import { TablePagination } from "./TablePagination";
+import { Pagination } from "../Pagination/Pagination";
 import FilterDataTable from "./FiltterDataTable";
-import { MobileActions } from "./MobileActions";
+import { useLanguage } from "@/hooks/useLanguage";
+
+import { DataTableHeaderConfig } from "./DataTableHeaderConfig";
+import { DataTableDesktop } from "./DataTableDesktop";
+import { DataTableMobile } from "./DataTableMobile";
 
 export default function DataTable<T extends { id: string | number }>({
   data,
   columns,
-  lang,
-  paginationType,
+  paginationMode,
   filterSideServer,
   meta,
+  loading = false,
   renderMobileCard,
   showTrashed,
   onEdit,
   onDelete,
   onRestore,
-  pageSize = 10, // Recommended default increased to 10 for better dataset browsing
   filterFields = [],
-}: DataTableProps<T>) {
+  searchableFields = ['name', 'title'],
+  pageSize: propPageSize,
+  pageSizeOptions,
+}: DataTableProps<T, any> & { loading?: boolean }) {
+  const { t } = useTranslation("common");
+  const { dir } = useLanguage();
 
   const {
-    currentPage,
+    activeCurrentPage,
+    activeTotalPages,
     filters,
     setFilters,
     searchTerm,
     setSearchTerm,
-    totalPages,
     currentData,
     handlePageChange,
+    handlePageSizeChange,
+    sortConfig,
+    handleSort,
+    pageSize,
+    totalRecords,
   } = useDataTable({
     data,
-    paginationType,
+    paginationMode,
     filterSideServer,
     meta,
-    pageSize,
+    searchableFields,
+    pageSize: propPageSize,
   });
 
-  const isRtl = lang === "ar";
+
   const hasActions = Boolean(onEdit || onDelete || onRestore);
 
-  const renderCellContent = (col: Column<T>, item: T) => {
+  const renderCellContent = useCallback((col: Column<T>, item: T) => {
     let value = undefined;
     if (col.accessor) {
       value = typeof col.accessor === "function" ? col.accessor(item) : item[col.accessor];
@@ -51,101 +66,76 @@ export default function DataTable<T extends { id: string | number }>({
       return col.render(value, item);
     }
     return value as React.ReactNode;
-  };
+  }, []);
 
   return (
-    <div className="space-y-4" dir={isRtl ? "rtl" : "ltr"}>
+    <div className="space-y-4" dir={dir}>
+
       <FilterDataTable
         filterFields={filterFields}
         setFilters={setFilters}
         filters={filters}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
-        lang={lang}
       />
 
-      <div className="bg-[var(--card-bg)] backdrop-blur-xl rounded-[var(--radius-xl)] border border-[var(--color-border)] overflow-hidden shadow-[var(--shadow-xs)] hover:shadow-[var(--shadow-sm)] transition-all">
-        {/* Desktop Table */}
-        <div className="hidden md:block overflow-x-auto">
-          <table className="w-full text-start">
-            <thead className="bg-[var(--color-surface-secondary)] backdrop-blur border-b border-[var(--color-border)]">
-              <tr>
-                {columns.map((col, index) => (
-                  <th
-                    key={index}
-                    className={`p-4 text-start text-xs uppercase tracking-wider font-semibold text-[var(--color-text-muted)] ${col.className ?? ""}`}
-                  >
-                    {col.header}
-                  </th>
-                ))}
-                {hasActions && (
-                  <th className="p-4 text-center text-xs uppercase tracking-wider font-semibold text-[var(--color-text-muted)]">
-                    {isRtl ? "إجراءات" : "Actions"}
-                  </th>
-                )}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--color-border)]">
-              {Array.isArray(currentData) && currentData.length > 0 && currentData.map((item) => (
-                <tr
-                  key={`row-${item.id}`}
-                  className="group relative hover:bg-[var(--color-surface-secondary)]/50 transition-colors"
-                >
-                  {columns.map((col, idx) => (
-                    <td
-                      key={`cell-${item.id}-${idx}`}
-                      className={`p-4 text-sm text-[var(--color-text-primary)] ${col.className ?? ""}`}
-                    >
-                      {renderCellContent(col, item)}
-                    </td>
-                  ))}
+      <DataTableHeaderConfig
+        totalRecords={totalRecords}
+        pageSize={pageSize}
+        pageSizeOptions={pageSizeOptions}
+        onPageSizeChange={handlePageSizeChange}
+      />
 
-                  {hasActions && (
-                    <td className="p-4 text-sm transition text-center">
-                      <TableActions
-                        item={item}
-                        isRtl={isRtl}
-                        showTrashed={showTrashed}
-                        onEdit={onEdit}
-                        onDelete={onDelete}
-                        onRestore={onRestore}
-                      />
-                    </td>
-                  )}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Mobile Cards */}
-        <div className="md:hidden divide-y divide-[var(--color-border)]">
-          {Array.isArray(currentData) && currentData.length > 0 && currentData.map((item) => (
-            <div key={item.id} className="p-4 space-y-3">
-              {renderMobileCard && renderMobileCard(item)}
-              <MobileActions
-                item={item}
-                isRtl={isRtl}
-                showTrashed={showTrashed}
-                onEdit={onEdit}
-                onDelete={onDelete}
-                onRestore={onRestore}
-              />
+      <div className="relative bg-[var(--card-bg)] backdrop-blur-xl rounded-[var(--radius-xl)] border border-[var(--color-border)] overflow-x-auto shadow-[var(--shadow-xs)] hover:shadow-[var(--shadow-sm)] transition-all">
+        {/* شاشة التحميل (Loader) */}
+        {loading && (
+          <div className="absolute inset-0 bg-[var(--card-bg)]/80 backdrop-blur-sm z-10 flex items-center justify-center p-12 text-sm text-[var(--color-text-muted)]">
+            <div className="flex items-center gap-3 animate-pulse">
+              <div className="w-5 h-5 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
+              <span>{t("loading") || "Loading..."}</span>
             </div>
-          ))}
-        </div>
-
-        {(!Array.isArray(currentData) || currentData.length === 0) && (
-          <div className="p-12 text-center text-sm text-[var(--color-text-muted)]">
-            {isRtl ? "لا توجد نتائج" : "No results found"}
           </div>
+        )}
+
+        {!loading && currentData.length > 0 ? (
+          <>
+            <DataTableDesktop
+              data={currentData}
+              columns={columns}
+              sortConfig={sortConfig}
+              onSort={handleSort}
+              renderCellContent={renderCellContent}
+              hasActions={hasActions}
+              showTrashed={showTrashed}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              onRestore={onRestore}
+            />
+
+            <DataTableMobile
+              data={currentData}
+              columns={columns}
+              renderMobileCard={renderMobileCard}
+              renderCellContent={renderCellContent}
+              showTrashed={showTrashed}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              onRestore={onRestore}
+            />
+          </>
+        ) : !loading && currentData.length === 0 ? (
+          <div className="p-12 text-center text-sm text-[var(--color-text-muted)]">
+            {t("no_results")}
+          </div>
+        ) : (
+          <div className="h-48" />
         )}
       </div>
 
-      <TablePagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        isRtl={isRtl}
+      {/* 4. الترقيم */}
+      <Pagination
+        currentPage={activeCurrentPage}
+        lastPage={activeTotalPages}
         onPageChange={handlePageChange}
       />
     </div>

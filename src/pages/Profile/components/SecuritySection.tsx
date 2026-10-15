@@ -1,10 +1,9 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { passwordSchema, type PasswordFormValues } from "../schemas/password.schema";
-import { Input } from "@/shared/components/Input";
+import { Input } from "@/shared/components/ui/Input";
 import { useUpdatePassword } from "../hooks/useUpdatePassword"; // استدعاء الهوك العزل
 
 export default function SecuritySection() {

@@ -5,6 +5,7 @@ export const cmsService = {
   async getPage(slug: string): Promise<HomePageResponse> {
     const response = await storeApi.getPageBySlug<HomePageResponse>(slug);
 
-    return response?.data;
+
+    return response; 
   },
 };

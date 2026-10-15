@@ -1,4 +1,3 @@
-import React from "react";
 import { Check, X, Loader2 } from "lucide-react";
 
 

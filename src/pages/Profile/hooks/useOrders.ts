@@ -1,31 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { orderApi } from "@/api/client";
+import type { Order } from "@/features/order/model/types/order.types";
 
-export interface Order {
-  id: number | string;
-  total: number;
-  status: string;
-  created_at: string;
 
-}
 
-const ORDERS_QUERY_KEY = ["my-orders"];
-
-export function useOrders() {
-  const { data: orders, isLoading, isError, error } = useQuery<Order[], Error>({
-    queryKey: ORDERS_QUERY_KEY,
+export function useOrders(filters = {}) {
+  const { data: orders, isLoading, isError, error } = useQuery<Order<string>[], Error>({
+    queryKey: ["my-orders", filters], // إضافة الفلاتر هنا مفتاح أساسي لتحديث الكاش
     queryFn: async () => {
-      const response: any = await orderApi.getMyOrders();
-
-      return response.data?.orders || response.data || response;
+      const response = await orderApi.getMyOrders();
+      return response.data?.items || [];
     },
     staleTime: 1000 * 60 * 5,
   });
 
-  return {
-    orders: orders || [],
-    isLoading,
-    isError,
-    error,
-  };
+  return { orders: orders || [], isLoading, isError, error };
 }

@@ -1,9 +1,10 @@
 // src/pages/Checkout/components/steps/ShippingStep.tsx
 
 import { useFormContext } from "react-hook-form";
-import ShippingMethod from "@/components/Checkout/ShippingMethod";
 import { Button } from "@/shared/components/Button";
 import { useTranslation } from "react-i18next";
+import ShippingMethod from "../ShippingMethod";
+import type { ShippingOption } from "@/features/shipping/model/types/shipping.types";
 
 interface ShippingStepProps {
   onNext: () => void;
@@ -18,9 +19,19 @@ export default function ShippingStep({ onNext, onBack }: ShippingStepProps) {
   const selectedShippingId = watch("shipping_method_id");
   const currency = watch("currency") || "USD";
 
-  const handleShippingChange = (methodId: string | number, price: number) => {
-    setValue("shipping_method_id", methodId, { shouldValidate: true });
-    setValue("shipping_cost", price, { shouldValidate: true });
+  // استخدام ShippingOption | null بوضوح تام ودون تعقيد
+  const handleShippingChange = (option: ShippingOption | null) => {
+    if (!option) {
+      setValue("shipping_method_id", null, { shouldValidate: true });
+      setValue("shipping_cost", 0, { shouldValidate: true });
+      return;
+    }
+
+    // استخراج السعر سواء كان مخزناً بشكل مباشر أو داخل كائن rates
+    const cost = option.rates?.cost ?? option.cost ?? 0;
+
+    setValue("shipping_method_id", String(option.id), { shouldValidate: true });
+    setValue("shipping_cost", cost, { shouldValidate: true });
   };
 
   return (

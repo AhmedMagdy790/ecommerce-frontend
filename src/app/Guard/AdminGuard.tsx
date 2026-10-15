@@ -1,18 +1,32 @@
+// src/components/AdminGuard.tsx
+
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/features/auth/model/store/useAuthStore";
+import { isAdmin } from "@/features/auth/utils/authHelpers";
 
 export const AdminGuard = () => {
-  const { user } = useAuthStore();
+  const user = useAuthStore((state) => state.user);
+  const isInitialized = useAuthStore((state) => state.isInitialized);
   const location = useLocation();
 
-  if (!user) {
-    return <Navigate to="/auth/login" state={{ from: location }} replace />;
+  if (!isInitialized) {
+    return null;
   }
 
-  // التحقق من أن المستخدم يمتلك صلاحية الأدمن
-  const isAdmin = user.roles?.includes("admin");
+  if (!user) {
+    return (
+      <Navigate
+        to="/auth/login"
+        state={{ from: location }}
+        replace
+      />
+    );
+  }
 
-  if (!isAdmin) {
+  console.log("isAdmin(user)", isAdmin(user))
+
+  // 🟢 استخدام دالة الـ Helper بوضوح واحترافية
+  if (!isAdmin(user)) {
     return <Navigate to="/unauthorized" replace />;
   }
 

@@ -1,48 +1,64 @@
+// src/pages/Home/components/sections/NewArrivals.tsx
+
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ProductCard } from "@/features/product/components/ProductCard";
 import { useLang } from "@/shared/context/LanguageContext";
-import type { ProductSummary } from "@/features/product/types/product";
+import type { Section } from "@/features/cms/section/model/types/section.types";
+import ProductCard from "../products/ProductCard";
+import { mapCmsProducts } from "@/features/product/adapters/cmsProductCardAdapter";
 
 interface NewArrivalsProps {
-  title: string;
-  products: ProductSummary[];
+  section: Section<string>;
 }
 
-export default function NewArrivals({ title, products = [] }: NewArrivalsProps) {
+export default function NewArrivals({ section }: NewArrivalsProps) {
   const { t } = useTranslation("home");
-  const { lang } = useLang();
+  const { lang, isRTL } = useLang();
 
-  const getLocalizedText = (text: string) => {
-    if (!text) return "";
-    return t(text);
-  };
+  console.log("section", section)
+  console.log("section", section)
 
-  if (!products.length) return null;
+    const rawItems = Array.isArray(section?.data) ? section.data : [];
+  
+    // 2. تحويل البيانات باستخدام Adapter
+    const products = mapCmsProducts(rawItems, lang);
+  
+
+  const sectionTitle = section.name || (lang === "ar" ? "وصل حديثاً" : "New Arrivals");
+  const badgeText = lang === "ar" ? "جديد" : "NEW";
 
   return (
-    <section className="px-6 py-16">
-      <div className="mx-auto max-w-[var(--container-xl)]">
-        {/* Header */}
-        <div className="mb-10 flex items-center justify-between">
-          <h2 className="text-3xl font-bold text-[var(--color-text-primary)] md:text-4xl">
-            {getLocalizedText(title)}
-          </h2>
+    <section 
+      dir={isRTL ? "rtl" : "ltr"}
+      className="px-[var(--spacing-6)] py-[var(--spacing-16)]"
+    >
+      <div className="mx-auto max-w-[var(--container-2xl,1400px)]">
+        {/* Section Header */}
+        <div className="mb-[var(--spacing-10)] flex items-center justify-between border-b border-[var(--color-border)] pb-[var(--spacing-4)]">
+          {sectionTitle && (
+            <div className="flex items-center gap-[var(--spacing-3)]">
+              <span className="h-6 w-1.5 rounded-[var(--radius-full)] bg-[var(--color-primary)]" />
+              <h2 className="text-[var(--text-2xl)] sm:text-[var(--text-3xl)] font-[var(--font-bold)] text-[var(--color-text-primary)] tracking-tight">
+                {sectionTitle}
+              </h2>
+            </div>
+          )}
 
-          <a
-            href="/shop?sort=newest"
-            className="text-sm font-semibold text-[var(--color-primary)] hover:underline"
+          <Link
+            to="/products?sort=newest"
+            className="text-[var(--text-sm)] font-[var(--font-semibold)] text-[var(--color-primary)] transition-colors hover:text-[var(--color-primary-dark)] hover:underline"
           >
             {t("newArrivals.viewAll", lang === "ar" ? "عرض الكل" : "View All")}
-          </a>
+          </Link>
         </div>
 
-        {/* Products Grid */}
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4">
-          {products.map((product) => (
-            <ProductCard 
-              key={product.id} 
+        {/* Responsive Products Grid */}
+        <div className="grid grid-cols-2 gap-[var(--spacing-4)] sm:gap-[var(--spacing-6)] md:grid-cols-3 lg:grid-cols-4">
+          {products.map((product, idx) => (
+            <ProductCard
+              key={product.id ?? idx} 
               product={product} 
-              badge="newArrivals.badge" 
+              badge={badgeText} 
             />
           ))}
         </div>

@@ -10,7 +10,7 @@ interface CheckoutStepsProps {
   currentStep: number;
   onNext: () => void;
   onBack: () => void;
-  onSubmit: (e: React.BaseSyntheticEvent) => Promise<void>;
+  onSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
 }
 
 export default function CheckoutSteps({

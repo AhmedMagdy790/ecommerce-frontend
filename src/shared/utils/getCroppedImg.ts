@@ -1,3 +1,4 @@
+// src/shared/utils/cropImage.ts
 export const getCroppedImg = async (imageSrc: string, pixelCrop: any): Promise<File> => {
   const image = new Image();
   image.src = imageSrc;
@@ -8,7 +9,11 @@ export const getCroppedImg = async (imageSrc: string, pixelCrop: any): Promise<F
   canvas.height = pixelCrop.height;
   const ctx = canvas.getContext('2d');
 
-  ctx?.drawImage(
+  if (!ctx) {
+    throw new Error("No 2d context");
+  }
+
+  ctx.drawImage(
     image,
     pixelCrop.x,
     pixelCrop.y,
@@ -20,11 +25,14 @@ export const getCroppedImg = async (imageSrc: string, pixelCrop: any): Promise<F
     pixelCrop.height
   );
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
-      if (!blob) return;
-      const file = new File([blob], `image.webp`, { type: "image/webp" });
+      if (!blob) {
+        reject(new Error("Canvas is empty"));
+        return;
+      }
+      const file = new File([blob], `cropped-image.webp`, { type: "image/webp" });
       resolve(file);
-    }, 'image/webp');
+    }, 'image/webp', 0.9);
   });
-}
+};

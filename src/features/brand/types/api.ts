@@ -1,5 +1,5 @@
-import type { Product } from "@/types/product";
-import type { Section } from "@/types/sections";
+import type { Product } from "@/features/product/model/types/product.types";
+import type { Section } from "@/features/cms/section/model/types/section.types";
 
 export interface ApiBrand {
     id: number;

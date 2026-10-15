@@ -3,17 +3,17 @@
      Colors
   =========================== */
 
-  /* Blue */
-  --blue-50: #eff6ff;
-  --blue-100: #dbeafe;
-  --blue-200: #bfdbfe;
-  --blue-300: #93c5fd;
-  --blue-400: #60a5fa;
-  --blue-500: #3b82f6;
-  --blue-600: #2563eb;
-  --blue-700: #1d4ed8;
-  --blue-800: #1e40af;
-  --blue-900: #1e3a8a;
+  /* Violet / Purple (تم استبدال الأزرق بالأرجواني) */
+  --violet-50: #f5f3ff;
+  --violet-100: #ede9fe;
+  --violet-200: #ddd6fe;
+  --violet-300: #c4b5fd;
+  --violet-400: #a78bfa;
+  --violet-500: #8b5cf6;
+  --violet-600: #7c3aed;
+  --violet-700: #6d28d9;
+  --violet-800: #5b21b6;
+  --violet-900: #4c1d95;
 
   /* Gray */
   --gray-50: #f8fafc;
@@ -33,10 +33,10 @@
   --red-500: #ef4444;
 
   /* Brand */
-  --color-primary: var(--blue-600);
-  --color-primary-hover: var(--blue-700);
-  --color-primary-active: var(--blue-800);
-  --color-primary-rgb: 37 99 235;
+  --color-primary: var(--violet-600);
+  --color-primary-hover: var(--violet-700);
+  --color-primary-active: var(--violet-800);
+  --color-primary-rgb: 124 58 237;
 
   /* Background & Surface */
   --color-background: #ffffff;
@@ -161,7 +161,6 @@
   --sidebar-width: 280px;
   --sidebar-collapsed-width: 80px;
   
-
   /* ===========================
      Z-Index Layers System
   =========================== */
@@ -170,7 +169,7 @@
   --z-sticky: 200;
   --z-fixed: 300;
   --z-tooltip: 400;
-  --z-dropdown: 500;
+  --z-dropdown: 1500;
   --z-popover: 600;
   --z-header: 700;
   --z-sidebar: 800;
@@ -181,12 +180,12 @@
 
 [data-theme="dark"] {
   /* ===========================
-     Brand Overrides
+     Brand Overrides (Violet)
   =========================== */
-  --color-primary: var(--blue-500);
-  --color-primary-hover: var(--blue-400);
-  --color-primary-active: var(--blue-300);
-  --color-primary-rgb: 59 130 246;
+  --color-primary: var(--violet-500);
+  --color-primary-hover: var(--violet-400);
+  --color-primary-active: var(--violet-300);
+  --color-primary-rgb: 139 92 246;
 
   /* ===========================
      Background & Surface

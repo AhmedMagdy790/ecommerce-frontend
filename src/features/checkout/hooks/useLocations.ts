@@ -1,18 +1,28 @@
 // src/pages/Checkout/hooks/useLocations.ts
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { locationService } from "@/services/locationService";
-import type { Country, City } from "@/shared/types/location";
+import type { Country } from "@/features/country/model/types/country.types";
+import type { City } from "@/features/city/model/types/city.types";
+import type { Option } from "@/shared/components/CustomSelect";
 
-export function useLocations(countryId?: string | number) {
-  const [countries, setCountries] = useState<Country[]>([]);
-  const [cities, setCities] = useState<City[]>([]);
+export function useLocations(countryId?: number) {
+  const [countries, setCountries] = useState<Country<string>[]>([]);
   
   const [loadingCountries, setLoadingCountries] = useState<boolean>(false);
-  const [loadingCities, setLoadingCities] = useState<boolean>(false);
-  
   const [countriesError, setCountriesError] = useState<string | null>(null);
+
+  const [prevCountryId, setPrevCountryId] = useState(countryId);
+  const [cities, setCities] = useState<City<string>[]>([]);
+  const [loadingCities, setLoadingCities] = useState<boolean>(false);
   const [citiesError, setCitiesError] = useState<string | null>(null);
+
+  if (countryId !== prevCountryId) {
+    setPrevCountryId(countryId);
+    setCities([]);
+    setCitiesError(null);
+    setLoadingCities(false);
+  }
 
   // Fetch countries on mount
   useEffect(() => {
@@ -22,15 +32,10 @@ export function useLocations(countryId?: string | number) {
       try {
         setLoadingCountries(true);
         setCountriesError(null);
-        const response = await locationService.getCountries();
+        const countries = await locationService.getCountries();
         
-        console.log("response", response)
-        // استخراج الـ items بشكل آمن سواء كان الرد مصفوفة مباشرة أو داخل كائن الـ Smart Pagination
-        const responseData = response?.data || response;
-        const items = responseData?.items || (Array.isArray(responseData) ? responseData : []);
-
         if (isMounted) {
-          setCountries(items);
+          setCountries(countries);
         }
       } catch (err) {
         if (isMounted) {
@@ -53,25 +58,20 @@ export function useLocations(countryId?: string | number) {
   // Fetch cities whenever countryId changes
   useEffect(() => {
     if (!countryId) {
-      setCities([]);
-      setCitiesError(null);
       return;
     }
 
     let isMounted = true;
 
     async function fetchCities() {
+      
       try {
         setLoadingCities(true);
         setCitiesError(null);
-        const response = await locationService.getCities(countryId);
+        const data = await locationService.getCities(Number(countryId));
         
-        // نفس الشيء للمدن في حال كانت تستخدم نفس نمط الاستجابة
-        const responseData = response?.data || response;
-        const items = responseData?.items || (Array.isArray(responseData) ? responseData : []);
-
         if (isMounted) {
-          setCities(items);
+          setCities(data);
         }
       } catch (err) {
         if (isMounted) {
@@ -92,12 +92,29 @@ export function useLocations(countryId?: string | number) {
     };
   }, [countryId]);
 
+  const countryOptions: Option[] = useMemo(() => {
+    return (countries || []).map((country) => ({
+      label: country.name,
+      value: country.id,
+    }));
+  }, [countries]);
+
+  // تحويل المدن إلى خيارات للـ CustomSelect
+  const cityOptions: Option[] = useMemo(() => {
+    return (cities || []).map((city) => ({
+      label: city.name,
+      value: city.id,
+    }));
+  }, [cities]);
+
   return {
     countries,
-    cities,
+    cities: countryId ? cities : [],
+    countryOptions,
+    cityOptions,
     loadingCountries,
-    loadingCities,
+    loadingCities: countryId ? loadingCities : false,
     countriesError,
-    citiesError,
+    citiesError: countryId ? citiesError : null,
   };
 }

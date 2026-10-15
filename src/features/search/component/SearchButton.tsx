@@ -17,28 +17,37 @@ export default function SearchButton({ onClick }: SearchButtonProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Focus input automatically when expanded
   useEffect(() => {
     if (isExpanded && inputRef.current) {
       inputRef.current.focus();
     }
   }, [isExpanded]);
 
-  // Close when clicking outside
+  // الإغلاق عند الضغط على Escape أو الضغط خارج الإطار
   useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setIsExpanded(false);
+    }
     function handleClickOutside(event: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsExpanded(false);
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+
+    if (isExpanded) {
+      document.addEventListener("keydown", handleKeyDown);
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isExpanded]);
 
   const handleToggle = () => {
     const nextState = !isExpanded;
     setIsExpanded(nextState);
-    // Trigger external onClick handler (e.g. to open SearchModal) when expanding
     if (onClick && nextState) {
       onClick();
     }
@@ -47,66 +56,66 @@ export default function SearchButton({ onClick }: SearchButtonProps) {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      window.location.href = `/products?search=${encodeURIComponent(searchQuery)}`;
+      window.location.href = `/products?search=${encodeURIComponent(searchQuery.trim())}`;
+      setIsExpanded(false);
     }
   };
 
   return (
-    <div ref={containerRef} className="relative flex items-center" dir={isRTL ? "rtl" : "ltr"}>
-      {/* Expandable Search Input Container */}
-      <div
-        className={`flex items-center transition-all duration-[var(--duration-normal)] ease-[var(--ease-default)] overflow-hidden ${
-          isExpanded ? "w-64 sm:w-80 opacity-100" : "w-0 opacity-0 pointer-events-none"
-        }`}
-        style={{
-          position: isExpanded ? "relative" : "absolute",
-          [isRTL ? "left" : "right"]: 0,
-        }}
-      >
-        <form
-          onSubmit={handleSearchSubmit}
-          className="w-full flex items-center h-10 px-[var(--spacing-3)] rounded-[var(--radius-xl)] bg-[var(--color-surface-secondary)] border border-[var(--color-border)] shadow-[var(--shadow-xs)]"
-        >
-          <Search size={16} className="text-[var(--color-text-muted)] shrink-0" />
-          <input
-            ref={inputRef}
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={lang === "ar" ? "ابحث عن منتجات..." : "Search products..."}
-            className="w-full bg-transparent border-none outline-none text-[var(--text-sm)] mx-[var(--spacing-2)] text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:ring-0"
-            style={{
-              fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)",
-            }}
-          />
-          {searchQuery && (
+    <div ref={containerRef} dir={isRTL ? "rtl" : "ltr"}>
+      {/* 1. Full Width Search Overlay Bar */}
+      {isExpanded && (
+        <div className="absolute inset-0 z-50 flex items-center px-[var(--spacing-4)] bg-[var(--color-surface)] border-b border-[var(--color-border)] shadow-[var(--shadow-sm)] animate-in fade-in slide-in-from-top-2 duration-200">
+          <form
+            onSubmit={handleSearchSubmit}
+            className="mx-auto flex w-full max-w-[var(--container-xl)] items-center gap-[var(--spacing-3)]"
+          >
+            <Search size={20} className="text-[var(--color-text-muted)] shrink-0" />
+
+            <input
+              ref={inputRef}
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={lang === "ar" ? "ابحث عن منتجات، أقسام، أو ماركات..." : "Search products, categories, or brands..."}
+              className="w-full bg-transparent border-none outline-none text-[var(--text-base)] text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:ring-0"
+              style={{
+                fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)",
+              }}
+            />
+
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="p-1 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors"
+                aria-label="Clear query"
+              >
+                <X size={16} />
+              </button>
+            )}
+
+            {/* Close Overlay Button */}
             <button
               type="button"
-              onClick={() => setSearchQuery("")}
-              className="text-[var(--color-text-muted)] transition-opacity hover:opacity-80"
-              aria-label="Clear query"
+              onClick={() => setIsExpanded(false)}
+              className="inline-flex h-9 items-center justify-center rounded-[var(--radius-lg)] px-[var(--spacing-3)] text-[var(--text-sm)] font-[var(--font-medium)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
             >
-              <X size={14} />
+              {lang === "ar" ? "إلغاء" : "Cancel"}
             </button>
-          )}
-        </form>
-      </div>
+          </form>
+        </div>
+      )}
 
-      {/* Trigger Button */}
+      {/* 2. Trigger Button (الموجود في Navbar) */}
       <button
         type="button"
         onClick={handleToggle}
-        aria-label={t("buttons.search")}
-        title={t("buttons.search")}
-        className={`inline-flex items-center justify-center h-10 w-10 rounded-[var(--radius-xl)] transition-all duration-[var(--duration-fast)] ease-[var(--ease-default)] hover:scale-105 active:scale-95 ${
-          isExpanded ? "ml-[var(--spacing-2)]" : ""
-        } ${
-          isExpanded 
-            ? "bg-[var(--color-primary)] text-[var(--color-text-inverse)] shadow-md" 
-            : "bg-[var(--color-surface-secondary)] border border-[var(--color-border)] text-[var(--color-text-primary)] hover:border-[var(--color-border-hover)]"
-        }`}
+        aria-label={t("buttons.search", "Search")}
+        title={t("buttons.search", "Search")}
+        className="inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-xl)] bg-[var(--color-surface-secondary)] border border-[var(--color-border)] text-[var(--color-text-primary)] transition-all duration-[var(--duration-fast)] hover:scale-105 active:scale-95 hover:border-[var(--color-border-hover)]"
       >
-        {isExpanded ? <X size={18} strokeWidth={2.2} /> : <Search size={18} strokeWidth={2.2} />}
+        <Search size={18} strokeWidth={2.2} />
       </button>
     </div>
   );

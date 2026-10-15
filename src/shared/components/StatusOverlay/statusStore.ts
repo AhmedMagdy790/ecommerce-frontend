@@ -11,7 +11,8 @@ interface StatusState {
   bgStyle: bgStyle;
   btnClose: boolean;
   
-  show: (type: StatusType, message?: string, bgStyle?: bgStyle) => void;
+  // إضافة btnClose هنا ليطابق التنفيذ
+  show: (type: StatusType, message?: string, bgStyle?: bgStyle, btnClose?: boolean) => void;
   hide: () => void;
 }
 
@@ -22,15 +23,13 @@ export const useStatusStore = create<StatusState>((set) => ({
   bgStyle: 'blur',
   btnClose: false,
 
-
   show: (type, message = "", bgStyle = 'blur', btnClose = false) =>
-
     set({
       type,
       message,
       isVisible: true,
-      btnClose: btnClose,
-      bgStyle: bgStyle
+      btnClose,
+      bgStyle
     }),
 
   hide: () =>

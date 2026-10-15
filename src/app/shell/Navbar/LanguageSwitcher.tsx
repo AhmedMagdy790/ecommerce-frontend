@@ -1,12 +1,19 @@
 import { Languages } from "lucide-react";
 import { useLang } from "@/shared/context/LanguageContext";
+import { langKeys } from "@/shared/utils/langHelpers";
+import { UI_STRINGS } from "@/locales/languages"; // ⭐ استيراد UI_STRINGS لجلب البيانات من config.json
 
 export default function LanguageSwitcher() {
   const { lang, changeLanguage } = useLang();
 
+  // دالة تبديل اللغة بشكل دائري بين اللغات المتاحة
   const handleToggle = () => {
-    changeLanguage(lang === "en" ? "ar" : "en");
+    const currentIndex = langKeys.indexOf(lang);
+    const nextIndex = (currentIndex + 1) % langKeys.length;
+    changeLanguage(langKeys[nextIndex]);
   };
+
+  const currentLangName = UI_STRINGS[lang]?._config?.nativeName || lang;
 
   return (
     <button
@@ -35,7 +42,7 @@ export default function LanguageSwitcher() {
           textTransform: "uppercase",
         }}
       >
-        {lang === "ar" ? "العربية" : "English"}
+        {currentLangName}
       </span>
     </button>
   );

@@ -1,160 +1,163 @@
+// src/shared/components/dashboard/ui/dropdown/Dropdown.tsx
+
 import type React from "react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useLayoutEffect } from "react";
 import { createPortal } from "react-dom";
 
 interface DropdownProps {
+  /** Controls the visibility state of the dropdown */
   isOpen: boolean;
+
+  /** Margin below */
+  marginBelow?: number;
+  /** Callback triggered when the dropdown should close */
   onClose: () => void;
+  /** Content rendered inside the dropdown menu */
   children: React.ReactNode;
+  /** Additional CSS classes for custom styling */
   className?: string;
-  triggerRef: React.RefObject<HTMLElement | null>;
+  /** Reference to the trigger element used for positioning */
+  triggerRef?: React.RefObject<HTMLElement | null>;
+  /** Portal container ID (defaults to 'dropdown-portal-root') */
+  portalId?: string;
+}
+
+const PORTAL_ROOT_ID = "dropdown-portal-root";
+const VIEWPORT_MARGIN = 16;
+
+/** Helper function to safely get or create portal container without React State */
+function getPortalContainer(portalId: string): HTMLElement {
+  let elem = document.getElementById(portalId);
+  if (!elem) {
+    elem = document.createElement("div");
+    elem.id = portalId;
+    document.body.appendChild(elem);
+  }
+  return elem;
 }
 
 export const Dropdown: React.FC<DropdownProps> = ({
   isOpen,
+  marginBelow = 8,
   onClose,
   children,
   className = "",
   triggerRef,
+  portalId = PORTAL_ROOT_ID,
 }) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Handle Escape key press to close the dropdown
+  // 1. Navigation Control (Close on Escape key)
   useEffect(() => {
     if (!isOpen) return;
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
         onClose();
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
-  // Handle positioning and responsive behavior
+  // 2. Close on Outside Click
   useEffect(() => {
-    if (!isOpen || !triggerRef?.current) return;
+    if (!isOpen) return;
 
-    const handlePosition = () => {
-      if (!dropdownRef.current || !containerRef.current || !triggerRef.current) return;
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      const isOutsideDropdown = dropdownRef.current && !dropdownRef.current.contains(target);
+      const isOutsideTrigger = triggerRef?.current && !triggerRef.current.contains(target);
 
+      if (isOutsideDropdown && isOutsideTrigger) {
+        onClose();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen, onClose, triggerRef]);
+
+  // 3. Intelligent Dynamic Positioning (Supports RTL & Viewport Constraints)
+  useLayoutEffect(() => {
+    if (!isOpen || !triggerRef?.current || !dropdownRef.current) return;
+
+    const updatePosition = () => {
+      const dropdown = dropdownRef.current;
+      const trigger = triggerRef.current;
+      if (!dropdown || !trigger) return;
+
+      const triggerRect = trigger.getBoundingClientRect();
+      const dropdownRect = dropdown.getBoundingClientRect();
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
-      const margin = 16;
 
-      const isRtl =
+      const isRTL =
         document.documentElement.dir === "rtl" ||
         getComputedStyle(document.documentElement).direction === "rtl";
 
-      // Mobile view (< 640px): Render as a centered modal
-      if (viewportWidth < 640) {
-        containerRef.current.style.position = "fixed";
-        containerRef.current.style.inset = "0";
-        containerRef.current.style.display = "flex";
-        containerRef.current.style.alignItems = "center";
-        containerRef.current.style.justifyContent = "center";
-
-        const dropdown = dropdownRef.current;
-        dropdown.style.position = "relative";
-        dropdown.style.inset = "auto";
-        dropdown.style.transform = "none";
-        dropdown.style.width = "calc(100vw - 2rem)";
-        dropdown.style.maxHeight = "calc(100vh - 4rem)";
-        return;
-      }
-
-      // Desktop view: Position relative to the trigger element
-      containerRef.current.style.position = "static";
-      containerRef.current.style.display = "block";
-
-      const toggleRect = triggerRef.current.getBoundingClientRect();
-      const dropRect = dropdownRef.current.getBoundingClientRect();
-
       let x: number;
-      let y = toggleRect.bottom + 12;
+      let y = triggerRect.bottom + marginBelow; // Margin below trigger
 
-      if (isRtl) {
-        x = toggleRect.right - dropRect.width;
+      // Alignment check: if trigger is on the right side of the viewport
+      const isTriggerOnRightSide = triggerRect.left > viewportWidth / 2;
 
-        if (x < margin) {
-          x = toggleRect.left;
-        }
-        if (x + dropRect.width > viewportWidth - margin) {
-          x = viewportWidth - dropRect.width - margin;
-        }
+      if (isRTL || isTriggerOnRightSide) {
+        // Right alignment with trigger
+        x = triggerRect.right - dropdownRect.width;
       } else {
-        x = toggleRect.left;
-
-        if (x + dropRect.width > viewportWidth - margin) {
-          x = viewportWidth - dropRect.width - margin;
-        }
-        if (x < margin) {
-          x = margin;
-        }
+        // Left alignment with trigger
+        x = triggerRect.left;
       }
 
-      if (y + dropRect.height > viewportHeight - margin) {
-        y = toggleRect.top - dropRect.height - 12;
+      // Viewport horizontal boundary enforcement
+      if (x + dropdownRect.width > viewportWidth - VIEWPORT_MARGIN) {
+        x = viewportWidth - dropdownRect.width - VIEWPORT_MARGIN;
+      }
+      if (x < VIEWPORT_MARGIN) {
+        x = VIEWPORT_MARGIN;
       }
 
-      const dropdown = dropdownRef.current;
+      // Vertical flip if overflow occurs at the bottom
+      if (y + dropdownRect.height > viewportHeight - VIEWPORT_MARGIN) {
+        y = triggerRect.top - dropdownRect.height - 8;
+      }
+      if (y < VIEWPORT_MARGIN) {
+        y = VIEWPORT_MARGIN;
+      }
+
       dropdown.style.position = "fixed";
       dropdown.style.left = `${x}px`;
       dropdown.style.top = `${y}px`;
-      dropdown.style.right = "auto";
-      dropdown.style.bottom = "auto";
-      dropdown.style.transform = "none";
+      dropdown.style.zIndex = "var(--z-dropdown, 9999)";
     };
 
-    requestAnimationFrame(handlePosition);
-    window.addEventListener("resize", handlePosition);
-    window.addEventListener("scroll", handlePosition, true);
+    updatePosition();
+
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
 
     return () => {
-      window.removeEventListener("resize", handlePosition);
-      window.removeEventListener("scroll", handlePosition, true);
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
     };
   }, [isOpen, triggerRef]);
 
   if (!isOpen) return null;
 
-  // Safely get or create portal root
-  let portalRoot = document.getElementById("dropdown-portal-root");
-  if (!portalRoot) {
-    portalRoot = document.createElement("div");
-    portalRoot.id = "dropdown-portal-root";
-    portalRoot.className = "z-[var(--z-modal-dropdown)]";
-    document.body.appendChild(portalRoot);
-  }
+  // Render Portal directly without state triggers
+  const portalContainer = getPortalContainer(portalId);
 
   return createPortal(
     <div
-      ref={containerRef}
-      className="fixed inset-0 z-[var(--z-modal-dropdown)] pointer-events-none"
+      ref={dropdownRef}
+      role="menu"
+      aria-orientation="vertical"
+      className={`flex flex-col rounded-2xl sm:rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] shadow-2xl sm:shadow-lg dark:border-[var(--color-border)] dark:bg-[var(--color-surface)] overflow-hidden max-h-[350px] overflow-y-auto custom-scrollbar animate-in fade-in zoom-in-95 duration-100 ${className}`}
     >
-      {/* Backdrop for mobile */}
-      <div className="md:hidden fixed inset-0 z-[var(--z-modal-backdrop-dropdown)] bg-gray-950/40 backdrop-blur-xs transition-opacity duration-300 pointer-events-auto" />
-      
-      {/* Click outside to close */}
-      <div
-        className="fixed inset-0 z-[var(--z-modal-backdrop-dropdown)] pointer-events-auto"
-        onClick={onClose}
-      />
-      
-      {/* Dropdown Content with custom scrollbar */}
-      <div
-        ref={dropdownRef}
-        className={`pointer-events-auto relative z-[var(--z-modal-dropdown)] flex flex-col rounded-2xl sm:rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] shadow-2xl sm:shadow-lg dark:border-[var(--color-border)] dark:bg-[var(--color-surface)] overflow-hidden max-h-[350px] overflow-y-auto custom-scrollbar ${className}`}
-      >
-        {children}
-      </div>
+      {children}
     </div>,
-    portalRoot
+    portalContainer
   );
 };

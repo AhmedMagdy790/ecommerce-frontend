@@ -1,40 +1,43 @@
-import { useTranslation } from "react-i18next";
-import { useLang } from "@/shared/context/LanguageContext";
+// src/pages/Home/components/sections/BrandLogos.tsx
 
-interface Brand {
-  id: string;
+import type { Section } from "@/features/cms/section/model/types/section.types";
+
+interface BrandItem {
+  id: string | number;
   name: string;
   logo: string;
   link?: string;
 }
 
 interface BrandLogosProps {
-  title: string;
-  brands: Brand[];
+  section: Section<string> & {
+    brands?: BrandItem[];
+    items?: BrandItem[];
+  };
 }
 
-export default function BrandLogos({ title, brands = [] }: BrandLogosProps) {
-  const { t } = useTranslation("home");
-  const { lang } = useLang();
+export default function BrandLogos({ section }: BrandLogosProps) {
 
-  const getLocalizedText = (text: string) => {
-    if (!text) return "";
-    return t(text);
-  };
+  // Support section.data, brands, or items
+  const rawBrands = (section.data || section.brands || section.items || []) as BrandItem[];
 
-  if (!brands.length) return null;
+  if (!rawBrands.length) return null;
+
+  const sectionTitle = section.name || "";
 
   return (
     <section className="px-6 py-16">
       <div className="mx-auto max-w-[var(--container-xl)]">
         {/* Header */}
-        <h2 className="mb-10 text-center text-3xl font-bold text-[var(--color-text-primary)] md:text-4xl">
-          {getLocalizedText(title)}
-        </h2>
+        {sectionTitle && (
+          <h2 className="mb-10 text-center text-3xl font-bold text-[var(--color-text-primary)] md:text-4xl">
+            {sectionTitle}
+          </h2>
+        )}
 
         {/* Logos Grid */}
         <div className="grid grid-cols-2 items-center gap-8 md:grid-cols-4 lg:grid-cols-6">
-          {brands.map((brand) => (
+          {rawBrands.map((brand) => (
             <a
               key={brand.id}
               href={brand.link || "#"}
@@ -42,7 +45,7 @@ export default function BrandLogos({ title, brands = [] }: BrandLogosProps) {
             >
               <img
                 src={brand.logo}
-                alt={getLocalizedText(brand.name)}
+                alt={brand.name || "Brand Logo"}
                 className="max-h-12 max-w-full object-contain grayscale transition hover:grayscale-0"
                 loading="lazy"
               />

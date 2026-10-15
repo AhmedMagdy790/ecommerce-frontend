@@ -10,7 +10,7 @@ export default function MobileMenuButton({
   isOpen,
   onToggle,
 }: MobileMenuButtonProps) {
-  const { lang } = useLang();
+  const { t } = useLang();
 
   return (
     <button
@@ -27,12 +27,8 @@ export default function MobileMenuButton({
       }}
       aria-label={
         isOpen
-          ? lang === "ar"
-            ? "إغلاق القائمة"
-            : "Close menu"
-          : lang === "ar"
-          ? "فتح القائمة"
-          : "Open menu"
+          ? t?.("nav.closeMenu")
+          : t?.("nav.openMenu")
       }
       aria-expanded={isOpen}
       aria-controls="mobile-menu"

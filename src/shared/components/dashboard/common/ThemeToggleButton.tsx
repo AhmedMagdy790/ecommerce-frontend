@@ -1,7 +1,5 @@
 import { useTheme } from "@/app/providers/ThemeContext";
-import { wait } from "@/shared/utils/helper";
 import { MoonIcon, SunIcon } from "lucide-react";
-import { useEffect } from "react";
 
 export const ThemeToggleButton: React.FC =  () => {
   const { theme, toggleTheme } = useTheme();

@@ -1,20 +1,28 @@
 import { useLang } from "@/shared/context/LanguageContext";
+import { UI_STRINGS } from "@/locales/languages";
 
 export function useLanguage() {
-  const { lang, changeLanguage, t, translate } = useLang();
+  const { lang, dir, isRTL, changeLanguage, t, translate } = useLang();
 
-  // الحفاظ على التوافق مع الكود القديم
+  const availableLanguages = Object.keys(UI_STRINGS) as Array<keyof typeof UI_STRINGS>;
+
   const toggleLanguage = () => {
-    changeLanguage(lang === "ar" ? "en" : "ar");
+    const currentIndex = availableLanguages.indexOf(lang);
+
+    const nextIndex = (currentIndex + 1) % availableLanguages.length;
+    changeLanguage(nextIndex >= 0 ? availableLanguages[nextIndex] : "en");
   };
 
   return {
     language: lang,
+    lang,
+    dir,
+    isRTL,
     isArabic: lang === "ar",
     isEnglish: lang === "en",
     setLanguage: changeLanguage,
     toggleLanguage,
-    t,          // للترجمة العامة (UI)
-    translate,  // لترجمة بيانات الـ API
+    t,
+    translate,
   };
 }

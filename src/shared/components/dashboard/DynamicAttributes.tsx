@@ -1,6 +1,6 @@
 import { PlusIcon, Trash2Icon } from "lucide-react";
 
-export const DynamicAttributes = ({ attributes, onAdd, onUpdate, onRemove, lang }: any) => (
+export const DynamicAttributes = ({ attributes, onAdd, onUpdate, onRemove }: any) => (
   <div className="border-t pt-4 mt-4">
     <div className="flex justify-between items-center mb-3">
       <span className="text-sm font-bold">المواصفات (Attributes)</span>

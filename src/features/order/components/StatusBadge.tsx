@@ -1,18 +1,20 @@
 // features/order/components/StatusBadge.tsx
 import { cn } from "@/lib/utils";
+import type { OrderStatus } from "../model/types/order.types";
 
 interface StatusBadgeProps {
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  status: OrderStatus;
   className?: string;
 }
 
 export const StatusBadge = ({ status, className }: StatusBadgeProps) => {
-  const styles = {
+  const styles: Record<OrderStatus, string> = {
     pending: "bg-yellow-100 text-yellow-700",
     processing: "bg-blue-100 text-blue-700",
     shipped: "bg-purple-100 text-purple-700",
-    delivered: "bg-green-100 text-green-700",
     cancelled: "bg-red-100 text-red-700",
+    completed: "bg-green-100 text-green-700",
+    returned: "bg-orange-100 text-orange-700",
   };
 
   return (

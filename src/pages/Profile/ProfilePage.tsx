@@ -28,7 +28,9 @@ export default function ProfilePage() {
     info: (
       <ProfileInfoForm
         profile={profile}
-        onSave={updateProfile}
+        onSave={async (data) => {
+          await updateProfile(data);
+        }}
         isSaving={isSaving}
       />
     ),

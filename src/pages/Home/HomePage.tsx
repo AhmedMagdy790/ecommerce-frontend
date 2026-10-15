@@ -2,6 +2,7 @@
 import SectionRenderer from "./components/SectionRenderer";
 import PageLoading from "./components/ui/PageLoading";
 import PageError from "./components/ui/PageError";
+import SEO from "@/shared/components/seo/SEO";
 import { useLang } from "@/shared/context/LanguageContext";
 import { useHomePage } from "./hook/useHomePage";
 
@@ -15,23 +16,10 @@ export default function HomePage() {
     refetch,
   } = useHomePage();
 
+
   if (isLoading) {
     return <PageLoading />;
   }
-
-// if (data?.page?.sections) {
-//   console.log(
-//     "Sections Data:",
-
-//     data.page.sections.map((section) => ({
-//         ID: section.id,
-//         Key: section.key,
-//         Type: section.type,
-//         SortOrder: section.sort_order,
-//         NameAr: section.name?.ar,
-//       }))
-//     );
-//   }
 
   if (error) {
     return (
@@ -48,13 +36,27 @@ export default function HomePage() {
     );
   }
 
-
+  // استخراج بيانات الـ SEO والمحتوى من الـ API (بعد تطبيق getTranslation أصبحت نصوصاً جاهزة مباشرة)
+  const pageTitle = data?.meta_title || data?.title;
+  const pageDescription = data?.meta_description;
+  // const pageContent = data?.content;
+  const canonicalUrl = `${import.meta.env.VITE_APP_URL}/`;
 
   return (
-    <main className="flex flex-col gap-12 pb-16">
-      <SectionRenderer 
-        sections={data?.page.sections ?? []}
+    <>
+      <SEO
+        title={pageTitle}
+        description={pageDescription}
+        canonical={canonicalUrl}
       />
-    </main>
+
+      <main className="flex flex-col gap-12 pb-16">
+
+
+        <SectionRenderer 
+          sections={data?.sections ?? []}
+        />
+      </main>
+    </>
   );
 }

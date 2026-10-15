@@ -1,121 +1,144 @@
-import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router";
 import { useSidebar } from "@/app/providers/SidebarContext";
-import { navItems, othersItems } from "./sidebarData";
+import { navItems, othersItems } from "../../../constants/sidebarData";
 import { SidebarLogo } from "./SidebarLogo";
 import { SidebarMenuSection } from "./SidebarMenuSection";
 import { useLang } from "@/shared/context/LanguageContext";
 
+const HOVER_OPEN_DELAY = 350;
+const HOVER_CLOSE_DELAY = 700;
+
+type SubmenuState = { type: "main" | "others"; index: number } | null;
+
 const AppSidebar: React.FC = () => {
-  const { isExpanded, isMobileOpen, isHovered, setIsHovered, toggleMobileSidebar } = useSidebar();
+  const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();
   const { dir } = useLang();
 
-  const [openSubmenu, setOpenSubmenu] = useState<{
-    type: "main" | "others";
-    index: number;
+  const [submenuOverride, setSubmenuOverride] = useState<{
+    pathname: string;
+    value: SubmenuState;
   } | null>(null);
-  
-  const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>({});
-  const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearHoverTimeout = useCallback(() => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+  }, []);
+
+  // تنضيف الـ timeout لو الكومبوننت اتشال قبل ما الـ setTimeout يخلص
+  useEffect(() => clearHoverTimeout, [clearHoverTimeout]);
 
   const isActive = useCallback(
-    (path: string) => location.pathname === path,
+    (path: string): boolean => location.pathname === path,
     [location.pathname]
   );
 
-  // Match submenus based on current route path
   useEffect(() => {
-    let submenuMatched = false;
+    document.body.style.overflow = isMobileOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileOpen]);
+
+  // مطابقة الـ submenu المفتوح بناءً على المسار الحالي
+  const routeSubmenu = useMemo<SubmenuState>(() => {
     const menuConfigs = [
       { type: "main" as const, items: navItems },
       { type: "others" as const, items: othersItems },
     ];
 
-    menuConfigs.forEach(({ type, items }) => {
-      items.forEach((nav, index) => {
-        nav.subItems?.forEach((subItem) => {
-          if (isActive(subItem.path)) {
-            setOpenSubmenu({ type, index });
-            submenuMatched = true;
-          }
-        });
+    for (const { type, items } of menuConfigs) {
+      const matchedIndex = items.findIndex((nav) => {
+        const isSubMatch = nav.subItems?.some((subItem) => isActive(subItem.path));
+        const isMainMatch = nav.path ? isActive(nav.path) : false;
+        return isSubMatch || isMainMatch;
       });
-    });
 
-    if (!submenuMatched) {
-      setOpenSubmenu(null);
-    }
-  }, [location.pathname, isActive]);
-
-  // Recalculate submenu height dynamically for animations
-  useEffect(() => {
-    if (openSubmenu !== null) {
-      const key = `${openSubmenu.type}-${openSubmenu.index}`;
-      const element = subMenuRefs.current[key];
-      if (element) {
-        setSubMenuHeight((prev) => ({
-          ...prev,
-          [key]: element.scrollHeight,
-        }));
+      if (matchedIndex !== -1) {
+        return { type, index: matchedIndex };
       }
     }
-  }, [openSubmenu]);
 
-  // استخدام useCallback لمنع تغير مرجع الدالة مع كل رندر
+    return null;
+  }, [location.pathname, isActive]);
+
+  const openSubmenu =
+    submenuOverride?.pathname === location.pathname
+      ? submenuOverride.value
+      : routeSubmenu;
+
   const handleSubmenuToggle = useCallback((index: number, menuType: "main" | "others") => {
-    setOpenSubmenu((prev) =>
-      prev?.type === menuType && prev?.index === index ? null : { type: menuType, index }
-    );
-  }, []);
+    setSubmenuOverride({
+      pathname: location.pathname,
+      value:
+        openSubmenu?.type === menuType && openSubmenu.index === index
+          ? null
+          : { type: menuType, index },
+    });
+  }, [location.pathname, openSubmenu]);
 
-  const showFullSidebar = isExpanded || isHovered || isMobileOpen;
+  const showFullSidebar = Boolean(isExpanded || isHovered || isMobileOpen);
+  const currentWidthClass = showFullSidebar
+    ? "w-[var(--sidebar-width)]"
+    : "w-[var(--sidebar-collapsed-width)]";
 
-  // Correcting mobile translate logic based on direction (RTL vs LTR)
-  const getMobileTranslateClass = () => {
-    if (isMobileOpen) {
-      return "translate-x-0";
-    }
-    if (dir === "rtl") {
-      return "translate-x-full";
-    }
-    return "-translate-x-full";
-  };
+  const translateClasses = useMemo(() => {
+    if (isMobileOpen) return "translate-x-0";
+    return dir === "rtl"
+      ? "md:translate-x-0 translate-x-full"
+      : "md:translate-x-0 -translate-x-full";
+  }, [isMobileOpen, dir]);
 
   const handleMouseEnter = useCallback(() => {
-    if (!isExpanded) setIsHovered(true);
-  }, [isExpanded, setIsHovered]);
+    if (isExpanded) return;
+
+    clearHoverTimeout();
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsHovered(true);
+    }, HOVER_OPEN_DELAY);
+  }, [isExpanded, setIsHovered, clearHoverTimeout]);
 
   const handleMouseLeave = useCallback(() => {
-    setIsHovered(false);
-  }, [setIsHovered]);
+    clearHoverTimeout();
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsHovered(false);
+    }, HOVER_CLOSE_DELAY);
+  }, [setIsHovered, clearHoverTimeout]);
 
   return (
     <aside
+      aria-label="Sidebar navigation"
       className={`fixed 
-        top-[calc(var(--header-height)_+_1px)] lg:top-0
-        px-1 md:px-2 flex flex-col 
+        top-[calc(var(--header-height)_+_1px)] md:top-0
+         flex flex-col 
         h-[calc(100vh-var(--header-height))] md:h-screen
-        bg-[var(--color-background)] dark:bg-[var(--color-surface)] transition-all duration-300 ease-in-out
+        bg-[var(--color-background)] dark:bg-[var(--color-surface)] 
+        transition-all duration-300 ease-in-out transform-gpu
         text-[var(--color-text-primary)] dark:text-[var(--color-text-primary)]
-        border-e border-[var(--color-border)] inset-s-0 z-[var(--z-sidebar)]
-        ${showFullSidebar ? "w-[var(--sidebar-width)]" : "w-[var(--sidebar-collapsed-width)]"}
-        ${getMobileTranslateClass()}
-        md:translate-x-0`}
+        z-[var(--z-sidebar)] overflow-hidden
+        ${dir === "rtl" ? "border-s border-[var(--color-border)] right-0" : "border-e border-[var(--color-border)] left-0"}
+        ${currentWidthClass}
+        ${isMobileOpen ? "translate-x-0" : translateClasses}
+      `}
     >
-      <SidebarLogo 
-        isExpanded={isExpanded} 
-        isHovered={isHovered} 
-        isMobileOpen={isMobileOpen} 
+      <SidebarLogo
+        isExpanded={isExpanded}
+        isHovered={isHovered}
+        isMobileOpen={isMobileOpen}
       />
 
-      <div 
-        className="flex flex-col overflow-y-auto sidebar-scroll duration-300 ease-linear"
+      <div
+        className="flex-1 flex flex-col overflow-y-auto sidebar-scroll duration-300 ease-linear pb-10"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <nav className="mb-6 min-h-dvh px-2">
-          <div className="flex flex-col gap-4">
+        <nav aria-label="Main menu" className="mb-6 px-2 pe-3 w-full">
+          <div className="flex flex-col gap-2">
             <SidebarMenuSection
               title="Menu"
               items={navItems}
@@ -124,8 +147,6 @@ const AppSidebar: React.FC = () => {
               isHovered={isHovered}
               isMobileOpen={isMobileOpen}
               openSubmenu={openSubmenu}
-              subMenuHeight={subMenuHeight}
-              subMenuRefs={subMenuRefs}
               isActive={isActive}
               onSubmenuToggle={handleSubmenuToggle}
             />
@@ -138,8 +159,6 @@ const AppSidebar: React.FC = () => {
               isHovered={isHovered}
               isMobileOpen={isMobileOpen}
               openSubmenu={openSubmenu}
-              subMenuHeight={subMenuHeight}
-              subMenuRefs={subMenuRefs}
               isActive={isActive}
               onSubmenuToggle={handleSubmenuToggle}
             />

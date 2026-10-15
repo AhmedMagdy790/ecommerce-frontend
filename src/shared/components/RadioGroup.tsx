@@ -7,6 +7,7 @@ export interface RadioOption {
   value: string | number;
   description?: string | React.ReactNode;
   disabled?: boolean;
+  icon?: React.ReactNode; // 🟢 Added icon support
 }
 
 interface RadioGroupProps {
@@ -14,7 +15,7 @@ interface RadioGroupProps {
   error?: string;
   options: RadioOption[];
   value?: string | number | null;
-  onChange: (value: any) => void;
+  onChange: (value: string | number) => void;
   name?: string;
   containerClassName?: string;
   optionClassName?: string;
@@ -36,7 +37,7 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
       optionClassName = "",
       direction = "column",
       variant = "card",
-      allowDeselect = true, // مفعلة لتمكين الإلغاء عبر الـ Layer
+      allowDeselect = true,
     },
     ref
   ) => {
@@ -117,7 +118,7 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
                   ${optionClassName}
                 `}
               >
-                {/* الـ Input الأصلي يعمل بشكل طبيعي جداً بدون أي تداخل */}
+                {/* Radio Input */}
                 {variant !== "pill" && (
                   <input
                     type="radio"
@@ -130,28 +131,35 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
                   />
                 )}
 
-                <div className="flex-1 flex flex-col">
-                  <span className={`text-sm ${variant === "pill" && isSelected ? "font-semibold text-white" : "font-medium text-[var(--color-text-primary)]"}`}>
-                    {option.label}
-                  </span>
-                  {option.description && variant !== "pill" && (
-                    <span className="text-xs text-[var(--color-text-muted)] mt-0.5">
-                      {option.description}
-                    </span>
+                {/* Content wrapper with icon support */}
+                <div className="flex-1 flex items-center gap-3">
+                  {option.icon && (
+                    <div className="flex-shrink-0 text-[var(--color-primary)]">
+                      {option.icon}
+                    </div>
                   )}
+                  <div className="flex-1 flex flex-col">
+                    <span className={`text-sm ${variant === "pill" && isSelected ? "font-semibold text-white" : "font-medium text-[var(--color-text-primary)]"}`}>
+                      {option.label}
+                    </span>
+                    {option.description && variant !== "pill" && (
+                      <span className="text-xs text-[var(--color-text-muted)] mt-0.5">
+                        {option.description}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
-                {/* طبقة شفافة (Layer) فوق الكارد بالكامل لالتقاط النقر المزدوج أو إلغاء التحديد */}
+                {/* Transparent overlay layer for deselection / full card click */}
                 <div
                   className="absolute inset-0 z-10 cursor-pointer"
                   onClick={(e) => {
                     if (option.disabled) return;
 
-                    // إذا كان العنصر مختاراً وتم الضغط عليه مجدداً، قم بإلغاء التحديد
                     if (allowDeselect && isSelected) {
                       e.preventDefault();
                       e.stopPropagation();
-                      onChange(""); // تفريغ القيمة
+                      onChange("");
                     }
                   }}
                 />

@@ -1,20 +1,18 @@
-import { useMutation } from "@tanstack/react-query";
+// import { useMutation } from "@tanstack/react-query";
 
-import { registerService } from "../services/auth.service";
-
-import type { RegisterPayload } from "../types/auth.types";
+// import type { RegisterPayload } from "../types/auth.types";
 
 
-export function useRegister(){
+// export function useRegister(){
 
 
-return useMutation({
+// return useMutation({
 
-    mutationFn:
-    (data:RegisterPayload)=>
-        registerService(data)
+//     mutationFn:
+//     (data:RegisterPayload)=>
+//         registerServic(data)
 
-});
+// });
 
 
-}
+// }

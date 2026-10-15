@@ -12,3 +12,23 @@ services/,الخدمات الخارجية وخدمات الدفع والشحن �
 shared/,مكونات، أدوات (Utils)، أنواع (Types)، وخطافات مشتركة قابلة لإعادة الاستخدام في كل مكان.
 store/,مخازن الحالة المركزية باستخدام Zustand (مثل authStore و useSettingsStore).
 styles/,ملفات التنسيق العامة و CSS Reset وتصميم الثيمات.
+
+
+
+product/
+
+api/
+adapters/
+constants/
+hooks/
+services/
+store/
+types/
+
+dashboard/
+    pages/
+    components/
+
+public/
+    pages/
+    components/

@@ -29,6 +29,30 @@
     @apply px-1.5 py-0.5 text-[10px] rounded uppercase font-bold tracking-wider;
   }
 
+  .submenu-container {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    visibility: hidden;
+    transition: max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+                opacity 0.2s ease-in-out, 
+                visibility 0.25s ease-in-out;
+    will-change: max-height, opacity;
+  }
+
+  .submenu-container.open {
+    max-height: 300px; /* ضع رقماً أكبر قليلاً من أقصى طول محتمل للقائمة الفرعية */
+    opacity: 1;
+    visibility: visible;
+  }
+
+
+  .submenu-container > ul {
+    overflow: hidden;
+    min-height: 0;
+  }
+
+
   /* ===========================
     Custom Sidebar Scrollbar
   =========================== */

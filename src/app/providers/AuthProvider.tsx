@@ -1,65 +1,82 @@
 import {
   createContext,
+  useCallback,
   useMemo,
   type ReactNode,
 } from "react";
-import { useAuthStore } from "@/store/authStore";
-import type { IUser as User } from "@/features/dashboard/auth/types/authType";
+
+import { useAuthStore } from "@/features/auth/model/store/useAuthStore";
+import type { User } from "@/features/auth/model/types/user.types";
+import type { LoginDto } from "@/features/auth/model/types/user.dto";
 
 export type { User };
 
-interface AuthContextType {
+export interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   loading: boolean;
-  login: (data?: any) => Promise<void>;
+  login: (data: LoginDto) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
 
-export const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType | null>(null);
 
 interface Props {
   children: ReactNode;
 }
 
 export function AuthProvider({ children }: Props) {
-  const { 
-    user, 
-    isAuthenticated, 
-    isLoading: storeLoading, 
-    isInitialized, 
-    fetchUser, 
-    login: storeLogin, 
-    logout: storeLogout, 
+  const {
+    user,
+    isAuthenticated,
+    isLoading,
+    isInitialized,
+    fetchUser,
+    login: storeLogin,
+    logout: storeLogout,
   } = useAuthStore();
 
-  const loading = storeLoading && !isInitialized;
 
-  async function login(data?: any) {
-    if (data) {
+  const login = useCallback(
+    async (data: LoginDto) => {
       await storeLogin(data);
-    }
-  }
+    },
+    [storeLogin],
+  );
 
-  async function logout() {
-    await storeLogout();
-  }
+  const logout = useCallback(
+    async () => {
+      await storeLogout();
+    },
+    [storeLogout],
+  );
 
-  async function refreshUser() {
-    await fetchUser();
-  }
+  const refreshUser = useCallback(
+    async () => {
+      await fetchUser();
+    },
+    [fetchUser],
+  );
 
-  const value = useMemo(
+  const value = useMemo<AuthContextType>(
     () => ({
       user,
-      loading,
       isAuthenticated,
+      loading: !isInitialized || isLoading,
       login,
       logout,
       refreshUser,
     }),
-    [user, loading, isAuthenticated]
+    [
+      user,
+      isAuthenticated,
+      isInitialized,
+      isLoading,
+      login,
+      logout,
+      refreshUser,
+    ],
   );
 
   return (
@@ -68,3 +85,6 @@ export function AuthProvider({ children }: Props) {
     </AuthContext.Provider>
   );
 }
+
+
+export default AuthContext;

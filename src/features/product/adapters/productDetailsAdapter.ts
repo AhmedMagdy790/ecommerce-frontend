@@ -1,29 +1,23 @@
 // src/features/product/adapters/productDetailsAdapter.ts
 
 import { mapVariant } from "@/features/product/adapters/variantAdapter";
-import type { ApiProduct } from "@/features/product/types/api";
-import type { Product } from "@/features/product/types/product";
-import { localize } from "@/shared/utils/localize";
+import type { Product } from "../model/types/product.types";
 
 export function mapProductDetails(
-  product: ApiProduct,
-  lang: "ar" | "en"
-): Product {
-  // Ensure variants is treated as an array whether it comes as an array or an object containing a list/array
-  const rawVariantsSource = product.variants;
-  const variantsArray = Array.isArray(rawVariantsSource)
-    ? rawVariantsSource
-    : Array.isArray((rawVariantsSource as any)?.list)
-      ? (rawVariantsSource as any).list
-      : [];
-
+  product: Product<string>
+): Product<string> {
+  const variantsArray = Array.isArray(product.variants) ? product.variants : [];
   const variants = variantsArray.map(mapVariant);
 
   const galleryImages = [
-    product.thumbnail,
+    product.media,
     product.featured_image,
-    ...(product.gallery ?? []).map((img: any) => 
-      typeof img === "string" ? img : img?.url
+    ...(Array.isArray(product.gallery) ? product.gallery : []).map((img: unknown) =>
+      typeof img === "string"
+        ? img
+        : typeof img === "object" && img !== null && "url" in img
+          ? String(img.url)
+          : undefined
     ),
   ].filter(Boolean) as string[];
 
@@ -33,11 +27,11 @@ export function mapProductDetails(
   );
 
   return {
-    id: product.id,
-    slug: product.slug,
+    ...product, // الاحتفاظ ببقية الحقول الأصلية إن وجدت
 
-    name: localize(product.name, lang),
-    description: localize(product.description, lang),
+    // الاعتماد المباشر على الـ string لأن الباك إند يرسله جاهزاً
+    name: product.name ?? "",
+    description: product.description ?? undefined,
 
     image:
       product.thumbnail ??
@@ -56,12 +50,10 @@ export function mapProductDetails(
       variants[0]?.price ??
       0,
 
-    oldPrice: product.old_price ?? undefined,
-
+    oldPrice: product.oldPrice ?? undefined, 
     stock: stockValue,
-
     rating: product.rating ?? 0,
-    reviewsCount: product.reviews_count ?? product.reviewsCount ?? 0,
+    reviewsCount: product.reviewsCount ?? 0,
 
     variants: {
       list: variants,
@@ -85,21 +77,20 @@ export function mapProductDetails(
 
     brand: product.brand
       ? {
-          id: product.brand.id,
-          name: localize(product.brand.name, lang),
-          logo: product.brand.logo ?? undefined,
+          ...product.brand,
+          name: product.brand.name ?? "",
+          logo: product.brand.logo ?? null,
         }
       : undefined,
 
     category: product.category
       ? {
-          id: product.category.id,
-          name: localize(product.category.name, lang),
-          slug: product.category.slug,
+          ...product.category,
+          name: product.category.name ?? "",
         }
       : undefined,
 
     reviews: product.reviews ?? [],
-    relatedProducts: product.relatedProducts ?? product.related_products ?? [],
+    relatedProducts: product.relatedProducts ?? [],
   };
 }

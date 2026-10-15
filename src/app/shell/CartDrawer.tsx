@@ -1,4 +1,6 @@
-import type { ProductSummary } from "@/features/product/types/product";
+import type { ProductSummary } from "@/features/product/model/types/product.types";
+import { useLang } from "@/shared/context/LanguageContext";
+import { getLocalizedName } from "@/shared/utils/localizeName";
 import { useTranslation } from "react-i18next";
 
 
@@ -10,7 +12,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product, badge }: ProductCardProps) {
   const { t } = useTranslation("home"); // Or "common"
-
+  const { lang } = useLang();
   if(!product) return null;
 
   return (
@@ -21,7 +23,7 @@ export function ProductCard({ product, badge }: ProductCardProps) {
       <div className="relative aspect-square overflow-hidden bg-surface-secondary">
         <img
           src={product.image}
-          alt={t(product.name)}
+          alt={getLocalizedName(product.name, lang)}
           className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
           loading="lazy"
         />
@@ -36,7 +38,7 @@ export function ProductCard({ product, badge }: ProductCardProps) {
 
       <div className="p-4">
         <h3 className="font-semibold text-text-primary truncate">
-          {t(product.name)}
+          {getLocalizedName(product.name, lang)}
         </h3>
         <div className="mt-2 flex items-center gap-2">
           <span className="font-bold text-primary">${product.price}</span>

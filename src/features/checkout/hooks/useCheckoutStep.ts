@@ -1,11 +1,12 @@
+// src/pages/Checkout/hooks/useCheckoutStep.ts
+
 import { useState } from "react";
-import type { UseFormTrigger } from "react-hook-form";
+import type { FieldValues, UseFormTrigger } from "react-hook-form";
 
 import { useCheckoutValidation } from "./useCheckoutValidation";
-import type { CheckoutFormValues } from "../types/checkout";
 
-export function useCheckoutStep(
-  trigger: UseFormTrigger<CheckoutFormValues>,
+export function useCheckoutStep<TFieldValues extends FieldValues = FieldValues>(
+  trigger: UseFormTrigger<TFieldValues>,
   initialStep = 1,
   maxSteps = 5
 ) {

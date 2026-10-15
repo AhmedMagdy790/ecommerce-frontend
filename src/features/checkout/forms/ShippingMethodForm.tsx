@@ -1,13 +1,13 @@
 // src/pages/Checkout/forms/ShippingMethodForm.tsx
 
 import { useFormContext } from "react-hook-form";
-import ShippingMethod from "@/components/Checkout/ShippingMethod";
 import { Button } from "@/shared/components/Button";
 import { useTranslation } from "react-i18next";
-import type { ShippingOption } from "../types/checkout";
-import { useCalculateShipping } from "../hooks/useCalculateShipping";
 
 import { useCart } from "@/pages/Cart/hook/useCart";
+import ShippingMethod from "../components/ShippingMethod";
+import { shippingService } from "@/services/shippingService";
+import type { ShippingOption } from "@/features/shipping/model/types/shipping.types";
 
 interface ShippingMethodFormProps {
   onNext: () => void;
@@ -18,16 +18,13 @@ export default function ShippingMethodForm({ onNext, onBack }: ShippingMethodFor
   const { t } = useTranslation("checkout");
   const { watch, setValue, formState: { errors } } = useFormContext();
 
-  console.log("errors", errors);
   const currentCityId = watch("city_id");
-  // تم تغييرها لتتطابق مع shipping_rate_id المستخدم في الـ schema و الـ setValue
   const selectedShippingId = watch("shipping_rate_id");
   const currency = watch("currency") || "USD";
   const { cartItems } = useCart();
 
-  const { mutateAsync: calculateShipping } = useCalculateShipping();
-
   const handleShippingChange = async (option: ShippingOption | null) => {
+
     if (!option) {
       setValue("shipping_rate_id", "", { shouldValidate: true, shouldDirty: true });
       setValue("shipping_cost", 0, { shouldValidate: true, shouldDirty: true });
@@ -37,6 +34,7 @@ export default function ShippingMethodForm({ onNext, onBack }: ShippingMethodFor
 
     const targetRateId = option.shipping_rate_id ?? option.id;
 
+    // Handle deselection if the same option is clicked again
     if (selectedShippingId !== undefined && selectedShippingId !== null && String(selectedShippingId) === String(targetRateId)) {
       setValue("shipping_rate_id", "", { shouldValidate: true, shouldDirty: true });
       setValue("shipping_cost", 0, { shouldValidate: true, shouldDirty: true });
@@ -44,31 +42,44 @@ export default function ShippingMethodForm({ onNext, onBack }: ShippingMethodFor
       return;
     }
 
+    // Ensure keys match backend expectations: product_variant_id
     const items = cartItems?.map(item => ({
-      variant_id: item.product_variant_id, 
+      product_variant_id: item.product_variant_id ?? item.id,
       quantity: item.quantity
-    }));
+    })) || [];
 
-    const response = await calculateShipping({
+    // Call calculation service
+    const calculation = await shippingService.calculateShipping({
       city_id: Number(currentCityId),
       shipping_rate_id: Number(targetRateId),
       items: items,
-    }).catch(() => null);
+      payment_gateway_id: undefined
+    }).catch((err) => {
+      console.error("Calculate shipping error:", err);
+      return null;
+    });
 
-    const result = response?.data ?? response;
+    console.log("calculation", calculation);
 
+    // استخراج القيمة والعملة بدقة من الـ Objects الخاصة بالاستجابة
     const fee = 
-      result?.actual_shipping_cost ?? 
-      result?.customer_shipping_cost ?? 
-      result?.shipping_fee ?? 
-      option.shipping_details?.shipping_fee ?? 
-      option.rates?.final_price ?? 
-      option.rates?.cost ?? 
+      Number(calculation?.actual_shipping_cost?.amount) || 
+      Number(calculation?.customer_shipping_cost?.amount) || 
+      Number(calculation?.customer_total_shipping_cost?.amount) || 
+      Number(calculation?.base_fee?.amount) || 
+      Number(option.shipping_details?.shipping_fee) || 
+      Number(option.rates?.cost) || 
       0;
 
-    const optionCurrency = result?.currency ?? option.shipping_details?.currency ?? currency;
-    const shippingName = option.name ?? option.title ?? `Shipping Method #${targetRateId}`;
+    const optionCurrency = 
+      calculation?.customer_shipping_cost?.currency ?? 
+      calculation?.actual_shipping_cost?.currency ?? 
+      option.shipping_details?.currency ?? 
+      currency;
 
+    const shippingName = option.name ?? `Shipping Method #${targetRateId}`;
+
+    // Update form context state
     setValue("shipping_rate_id", Number(targetRateId), { shouldValidate: true, shouldDirty: true });
     setValue("shipping_cost", Number(fee), { shouldValidate: true, shouldDirty: true });
     setValue("currency", optionCurrency, { shouldValidate: true, shouldDirty: true });
@@ -84,7 +95,6 @@ export default function ShippingMethodForm({ onNext, onBack }: ShippingMethodFor
         currency={currency}
       />
 
-      {/* تم تعديل عرض الخطأ هنا ليطابق shipping_rate_id بدلاً من shipping_courier_id */}
       {errors.shipping_rate_id && (
         <p className="text-xs text-[var(--color-error)] font-medium px-1">
           {String(errors.shipping_rate_id.message)}

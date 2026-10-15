@@ -1,8 +1,26 @@
 // src/features/notification/services/notificationMapper.ts
 
-import type { NotificationType as Notification } from "../../../types/types";
 
-export function mapOrderCreated(event: any): Notification {
+interface Notification {
+  id: string;
+  type: string;
+  title: string;
+  message: string;
+  senderName?: string;
+  link: string;
+  time: string;
+  isRead: boolean;
+}
+
+interface OrderEvent {
+  order: {
+    id: string;
+    customer_name: string;
+    status: string;
+  };
+}
+
+export function mapOrderCreated(event: OrderEvent): Notification {
   return {
     id: crypto.randomUUID(),
     type: "order",
@@ -15,7 +33,7 @@ export function mapOrderCreated(event: any): Notification {
   };
 }
 
-export function mapOrderCancelled(event: any): Notification {
+export function mapOrderCancelled(event: OrderEvent): Notification {
   return {
     id: crypto.randomUUID(),
     type: "order",
@@ -27,7 +45,7 @@ export function mapOrderCancelled(event: any): Notification {
   };
 }
 
-export function mapOrderUpdated(event: any): Notification {
+export function mapOrderUpdated(event: OrderEvent): Notification {
   return {
     id: crypto.randomUUID(),
     type: "order",

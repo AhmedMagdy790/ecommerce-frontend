@@ -1,6 +1,6 @@
 import React from "react";
 import { HorizontaLDots } from "@/assets/icons";
-import type { NavItem } from "./sidebarData";
+import type { NavItem } from "../../../constants/sidebarData";
 import { SidebarItemRow } from "./SidebarItemRow";
 
 type OpenSubmenuState = {
@@ -16,12 +16,9 @@ type SidebarMenuSectionProps = {
   isHovered: boolean;
   isMobileOpen: boolean;
   openSubmenu: OpenSubmenuState;
-  subMenuHeight: Record<string, number>;
-  subMenuRefs: React.MutableRefObject<Record<string, HTMLDivElement | null>>;
   isActive: (path: string) => boolean;
   onSubmenuToggle: (index: number, menuType: "main" | "others") => void;
 };
-
 
 export const SidebarMenuSection: React.FC<SidebarMenuSectionProps> = React.memo(({
   title,
@@ -31,8 +28,6 @@ export const SidebarMenuSection: React.FC<SidebarMenuSectionProps> = React.memo(
   isHovered,
   isMobileOpen,
   openSubmenu,
-  subMenuHeight,
-  subMenuRefs,
   isActive,
   onSubmenuToggle,
 }) => {
@@ -50,7 +45,6 @@ export const SidebarMenuSection: React.FC<SidebarMenuSectionProps> = React.memo(
       <ul className="flex flex-col gap-4">
         {items.map((nav, index) => {
           const isOpen = openSubmenu?.type === menuType && openSubmenu?.index === index;
-          const keyStr = `${menuType}-${index}`;
 
           return (
             <SidebarItemRow
@@ -60,9 +54,6 @@ export const SidebarMenuSection: React.FC<SidebarMenuSectionProps> = React.memo(
               menuType={menuType}
               showText={showText}
               isOpen={isOpen}
-              keyStr={keyStr}
-              subMenuHeight={subMenuHeight}
-              subMenuRefs={subMenuRefs}
               isActive={isActive}
               onSubmenuToggle={onSubmenuToggle}
             />
@@ -77,9 +68,8 @@ export const SidebarMenuSection: React.FC<SidebarMenuSectionProps> = React.memo(
     prevProps.isExpanded === nextProps.isExpanded &&
     prevProps.isHovered === nextProps.isHovered &&
     prevProps.isMobileOpen === nextProps.isMobileOpen &&
-    prevProps.openSubmenu?.type === nextProps.openSubmenu?.type &&
-    prevProps.openSubmenu?.index === nextProps.openSubmenu?.index &&
-    prevProps.items === nextProps.items
+    prevProps.items === nextProps.items &&
+    prevProps.openSubmenu === nextProps.openSubmenu
   );
 });
 

@@ -9,20 +9,24 @@ import CartSummary from "@/features/cart/components/CartSummary";
 import EmptyCart from "@/features/cart/components/EmptyCart";
 import { useCartCalculations } from "@/hooks/useCartCalculations";
 import { useCart } from "./hook/useCart";
-import type { ICartItem } from "@/features/cart/types";
+import type { ICartItem } from "@/features/cart/model/types/cart.types";
+
 
 export default function CartPage() {
   const { t } = useTranslation("cart");
   const { lang, isRTL } = useLang();
 
   // 1. Destructure data and mutations from the hook
-  const { 
-    cartItems, 
-    isLoading, 
-    addToCart, 
+  // 1. استدعاء clearCart و isClearing من الـ hook
+  const {
+    cartItems,
+    isLoading,
+    addToCart,
     removeFromCart,
+    clearCart, // <-- أضفها هنا
     isAdding,
-    isRemoving
+    isRemoving,
+    isClearing // <-- أضفها هنا
   } = useCart();
 
 
@@ -33,9 +37,9 @@ export default function CartPage() {
   const handleIncrease = async (cartItemId: number | string) => {
     const item = cartItems.find((i: ICartItem) => i.id === cartItemId);
     if (item && item.variant) {
-      await addToCart({ 
-        product_variant_id: item.variant.id, 
-        quantity: item.quantity + 1 
+      await addToCart({
+        product_variant_id: item.variant.id,
+        quantity: item.quantity + 1
       });
     }
   };
@@ -47,10 +51,10 @@ export default function CartPage() {
         await removeFromCart(cartItemId);
         return;
       }
-      
-      await addToCart({ 
-        product_variant_id: item.variant.id, 
-        quantity: item.quantity - 1 
+
+      await addToCart({
+        product_variant_id: item.variant.id,
+        quantity: item.quantity - 1
       });
     }
   };
@@ -60,7 +64,7 @@ export default function CartPage() {
   };
 
   const handleClearCart = async () => {
-    await Promise.all(cartItems.map((item: ICartItem) => removeFromCart(item.id)));
+    await clearCart();
   };
 
   // 4. Handle UI States
@@ -82,7 +86,7 @@ export default function CartPage() {
       className="w-full min-h-[85vh] bg-[var(--color-background)] text-[var(--color-text-primary)] py-[var(--spacing-12)] px-[var(--spacing-4)] sm:px-[var(--spacing-6)] lg:px-[var(--spacing-8)] transition-colors duration-[var(--duration-normal)]"
     >
       <div className="mx-auto max-w-[var(--container-2xl)]">
-        
+
         {/* Modern Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[var(--color-border)] mb-[var(--spacing-10)] pb-[var(--spacing-6)] gap-[var(--spacing-4)]">
           <div className="flex flex-col gap-[var(--spacing-2)]">
@@ -106,14 +110,14 @@ export default function CartPage() {
 
           {/* Header Action Buttons */}
           <div className="flex items-center gap-[var(--spacing-3)]">
-            <button
+           <button
               onClick={handleClearCart}
-              disabled={isRemoving || isLoading}
+              disabled={isClearing || isLoading} // <-- استخدمنا isClearing هنا بدلاً من isRemoving
               className="inline-flex items-center h-10 px-[var(--spacing-4)] rounded-[var(--radius-xl)] bg-[var(--color-surface-secondary)] border border-[var(--color-border)] text-[var(--color-error)] text-[var(--text-sm)] font-[var(--font-medium)] gap-[var(--spacing-2)] transition-all duration-[var(--duration-fast)] ease-[var(--ease-default)] hover:opacity-80 active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
-              style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+              style={{ fontFamily: isRTL ? "var(--font-arabic)" : "var(--font-sans)" }}
             >
-              {isRemoving ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} strokeWidth={2} />}
-              <span>{lang === "ar" ? "إفراغ السلة" : "Clear Cart"}</span>
+              {isClearing ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} strokeWidth={2} />}
+              <span>{isRTL ? "إفراغ السلة" : "Clear Cart"}</span>
             </button>
           </div>
         </div>
@@ -122,10 +126,10 @@ export default function CartPage() {
         <div className="grid items-start gap-[var(--spacing-8)] lg:grid-cols-[1fr_400px]">
           {/* Cart Items List */}
           <section className="w-full relative">
-            {(isAdding || isRemoving) && (
-               <div className="absolute inset-0 bg-black/5 z-10 rounded-xl transition-all" />
+           {(isAdding || isRemoving || isClearing) && (
+              <div className="absolute inset-0 bg-black/5 z-10 rounded-xl transition-all" />
             )}
-            
+
             <CartList
               items={cartItems}
               onIncrease={handleIncrease}

@@ -12,6 +12,7 @@ import { useCheckoutForm } from "../hooks/useCheckoutForm";
 import { useCheckoutStep } from "../hooks/useCheckoutStep";
 import { useCheckoutSubmit } from "../hooks/useCheckoutSubmit";
 
+
 export default function CheckoutPage() {
   const { t } = useTranslation("checkout");
 
@@ -30,40 +31,48 @@ export default function CheckoutPage() {
     error,
   } = useCheckoutSubmit();
 
+
   const onSubmitHandler = methods.handleSubmit(
-    (data) => {
-      console.log("Form is valid, submitting data...", data);
-      submit(data);
+    async (data) => {
+      await submit(data);
     },
     (errors) => {
-      // هذه الدالة ستعمل إذا كان هناك حقل غير مطابق للـ Zod Schema
-      console.log("Validation Errors:", errors);
+      console.log("Checkout validation errors:", errors);
     }
   );
 
-  console.log("error", error)
-
   return (
     <FormProvider {...methods}>
-      <div className="min-h-screen bg-[var(--color-background)] py-10 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto space-y-8">
+      <div className="min-h-screen bg-[var(--color-background)] px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl space-y-8">
+
           {/* Header */}
-          <div className="text-center space-y-2">
+          <div className="space-y-2 text-center">
             <h1 className="text-3xl font-bold tracking-tight">
               {t("page.title", "Checkout")}
             </h1>
+
             <p className="text-sm text-[var(--color-text-secondary)]">
-              {t("page.subtitle", "Complete your purchase securely by filling out the steps below.")}
+              {t(
+                "page.subtitle",
+                "Complete your purchase securely by filling out the steps below."
+              )}
             </p>
           </div>
 
           {/* Stepper Navigation */}
-          <CheckoutStepper currentStep={currentStep} onStepClick={setStep} />
+          <CheckoutStepper
+            currentStep={currentStep}
+            onStepClick={setStep}
+          />
 
-          {error && <CheckoutError error={error} />}
+          {/* Submission Error */}
+          {error && <CheckoutError error={String(error)} />}
 
-          {/* Main Layout: Form Steps & Order Summary */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Main Layout */}
+          <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
+
+            {/* Checkout Form */}
             <div className="lg:col-span-7 xl:col-span-8">
               <CheckoutSteps
                 currentStep={currentStep}
@@ -73,9 +82,11 @@ export default function CheckoutPage() {
               />
             </div>
 
-            <div className="lg:col-span-5 xl:col-span-4 sticky top-6">
+            {/* Order Summary */}
+            <div className="sticky top-6 lg:col-span-5 xl:col-span-4">
               <CheckoutSummary loading={loading} />
             </div>
+
           </div>
         </div>
       </div>

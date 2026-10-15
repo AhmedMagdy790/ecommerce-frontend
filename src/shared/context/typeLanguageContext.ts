@@ -1,7 +1,8 @@
+// src/context/typeLanguageContext.ts
 import type { UI_STRINGS } from "@/locales/languages";
 
-// src/context/typeLanguageContext.ts
-export type Language = "en" | "ar";
+// 1. استخراج أنواع اللغات ديناميكياً بناءً على الكائنات الموجودة في UI_STRINGS
+export type Language = keyof typeof UI_STRINGS;
 
 // Keep these generic so they don't depend on specific UI_STRINGS
 type Join<K, P> = K extends string | number ?
@@ -15,17 +16,13 @@ export type Paths<T> = T extends object ?
         : never
     }[keyof T] : "";
 
-
-
 type TranslationPaths = Paths<typeof UI_STRINGS.en>;
-
-
 
 // Updated Interface including 'translate'
 export interface LanguageContextType {
   lang: Language;
   t: (path: TranslationPaths) => string;
-  translate: (value?: { ar?: string; en?: string }) => string;
+  translate: (value?: Record<string, string> | { ar?: string; en?: string }) => string;
   changeLanguage: (newLang: Language) => void;
+  dir: "rtl" | "ltr"; // أضفنا الاتجاه أيضاً لتستفيد منه في الـ Context إذا احتجته
 }
-

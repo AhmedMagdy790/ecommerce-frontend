@@ -5,11 +5,30 @@ import { useTranslation } from "react-i18next";
 import { ShoppingBag, Tag, Truck, Receipt, Loader2 } from "lucide-react";
 import { useCart } from "@/pages/Cart/hook/useCart";
 import { useCartCalculations } from "@/hooks/useCartCalculations";
-import { useSettings } from "@/hooks/useSettings"; // 1. استيراد هوك الإعدادات
-import { formatCurrency } from "@/shared/utils/currency"; // 2. استيراد دالة تنسيق العملة
+import { useSettings } from "@/hooks/useSettings";
+import { formatCurrency } from "@/shared/utils/currency";
 
 interface CheckoutSummaryProps {
   loading?: boolean;
+}
+
+interface CheckoutCartItem {
+  variant?: {
+    name?: string;
+    price?: number;
+    image_url?: string;
+    image?: string;
+  };
+  product?: {
+    name?: string;
+    price?: number;
+    image_url?: string;
+    image?: string;
+  };
+  name?: string;
+  price?: number;
+  quantity?: number;
+  image?: string;
 }
 
 export default function CheckoutSummary({ loading = false }: CheckoutSummaryProps) {
@@ -17,10 +36,12 @@ export default function CheckoutSummary({ loading = false }: CheckoutSummaryProp
   const { watch } = useFormContext();
 
   const shippingCost = watch("shipping_cost") || 0;
+  const paymentFee = watch("payment_fee") || 0;
   
   const { settings } = useSettings();
+
   const currencySymbol = settings.currency_symbol || settings.currency || "USD";
-  const taxRate = settings.tax || 0;
+  const taxRate = Number(settings.tax) || 0;
 
   const { cartItems, isLoading: isCartLoading } = useCart();
 
@@ -29,7 +50,8 @@ export default function CheckoutSummary({ loading = false }: CheckoutSummaryProp
     cartItems || [], 
     0,
     Number(shippingCost) || 0,
-    taxRate
+    taxRate,
+    Number(paymentFee) || 0
   );
 
   return (
@@ -46,7 +68,7 @@ export default function CheckoutSummary({ loading = false }: CheckoutSummaryProp
             <Loader2 className="h-6 w-6 animate-spin text-[var(--color-primary)]" />
           </div>
         ) : cartItems && cartItems.length > 0 ? (
-          cartItems.map((item: any, index: number) => {
+          cartItems.map((item: CheckoutCartItem, index: number) => {
             const variant = item.variant || item.product;
             const name = variant?.name || item.name || "Product Item";
             const price = variant?.price || item.price || 0;
@@ -138,6 +160,18 @@ export default function CheckoutSummary({ loading = false }: CheckoutSummaryProp
             <span>{t("summary.discount", "Discount")}</span>
             <span className="font-medium">
               -{formatCurrency(discount, currencySymbol)}
+            </span>
+          </div>
+        )}
+
+        {paymentFee > 0 && (
+          <div className="flex justify-between text-[var(--color-text-secondary)]">
+            <span className="flex items-center gap-1.5">
+              <Receipt size={14} />
+              {t("summary.paymentFee", "Payment Fee")}
+            </span>
+            <span className="font-medium text-[var(--color-text)]">
+              {formatCurrency(paymentFee, currencySymbol)}
             </span>
           </div>
         )}

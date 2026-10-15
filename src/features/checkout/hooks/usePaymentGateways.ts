@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { paymentService } from "@/services/paymentService";
-import type { PaymentGateway } from "@/shared/types/payment";
+import type { PaymentGateway } from "@/features/payment/model/types/payment.types";
+
 
 export function usePaymentGateways() {
-  const [gateways, setGateways] = useState<PaymentGateway[]>([]);
+  const [gateways, setGateways] = useState<PaymentGateway<string>[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,9 +16,9 @@ export function usePaymentGateways() {
     async function fetchGateways() {
       try {
         setLoading(true);
-        const data = await paymentService.getPaymentGateways();
+        const gateways = await paymentService.getPaymentGateways();
         if (isMounted) {
-          setGateways(data);
+          setGateways(gateways ?? []);
           setError(null);
         }
       } catch (err) {

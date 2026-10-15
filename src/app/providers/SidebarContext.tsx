@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useState, useEffect, useMemo } from "react";
+import React, { createContext, useCallback, useContext, useState, useMemo } from "react";
 import { useIsMobile } from "./useIsMobile";
 
 type SidebarItem = "dashboard" | "orders" | "products" | "settings";
@@ -18,6 +18,8 @@ type SidebarContextType = {
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
 
+// This hook intentionally shares the provider's context from this module.
+// eslint-disable-next-line react-refresh/only-export-components
 export const useSidebar = () => {
   const context = useContext(SidebarContext);
   if (!context) {
@@ -31,21 +33,18 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const isMobile = useIsMobile();
 
-  const [isExpanded, setIsExpanded] = useState(true);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
+  // الحالة للديسكتوب (مبدئياً مفتوحة لضمان عدم حدوث وميض أو تمركز خاطئ)
+  const [isExpanded, setIsExpanded] = useState<boolean>(true);
+  // الحالة خاصة بالموبايل فقط
+  const [isMobileOpen, setIsMobileOpen] = useState<boolean>(false);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
   const [activeItem, setActiveItem] = useState<SidebarItem | null>(null);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!isMobile) {
-      setIsMobileOpen(false);
-    }
-  }, [isMobile]);
 
   const toggleSidebar = useCallback(() => {
     setIsExpanded((prev) => !prev);
   }, []);
+
 
   const toggleMobileSidebar = useCallback(() => {
     setIsMobileOpen((prev) => !prev);
@@ -55,11 +54,13 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
     setOpenSubmenu((prev) => (prev === item ? null : item));
   }, []);
 
+  const visibleMobileOpen = isMobile && isMobileOpen;
 
   const value = useMemo(
     () => ({
-      isExpanded: isMobile ? false : isExpanded,
-      isMobileOpen,
+      // على الموبايل نعتمد كلياً على isMobileOpen، وعلى الديسكتوب نعتمد على isExpanded
+      isExpanded,
+      isMobileOpen: visibleMobileOpen,
       isHovered,
       activeItem,
       openSubmenu,
@@ -70,9 +71,8 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
       toggleSubmenu,
     }),
     [
-      isMobile,
       isExpanded,
-      isMobileOpen,
+      visibleMobileOpen,
       isHovered,
       activeItem,
       openSubmenu,
@@ -82,12 +82,9 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode }> = ({
     ]
   );
 
-  // استخدام useMemo للـ children يمنع إعادة رندر شجرة التطبيق بالكامل إلا إذا تغيرت الـ children نفسها
-  const memoizedChildren = useMemo(() => children, [children]);
-
   return (
     <SidebarContext.Provider value={value}>
-      {memoizedChildren}
+      {children}
     </SidebarContext.Provider>
   );
 };

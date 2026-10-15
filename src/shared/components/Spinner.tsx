@@ -1,11 +1,11 @@
 import React from 'react';
 
-interface LoadingProps {
+interface SpinnerProps {
   fullScreen?: boolean;
   message?: string;
 }
 
-const Loading: React.FC<LoadingProps> = ({ fullScreen = false, message = "جاري التحميل..." }) => {
+const Spinner: React.FC<SpinnerProps> = ({ fullScreen = false, message = "جاري التحميل..." }) => {
   const containerClasses = fullScreen 
     ? "fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm" 
     : "flex flex-col items-center justify-center p-4";
@@ -39,4 +39,4 @@ export const CardSkeleton = () => (
   </div>
 );
 
-export default Loading;
+export default Spinner;

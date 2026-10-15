@@ -5,7 +5,7 @@ import { Button } from "@/shared/components/Button";
 import { useTranslation } from "react-i18next";
 import { useLocations } from "../hooks/useLocations";
 import { MapPin } from "lucide-react";
-import { Input } from "@/shared/components/Input";
+import { Input } from "@/shared/components/ui/Input";
 import CustomSelect from "@/shared/components/CustomSelect";
 
 interface ShippingAddressFormProps {
@@ -14,8 +14,7 @@ interface ShippingAddressFormProps {
 }
 
 export default function ShippingAddressForm({ onNext, onBack }: ShippingAddressFormProps) {
-  const { t, i18n } = useTranslation("checkout");
-  const currentLang = i18n.language;
+  const { t } = useTranslation("checkout");
   
   const { register, control, watch, setValue, formState: { errors } } = useFormContext();
 
@@ -24,29 +23,13 @@ export default function ShippingAddressForm({ onNext, onBack }: ShippingAddressF
   const {
     countries,
     cities,
+    countryOptions,
+    cityOptions,
     loadingCountries,
     loadingCities,
     countriesError,
     citiesError,
   } = useLocations(selectedCountryId);
-
-  const countryOptions = countries.map((country) => {
-    const countryId = country.id ?? country.country_id;
-    const countryName = country.name ?? country.title;
-    return {
-      value: countryId,
-      label: countryName,
-    };
-  });
-
-  const cityOptions = cities.map((city) => {
-    const cityId = city.id ?? city.city_id;
-    const cityName = city.name ?? city.title;
-    return {
-      value: cityId,
-      label: cityName,
-    };
-  });
 
   return (
     <section className="rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] p-6 space-y-6">
@@ -67,7 +50,7 @@ export default function ShippingAddressForm({ onNext, onBack }: ShippingAddressF
             render={({ field }) => (
               <CustomSelect
                 label={t("address.countryId", "Country")}
-                placeholder={currentLang === "ar" ? "اختر الدولة..." : "Select country..."}
+                placeholder={t("address.selectCountry", "Select country...")}
                 options={countryOptions}
                 value={field.value ?? ""}
                 disabled={loadingCountries}
@@ -75,8 +58,9 @@ export default function ShippingAddressForm({ onNext, onBack }: ShippingAddressF
                   const countryId = val ? Number(val) : undefined;
                   field.onChange(countryId);
                   
-                  const selectedCountry = countries.find((c) => (c.id ?? c.country_id) === countryId);
-                  const countryName = selectedCountry?.name ?? selectedCountry?.title;
+                  const selectedCountry = countries.find((c) => c.id === countryId);
+                  const countryName = selectedCountry?.name;
+
                   if (setValue) {
                     setValue("country", countryName, { shouldValidate: true });
                     setValue("city_id", undefined, { shouldValidate: true });
@@ -99,10 +83,10 @@ export default function ShippingAddressForm({ onNext, onBack }: ShippingAddressF
                 label={t("address.cityId", "City")}
                 placeholder={
                   !selectedCountryId
-                    ? (currentLang === "ar" ? "اختر الدولة أولاً..." : "Select country first...")
+                    ? t("address.selectCountryFirst", "Select country first...")
                     : loadingCities
-                    ? (currentLang === "ar" ? "جاري تحميل المدن..." : "Loading cities...")
-                    : (currentLang === "ar" ? "اختر المدينة..." : "Select city...")
+                    ? t("address.loadingCities", "Loading cities...")
+                    : t("address.selectCity", "Select city...")
                 }
                 options={cityOptions}
                 value={field.value ?? ""}
@@ -111,8 +95,9 @@ export default function ShippingAddressForm({ onNext, onBack }: ShippingAddressF
                   const cityId = val ? Number(val) : undefined;
                   field.onChange(cityId);
 
-                  const selectedCity = cities.find((c) => (c.id ?? c.city_id) === cityId);
-                  const cityName = selectedCity?.name ?? selectedCity?.title;
+                  const selectedCity = cities.find((c) => c.id === cityId);
+                  const cityName = selectedCity?.name;
+
                   if (setValue) {
                     setValue("city", cityName, { shouldValidate: true });
                   }
@@ -123,7 +108,7 @@ export default function ShippingAddressForm({ onNext, onBack }: ShippingAddressF
           />
         </div>
 
-        {/* Street Address Line (maps to backend shipping_address) */}
+        {/* Street Address Line 1 */}
         <div className="sm:col-span-2 mb-2">
           <Input
             id="shipping-address"
@@ -134,13 +119,15 @@ export default function ShippingAddressForm({ onNext, onBack }: ShippingAddressF
             error={errors.shipping_address?.message ? String(errors.shipping_address.message) : undefined}
           />
         </div>
+        
+        {/* Street Address Line 2 */}
         <div className="sm:col-span-2">
           <Input
             id="shipping-address2"
             label={t("address.addressLine2", "Street Address 2")}
             type="text"
             {...register("shipping_address2")}
-            placeholder="123 Main St"
+            placeholder="Apt, Suite, Building (Optional)"
             error={errors.shipping_address2?.message ? String(errors.shipping_address2.message) : undefined}
           />
         </div>

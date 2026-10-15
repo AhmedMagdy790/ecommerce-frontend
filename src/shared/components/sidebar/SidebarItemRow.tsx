@@ -1,8 +1,7 @@
 import React from "react";
 import { Link } from "react-router";
 import { ChevronDownIcon } from "@/assets/icons";
-import type { NavItem } from "./sidebarData";
-
+import type { NavItem } from "../../../constants/sidebarData";
 
 export const SidebarItemRow = React.memo(({
   nav,
@@ -10,9 +9,6 @@ export const SidebarItemRow = React.memo(({
   menuType,
   showText,
   isOpen,
-  keyStr,
-  subMenuHeight,
-  subMenuRefs,
   isActive,
   onSubmenuToggle,
 }: {
@@ -21,24 +17,25 @@ export const SidebarItemRow = React.memo(({
   menuType: "main" | "others";
   showText: boolean;
   isOpen: boolean;
-  keyStr: string;
-  subMenuHeight: Record<string, number>;
-  subMenuRefs: React.MutableRefObject<Record<string, HTMLDivElement | null>>;
   isActive: (path: string) => boolean;
   onSubmenuToggle: (index: number, menuType: "main" | "others") => void;
 }) => {
+  const isMainActive = nav.path ? isActive(nav.path) : false;
+  const hasActiveSubItem = nav.subItems?.some((subItem) => isActive(subItem.path)) ?? false;
+  const isAnyActive = isMainActive || hasActiveSubItem || isOpen;
+
   return (
     <li>
       {nav.subItems ? (
-        <button
+       <button
           onClick={() => onSubmenuToggle(index, menuType)}
-          className={`menu-item group min-w-full overflow-hidden ${
-            isOpen ? "menu-item-active" : "menu-item-inactive"
-          } cursor-pointer ${!showText ? "lg:justify-center" : "lg:justify-start"}`}
+          className={`menu-item group min-w-full overflow-hidden text-[var(--color-white)] ${
+            isAnyActive ? "menu-item-active" : "menu-item-inactive"
+          } cursor-pointer ${!showText ? "md:justify-center" : "md:justify-start"}`}
         >
           <span
             className={`menu-item-icon-size ${
-              isOpen ? "menu-item-icon-active" : "menu-item-icon-inactive"
+              isAnyActive ? "menu-item-icon-active" : "menu-item-icon-inactive"
             }`}
           >
             {nav.icon}
@@ -46,8 +43,8 @@ export const SidebarItemRow = React.memo(({
           {showText && <span className="menu-item-text text-nowrap">{nav.name}</span>}
           {showText && (
             <ChevronDownIcon
-              className={`ms-auto w-5 h-5 transition-transform duration-200 ${
-                isOpen ? "rotate-180 text-[var(--color-primary)]" : ""
+              className={`ms-auto w-3 h-3 transition-transform duration-200 ${
+                isOpen ? "rotate-180" : ""
               }`}
             />
           )}
@@ -57,16 +54,16 @@ export const SidebarItemRow = React.memo(({
           <Link
             to={nav.path}
             className={`menu-item group ${
-              isActive(nav.path) ? "menu-item-active" : "menu-item-inactive"
+              isMainActive ? "menu-item-active" : "menu-item-inactive"
             }`}
           >
             <span
               className={`menu-item-icon-size ${
-                isActive(nav.path)
+                isMainActive
                   ? "menu-item-icon-active"
                   : "menu-item-icon-inactive"
               }`}
-            >
+            > 
               {nav.icon}
             </span>
             {showText && <span className="menu-item-text">{nav.name}</span>}
@@ -74,19 +71,15 @@ export const SidebarItemRow = React.memo(({
         )
       )}
 
-      {nav.subItems && (showText) && (
+      {nav.subItems && showText && (
         <div
-          ref={(el) => {
-            subMenuRefs.current[keyStr] = el;
-          }}
-          className="overflow-hidden transition-all duration-[var(--duration-normal)]"
-          style={{
-            height: isOpen ? `${subMenuHeight[keyStr] || 0}px` : "0px",
-          }}
+          className={`submenu-container ${isOpen ? "open" : ""}`}
         >
           <ul className="mt-2 space-y-1 ms-9">
+            
             {nav.subItems.map((subItem) => {
               const isSubActive = isActive(subItem.path);
+              
               return (
                 <li key={subItem.path || subItem.name}>
                   <Link
@@ -124,8 +117,8 @@ export const SidebarItemRow = React.memo(({
   return (
     prevProps.isOpen === nextProps.isOpen &&
     prevProps.showText === nextProps.showText &&
-    prevProps.subMenuHeight[prevProps.keyStr] === nextProps.subMenuHeight[nextProps.keyStr] &&
-    prevProps.nav === nextProps.nav
+    prevProps.nav === nextProps.nav &&
+    prevProps.isActive === nextProps.isActive
   );
 });
 

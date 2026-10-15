@@ -1,9 +1,11 @@
 import { useEffect } from "react";
-import { Input } from "@/shared/components/Input";
+import { Input } from "@/shared/components/ui/Input";
 import CustomSelect from "@/shared/components/CustomSelect";
 import { useTranslation } from "react-i18next";
 import type { FieldError } from "react-hook-form";
 import { useLocations } from "@/features/checkout/hooks/useLocations";
+import { getLocalizedName } from "@/shared/utils/localizeName";
+import { useLang } from "@/shared/context/LanguageContext";
 
 export interface ShippingAddressData {
   fullName: string;
@@ -38,15 +40,17 @@ export default function ShippingAddress({
   onChange,
   error,
 }: ShippingAddressProps) {
-  const { t, i18n } = useTranslation("checkout");
-  const currentLang = i18n.language;
+  const { t } = useTranslation("checkout");
+  const { lang } = useLang();
 
   const {
     countries,
     cities,
     loadingCountries,
     loadingCities,
-  } = useLocations(value.country_id);
+  } = useLocations(
+    value.country_id === undefined ? undefined : Number(value.country_id)
+  );
 
 
   // Clear city if country changes
@@ -127,17 +131,16 @@ export default function ShippingAddress({
         <div>
           <CustomSelect
             label={t("shippingAddress.country")}
-            placeholder={currentLang === "ar" ? "اختر الدولة..." : "Select country..."}
+            placeholder={"Select country..."}
             options={countryOptions}
             value={value.country_id ?? ""}
             disabled={loadingCountries}
             onChange={(val) => {
               const selectedCountry = countries.find((c) => c.id === val);
-              const name = selectedCountry?.name;
               onChange({
                 ...value,
                 country_id: val ? Number(val) : undefined,
-                country: name,
+                country: getLocalizedName(selectedCountry?.name, lang),
                 city: "",
                 city_id: undefined,
               });
@@ -149,7 +152,7 @@ export default function ShippingAddress({
         <div>
           <CustomSelect
             label={t("shippingAddress.city")}
-            placeholder={currentLang === "ar" ? "اختر المدينة..." : "Select city..."}
+            placeholder={"Select city..."}
             options={cityOptions}
             value={value.city_id ?? ""}
             disabled={!value.country_id || loadingCities}
@@ -160,7 +163,7 @@ export default function ShippingAddress({
               onChange({
                 ...value,
                 city_id: selectedCity?.id,
-                city: cityName,
+                city: getLocalizedName(cityName, lang),
               });
             }}
             error={error?.city_id?.message || error?.city?.message}

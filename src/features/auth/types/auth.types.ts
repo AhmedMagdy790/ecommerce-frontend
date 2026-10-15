@@ -1,23 +1,44 @@
-import type { User } from "./user.types";
+import type { User } from "../model/types/user.types";
 
-export interface RegisterPayload {
-    name:string;
-    phone?:string;
-    email:string;
-    password:string;
-    password_confirmation:string;
-}
+export type {
+  User,
+  Address,
+  UserFilters,
+} from "../model/types/user.types";
 
-export interface LoginPayload {
-    email:string;
-    password:string;
-}
+export type {
+  LoginDto as LoginCredentials,
+  RegisterDto as RegisterPayload,
+  UpdateProfileDto,
+  UpdatePasswordDto,
+  UpdateAvatarDto,
+} from "../model/types/user.dto";
 
 export interface AuthResponse {
-    user:User;
-    accessToken:string;
-    token_type:string;
-    expires_in:number;
-    access_expires_at?:string;
-    refresh_expires_at?:string;
+  user: User;
+  token?: string;
+  accessToken?: string;
+  refresh_token?: string;
+  refresh_updated?: boolean;
+}
+
+export interface AuthState {
+  user: User | null;
+  accessToken: string | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  isLoggingOut: boolean;
+  isInitialized: boolean;
+  isRefreshing: boolean;
+  setUser(user: User | null): void;
+  setAccessToken(accessToken: string | null): void;
+  setInitialized(value: boolean): void;
+  clearAuth(): void;
+  initializeAuth(): Promise<void>;
+  login(data: import("../model/types/user.dto").LoginDto): Promise<void>;
+  createAcount(data: import("../model/types/user.dto").RegisterDto): Promise<void>;
+  logout(): Promise<void>;
+  fetchUser(): Promise<void>;
+  updateAccessToken(): Promise<string | undefined>;
+  rotateAccessToken(): Promise<boolean>;
 }

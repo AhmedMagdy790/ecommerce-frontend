@@ -4,18 +4,21 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCart } from "@/pages/Cart/hook/useCart";
-import { checkoutFormSchema, type CheckoutFormValues } from "../types/checkout";
+import { 
+  checkoutFormSchema, 
+  type CheckoutFormValues, 
+  type CheckoutFormInput 
+} from "../types/checkout";
 
 export function useCheckoutForm() {
   const { cartItems } = useCart();
 
-  const form = useForm<CheckoutFormValues>({
+  const form = useForm<CheckoutFormInput, unknown, CheckoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
     mode: "onChange",
     defaultValues: {
       idempotency_key: crypto.randomUUID(),
       customer_name: "",
-      customer_type: "individual",
       phone_primary: "",
       phone_secondary: "",
       shipping_address2: "",
@@ -23,7 +26,7 @@ export function useCheckoutForm() {
       shipping_address: "",
       city_id: undefined,
       shipping_rate_id: undefined,
-      payment_method: "cash_on_delivery",
+      payment_gateway_id: undefined,
       items: cartItems?.map((item) => ({
         product_variant_id: Number(item.product_variant_id ?? item.variant?.id ?? item.id),
         quantity: Number(item.quantity ?? 1),

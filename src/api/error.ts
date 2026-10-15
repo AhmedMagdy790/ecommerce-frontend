@@ -42,3 +42,8 @@ export const handleApiError = (error: unknown) => {
   const errorMessage = data?.message || "حدث خطأ غير متوقع، يرجى المحاولة لاحقاً";
   toast.error(errorMessage, { id: "general-server-error" });
 };
+
+export const getErrorMessage = (
+    error: unknown,
+    fallback: string
+) => error instanceof Error ? error.message : fallback;

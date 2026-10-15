@@ -10,7 +10,7 @@ echo "" >> "$OUTPUT"
 echo "## شجرة المجلدات (src)" >> "$OUTPUT"
 echo '```text' >> "$OUTPUT"
 
-find src -maxdepth 3 -not -path '*/.*' | sort >> "$OUTPUT"
+find src -not -path '*/.*' | sort >> "$OUTPUT"
 
 echo '```' >> "$OUTPUT"
 

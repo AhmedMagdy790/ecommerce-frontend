@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Input } from "@/shared/components/Input";
+import { Input } from "@/shared/components/ui/Input";
 import type { FieldError } from "react-hook-form";
 
 export interface BillingAddressData {

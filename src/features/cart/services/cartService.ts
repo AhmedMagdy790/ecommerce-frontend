@@ -1,37 +1,39 @@
 // src/features/cart/services/cartService.ts
 
 import { storeApi } from "@/api/client";
-import type { ICartItem } from "@/features/cart/types";
+import type { ICartItem } from "../model/types/cart.types";
 
-/**
- * Cart service refactored to use storeApi cleanly while preserving unwrap logic,
- * optional parameters, and required type definitions.
- */
-const cartService = {
+export const cartService = {
     /**
      * Get all cart items for the authenticated user.
      */
-    getCartItems: async (params?: Record<string, any>): Promise<ICartItem[]> => {
-        // Pass params if storeApi supports them, or call directly
-        const response = await storeApi.getCart<any>(params);
-        console.log(response)
-        return response.data?.data ?? response.data ?? response;
+    getCartItems: async (): Promise<ICartItem[]> => {
+        const response = await storeApi.getCart();
+
+        return response.data.cart_items ?? [];
     },
 
     /**
      * Add or update an item variant in the cart.
      */
-    addToCart: async (data: { product_variant_id: number | string; quantity?: number }): Promise<any> => {
-        const response = await storeApi.addToCart<any, typeof data>(data);
-        return response.data?.data ?? response.data ?? response;
+    addToCart: async (payload: { product_variant_id: number | string; quantity: number }): Promise<ICartItem> => {
+        const response = await storeApi.addToCart(payload);
+
+        return response.data.cart_item;
     },
 
     /**
      * Remove a specific cart item by its ID.
      */
-    removeFromCart: async (id: string | number): Promise<any> => {
-        const response = await storeApi.removeFromCart<any>(id);
-        return response.data?.data ?? response.data ?? response;
+    removeFromCart: async (id: string | number): Promise<void> => {
+        await storeApi.removeFromCart(id);
+    },
+
+    /**
+     * Clear the entire shopping cart.
+     */
+    clearCart: async (): Promise<void> => {
+        await storeApi.clearCart();
     },
 };
 

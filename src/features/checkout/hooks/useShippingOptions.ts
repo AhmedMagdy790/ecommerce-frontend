@@ -1,46 +1,58 @@
 // src/pages/Checkout/hooks/useShippingOptions.ts
 
 import { useQuery } from "@tanstack/react-query";
-import type { ShippingOption } from "../types/checkout";
 import { storeApi } from "@/api/client";
+import type { ShippingOption } from "@/features/shipping/model/types/shipping.types";
 
 export function useShippingOptions(cityId?: number | string) {
   const { data, isLoading, error } = useQuery({
     queryKey: ["shipping-options", cityId],
     queryFn: async () => {
       if (!cityId) return [];
-      const response = await storeApi.getCityShippingOptions(cityId);
+
+      const response = await storeApi.optionsShipping({ 
+        city_id: cityId 
+      });
       
-      // Handle Laravel resource wrapper: response.data.rsg, response.rsg, response.data.data, or response.data
       const rawData = response?.data ?? response;
-      const optionsArray = rawData?.rsg || rawData?.data?.rsg || rawData?.data || rawData;
+      const optionsArray = rawData?.shipping_options || rawData?.rsg || rawData?.data?.shipping_options || rawData?.data || rawData;
 
       return Array.isArray(optionsArray) ? optionsArray : [];
     },
     enabled: !!cityId,
-    staleTime: 1000 * 60 * 5, // 5 minutes cache
+    staleTime: 1000 * 60 * 5, 
   });
 
+  const options: ShippingOption<string>[] = (data || []).map((item) => {
+    // استخراج السعر والتكلفة بأمان من الجذر أو من كائن rates الداخلي
+    const rateData = item.rates || {};
+    const cost = item.cost ?? rateData.cost ?? "0.00";
+    const currency = item.currency ?? rateData.currency ?? "EG";
+    const deliveryDays = rateData.delivery_days ?? item.delivery?.from ?? 1;
 
-  // Map the API response completely, mapping shipping_rate_id as id and passing through all fields
-  const options: ShippingOption[] = (data || []).map((item: any) => ({
-    id: item.shipping_rate_id ?? item.id,
-    shipping_rate_id: item.shipping_rate_id,
-    code: item.code,
-    name: item.name,
-    description: item.description,
-    phone: item.phone,
-    email: item.email,
-    logo: item.logo,
-    logo_url: item.logo_url,
-    supports_cod: item.supports_cod,
-    is_active: item.is_active,
-    courier: item.courier,
-    rates: item.rates,
-    shipping_details: item.shipping_details,
-    created_at: item.created_at,
-    updated_at: item.updated_at,
-  }));
+    return {
+      id: item.id,
+      shipping_rate_id: item.shipping_rate_id ?? item.id ?? rateData.id,
+      code: item.code,
+      name: item.name ?? "Standard Shipping",
+      description: item.description,
+      logo: item.logo,
+      logo_url: item.logo_url,
+      phone: item.phone,
+      email: item.email,
+      supports_cod: item.supports_cod ?? false,
+      is_active: item.is_active ?? true,
+      cost: cost,
+      cod_fee: item.cod_fee ?? rateData.cod_fee ?? "0.00",
+      currency: currency,
+      delivery: {
+        from: deliveryDays,
+        to: rateData.delivery_time ?? deliveryDays,
+      },
+      rates: rateData,
+      shipping_details: item.shipping_details,
+    };
+  });
 
   return {
     options,

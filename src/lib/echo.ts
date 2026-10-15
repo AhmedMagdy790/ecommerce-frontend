@@ -1,14 +1,9 @@
 import  Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore } from '@/features/auth/model/store/useAuthStore';
 
 // Define Pusher globally (required by Laravel Echo)
-declare global {
-  interface Window {
-    Pusher: typeof Pusher;
-    Echo: Echo;
-  }
-}
+
 window.Pusher = Pusher;
 
 // Validate environment variables safely

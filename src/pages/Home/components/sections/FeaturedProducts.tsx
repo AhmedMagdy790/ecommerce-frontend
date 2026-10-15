@@ -1,38 +1,30 @@
 // src/pages/Home/components/sections/FeaturedProducts.tsx
 import { useLang } from "@/shared/context/LanguageContext";
-import { localize } from "@/shared/utils/localize";
 import ProductCard from "../products/ProductCard";
-import type { LocalizedText } from "@/shared/utils/localizedText";
-import type { Product } from "@/features/product/types/product";
 import { mapCmsProducts } from "@/features/product/adapters/cmsProductCardAdapter";
-import type { ApiProduct } from "@/features/product/types/api";
-
-
-export interface Section<T = unknown> {
-  id: number;
-  key: string;
-  type: string;
-  name: LocalizedText;
-
-  data?: T[];
-  items?: T[];
-}
+import { useTranslation } from "react-i18next";
+import type { Section } from "@/features/cms/section/model/types/section.types";
 
 interface FeaturedProductsProps {
-  section: Section<ApiProduct>;
+  section: Section<string>;
 }
 
-export default function FeaturedProducts({
-  section,
-}: FeaturedProductsProps) {
+export default function FeaturedProducts({ section }: FeaturedProductsProps) {
   const { lang, isRTL } = useLang();
+  const { t } = useTranslation("home");
 
-  const products = mapCmsProducts(
-    section.data ?? [],
-    lang
-  );
+  console.log("section", section)
+
+  // استخراج العناصر بأمان من section.data مباشرة
+  const rawItems = Array.isArray(section?.data) ? section.data : [];
+
+  // 2. تحويل البيانات باستخدام Adapter
+  const products = mapCmsProducts(rawItems, lang);
 
   if (!products.length) return null;
+
+  // 3. استخراج عنوان القسم بأمان
+  const sectionTitle = section.name;
 
   return (
     <section 
@@ -44,19 +36,21 @@ export default function FeaturedProducts({
 
       <div className="relative mx-auto max-w-[var(--container-xl)]">
         
-        {/* Modern Section Header with Subtitle Badge & Action link */}
+        {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-[var(--spacing-12)] gap-[var(--spacing-4)]">
           <div className="flex flex-col gap-[var(--spacing-2)]">
             <div className="inline-flex items-center gap-[var(--spacing-2)] w-fit px-[var(--spacing-4)] py-[var(--spacing-1.5)] rounded-[var(--radius-full)] bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-xs)]">
               <span className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-pulse" />
               <span className="text-[var(--text-xs)] font-[var(--font-semibold)] text-[var(--color-primary)] tracking-wider uppercase">
-                {lang === "ar" ? "منتجات مميزة خصيصاً لك" : "Handpicked For You"}
+                {t?.("products.handpicked") ?? (lang === "ar" ? "منتجات مميزة خصيصاً لك" : "Handpicked For You")}
               </span>
             </div>
 
-            <h2 className="text-[var(--text-3xl)] sm:text-[var(--text-4xl)] font-[var(--font-bold)] text-[var(--color-text-primary)] tracking-tight">
-              {localize(section.name, lang)}
-            </h2>
+            {sectionTitle && (
+              <h2 className="text-[var(--text-3xl)] sm:text-[var(--text-4xl)] font-[var(--font-bold)] text-[var(--color-text-primary)] tracking-tight">
+                {sectionTitle}
+              </h2>
+            )}
           </div>
 
           <a 

@@ -1,4 +1,4 @@
-import { Input } from "@/shared/components/Input";
+import { Input } from "@/shared/components/ui/Input";
 import { useTranslation } from "react-i18next";
 import type { FieldError } from "react-hook-form";
 

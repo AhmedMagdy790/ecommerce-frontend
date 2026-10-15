@@ -1,5 +1,5 @@
 import { type AxiosInstance, AxiosError } from 'axios';
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore } from '@/features/auth/model/store/useAuthStore';
 import toast from 'react-hot-toast';
 
 export const setupInterceptors = (apiClient: AxiosInstance) => {
@@ -19,6 +19,17 @@ export const setupInterceptors = (apiClient: AxiosInstance) => {
     });
     failedQueue = [];
   };
+
+  apiClient.interceptors.request.use(
+    (config) => {
+      const token = useAuthStore.getState().accessToken;
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => Promise.reject(error)
+  );
 
   apiClient.interceptors.response.use(
     (response) => response,
@@ -79,15 +90,9 @@ export const setupInterceptors = (apiClient: AxiosInstance) => {
           return apiClient(originalRequest);
 
         } catch (refreshError) {
-          processQueue(refreshError, null);
-          useAuthStore.getState().clearAuth();
-          
-          if (!window.location.pathname.includes('/auth/login')) {
-            toast.error("انتهت الجلسة، يرجى تسجيل الدخول مجدداً");
-            window.location.href = '/auth/login';
-          }
-          
-          return Promise.reject(refreshError);
+            processQueue(refreshError, null);
+            useAuthStore.getState().clearAuth();
+            return Promise.reject(refreshError);
         } finally {
           isRefreshing = false;
         }

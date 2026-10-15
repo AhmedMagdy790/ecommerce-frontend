@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const shippingSchema = z.object({
-  shipping_rate_id: z.coerce.number().int().positive("Invalid shipping method selected"),
-  shipping_cost: z.coerce.number().min(0).optional(),
+  shipping_rate_id: z.coerce.number().int().positive(),
 });
+
+export type ShippingFormValues = z.infer<typeof shippingSchema>;

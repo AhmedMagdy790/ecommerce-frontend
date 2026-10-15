@@ -3,8 +3,9 @@ import React from "react";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { useLang } from "@/shared/context/LanguageContext";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/features/auth/model/store/useAuthStore";
 import { Button } from "../../Button";
+import { getImageUrl } from "@/shared/utils/helper";
 
 function UserDropdownComponent() {
   const { user, logout } = useAuthStore();
@@ -66,7 +67,7 @@ function UserDropdownComponent() {
           "
         >
           <img
-            src={user?.avatar}
+            src={getImageUrl(user?.avatar)}
             alt={user?.name}
             className="
               object-cover
@@ -138,7 +139,7 @@ function UserDropdownComponent() {
             "
           >
             <img
-              src={user?.avatar}
+              src={getImageUrl(user?.avatar)}
               alt={user?.name}
               className="
                 object-cover

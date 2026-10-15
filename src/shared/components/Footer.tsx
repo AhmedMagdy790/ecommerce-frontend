@@ -1,7 +1,7 @@
 import { Mail } from 'lucide-react';
 import { Container } from './Container';
 
-// تعريف الروابط كمصفوفات لتسهيل الصيانة
+
 const FOOTER_SECTIONS = [
   {
     title: 'Discovery',
@@ -75,11 +75,6 @@ const Footer = () => {
   );
 };
 
-// المكون المساعد للايقونات
-const SocialLink = ({ icon: Icon }: { icon: any }) => (
-  <a href="#" className="w-10 h-10 flex items-center justify-center border border-main-border rounded-full hover:bg-primary hover:text-white transition-all text-main-text">
-    <Icon className="w-4 h-4" />
-  </a>
-);
+
 
 export default Footer;

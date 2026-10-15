@@ -1,45 +1,44 @@
-import { useEffect, useRef } from "react";
-import { useAuthStore } from "@/store/authStore";
+import { useEffect, useRef, type ReactNode } from "react";
+import { useAuthStore } from "@/features/auth/model/store/useAuthStore";
+import AuthLoader from "@/features/auth/components/AuthLoader";
 
-export const AuthBootstrap = ({ children }: { children: React.ReactNode }) => {
+interface Props {
+  children: ReactNode;
+}
+
+export const AuthBootstrap = ({ children }: Props) => {
   const started = useRef(false);
-  const { initializeAuth, isInitialized, setInitialized } = useAuthStore();
+
+  const isInitialized = useAuthStore(
+    (state) => state.isInitialized
+  );
+
+  const initializeAuth = useAuthStore(
+    (state) => state.initializeAuth
+  );
 
   useEffect(() => {
-    if (started.current || isInitialized) return;
+    if (started.current || isInitialized) {
+      return;
+    }
+
     started.current = true;
 
-    const checkAuth = async () => {
-      try {
-        await initializeAuth();
-      } catch (error: any) {
-
-        if (error.message === "Network Error" || error.code === "ERR_NETWORK") {
-          console.warn("⚠️ السيرفر غير متصل (Backend is offline)");
-        } else {
-          console.log("AUTH FAILED:", error);
-        }
-      } finally {
-
-        setInitialized(true);
-      }
-    };
-
     requestAnimationFrame(() => {
-      checkAuth();
+      initializeAuth().catch((error: unknown) => {
+        if (
+          error instanceof Error &&
+          error.message === "Network Error"
+        ) {
+          console.warn("⚠️ السيرفر غير متصل");
+        } else {
+          console.error("AUTH FAILED:", error);
+        }
+      });
     });
-  }, [initializeAuth, isInitialized, setInitialized]);
+  }, [initializeAuth, isInitialized]);
 
-  if (!isInitialized) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[var(--color-background)]">
-        <div className="flex flex-col items-center gap-[var(--spacing-4)]">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--color-primary)] border-t-transparent"></div>
-          <span className="text-[var(--text-sm)] text-[var(--color-text-secondary)]">جاري الاتصال بالسيرفر...</span>
-        </div>
-      </div>
-    );
-  }
+  if (!isInitialized) return <AuthLoader />;
 
   return <>{children}</>;
 };

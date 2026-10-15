@@ -1,6 +1,6 @@
 // src/components/cart/CartList.tsx
 
-import type { ICartItem } from "@/features/cart/types";
+import type { ICartItem } from "@/features/cart/model/types/cart.types";
 import CartItem from "./CartItem";
 import { useLang } from "@/shared/context/LanguageContext";
 

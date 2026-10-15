@@ -10,6 +10,7 @@ import { AuthProvider } from "@/app/providers/AuthProvider";
 import ConfirmProvider from "@/shared/components/confirmModal/ConfirmModal";
 import { NotificationProvider } from "@/app/providers/NotificationProvider";
 import { AuthBootstrap } from "@/app/bootstrap/AuthBootstrap";
+import { AppBootstrap } from "../bootstrap/AppBootstrap";
 
 interface AppProvidersProps {
   children: ReactNode;
@@ -19,23 +20,25 @@ export default function AppProviders({ children }: AppProvidersProps) {
   return (
     <ThemeProvider>
       <DirectionProvider>
-        <LanguageProvider>
-          <SettingsProvider>
-            <QueryProvider>
-              <HelmetProvider>
-                <AuthProvider>
-                  <AuthBootstrap>
-                    <NotificationProvider>
-                      <ConfirmProvider>
-                        {children}
-                      </ConfirmProvider>
-                    </NotificationProvider>
-                  </AuthBootstrap>
-                </AuthProvider>
-              </HelmetProvider>
-            </QueryProvider>
-          </SettingsProvider>
-        </LanguageProvider>
+        <QueryProvider>
+          <LanguageProvider>
+            <SettingsProvider>
+              <AppBootstrap>
+                <HelmetProvider>
+                  <AuthProvider>
+                    <AuthBootstrap>
+                      <NotificationProvider>
+                        <ConfirmProvider>
+                          {children}
+                        </ConfirmProvider>
+                      </NotificationProvider>
+                    </AuthBootstrap>
+                  </AuthProvider>
+                </HelmetProvider>
+              </AppBootstrap>
+            </SettingsProvider>
+          </LanguageProvider>
+        </QueryProvider>
       </DirectionProvider>
     </ThemeProvider>
   );

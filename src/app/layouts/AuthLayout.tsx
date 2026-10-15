@@ -1,4 +1,3 @@
-import React from "react";
 import { Link, Outlet } from "react-router-dom";
 import { useLanguage } from "@/hooks/useLanguage";
 import LanguageSwitcher from "@/app/shell/Navbar/LanguageSwitcher";

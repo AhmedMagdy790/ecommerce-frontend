@@ -5,9 +5,9 @@ import { Button } from "@/shared/components/Button";
 import { useTranslation } from "react-i18next";
 import { CreditCard, Wallet, Banknote, ShieldCheck } from "lucide-react";
 import { usePaymentGateways } from "../hooks/usePaymentGateways";
-import { useCalculateShipping } from "../hooks/useCalculateShipping";
 import { useCart } from "@/pages/Cart/hook/useCart";
-import { RadioGroup } from "@/shared/components/RadioGroup";
+import { RadioGroup, type RadioOption } from "@/shared/components/RadioGroup";
+import { shippingService } from "@/services/shippingService";
 
 interface PaymentFormProps {
   onNext: () => void;
@@ -19,65 +19,84 @@ export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
   const { register, watch, setValue, formState: { errors } } = useFormContext();
   const { gateways, loading, error: gatewayError } = usePaymentGateways();
 
-  console.log("errors", errors)
   const currentCityId = watch("city_id");
   const selectedShippingId = watch("shipping_rate_id");
-  const selectedPaymentMethod = watch("payment_method");
+  const selectedGatewayId = watch("payment_gateway_id");
   
   const { cartItems } = useCart();
-  const { mutateAsync: calculateShipping } = useCalculateShipping();
 
-  const handlePaymentChange = (gatewayOptionOrSlug: any) => {
-    if (!gatewayOptionOrSlug) {
+  const handlePaymentChange = (gatewayIdOption: unknown) => {
+    if (!gatewayIdOption) {
+      setValue("payment_gateway_id", "", { shouldValidate: true });
       setValue("payment_method", "", { shouldValidate: true });
       setValue("payment_method_name", "", { shouldValidate: true });
       setValue("payment_gateway_slug", "", { shouldValidate: true });
       return;
     }
 
-    let selectedGateway: any = null;
+    // البحث بالـ id الخاص بالبوابة
+    const selectedGateway = gateways.find(
+      (g) => String(g.id) === String(gatewayIdOption) || String(g.slug) === String(gatewayIdOption)
+    );
 
-    if (typeof gatewayOptionOrSlug === "object" && gatewayOptionOrSlug !== null) {
-      selectedGateway = gatewayOptionOrSlug;
-    } else {
-      selectedGateway = gateways.find(
-        (g) => String(g.slug) === String(gatewayOptionOrSlug) || String(g.type) === String(gatewayOptionOrSlug)
-      );
-    }
+    if (!selectedGateway) return;
 
-    const paymentMethodValue = selectedGateway?.type || selectedGateway?.slug || gatewayOptionOrSlug;
-    const paymentMethodName = selectedGateway?.name || gatewayOptionOrSlug;
-    const paymentSlug = selectedGateway?.slug || gatewayOptionOrSlug;
+    const gatewayId = selectedGateway.id;
+    const gatewaySlug = selectedGateway.slug;
+    
+    // استخراج اسم البوابة بأمان
+    const rawName = selectedGateway.name;
 
-    setValue("payment_method", paymentSlug, { shouldValidate: true });
-    setValue("payment_method_name", paymentMethodName, { shouldValidate: true });
-    setValue("payment_gateway_slug", paymentSlug, { shouldValidate: true });
+    // تحديث قيم الفورم بدقة
+    setValue("payment_gateway_id", Number(gatewayId), { shouldValidate: true, shouldDirty: true });
+    setValue("payment_method", gatewaySlug, { shouldValidate: true, shouldDirty: true });
+    setValue("payment_method_name", rawName, { shouldValidate: true });
+    setValue("payment_gateway_slug", gatewaySlug, { shouldValidate: true });
 
     if (currentCityId && selectedShippingId && cartItems) {
       const items = cartItems.map(item => ({
-        variant_id: item.product_variant_id, 
+        product_variant_id: item.product_variant_id ?? item.id, 
         quantity: item.quantity
       }));
 
-      calculateShipping({
+      shippingService.calculateShipping({
         city_id: Number(currentCityId),
         shipping_rate_id: Number(selectedShippingId),
         items: items,
-        payment_method: paymentMethodValue,
+        payment_gateway_id: Number(gatewayId),
       })
-        .then((response) => {
-          const result = response?.data ?? response;
-          if (result) {
-            const newFee = result.actual_shipping_cost ?? result.customer_shipping_cost ?? 0;
-            setValue("shipping_cost", Number(newFee), { shouldValidate: true, shouldDirty: true });
+        .then((calculation) => {
+          console.log("calculation payment", calculation);
+
+          if (calculation) {
+            // استخراج القيم العددية من الـ Money Objects بشكل آمن وسليم
+            const totalShippingAndFee = 
+              Number(calculation.customer_total_shipping_cost?.amount) || 
+              Number(calculation.actual_shipping_cost?.amount) || 
+              Number(calculation.customer_shipping_cost?.amount) || 
+              0;
+
+            const paymentFee = 
+              Number(calculation.payment_fee?.amount) || 
+              Number(calculation.breakdown?.payment_fee?.amount) || 
+              0;
+
+            const codFee = 
+              Number(calculation.breakdown?.cod_fee?.amount) || 
+              0;
+
+            // تحديث قيم الفورم بدقة لتنعكس فوراً على الـ CheckoutSummary
+            setValue("shipping_cost", totalShippingAndFee, { shouldValidate: true, shouldDirty: true });
+            setValue("payment_fee", paymentFee, { shouldValidate: true, shouldDirty: true });
+            setValue("cod_fee", codFee, { shouldValidate: true, shouldDirty: true });
           }
         })
         .catch(() => null);
     }
   };
 
-  const getGatewayIcon = (id: string) => {
-    switch (id?.toLowerCase()) {
+  const getGatewayIcon = (slug: string) => {
+    switch (slug?.toLowerCase()) {
       case "card":
       case "stripe":
       case "paymob":
@@ -90,14 +109,15 @@ export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
     }
   };
 
-  const radioOptions = gateways.map((g) => {
-    const gatewayValue = g.type || "online"; 
-    
+  const radioOptions: RadioOption[] = gateways.map((g) => {
+    const labelText = g.name;
+    const descText = g.description || t("payment.methods.defaultDesc", "Secure payment method.");
+
     return {
-      value: g.slug,
-      label: g.name,
-      description: g.description || t("payment.methods.defaultDesc", "Secure payment method."),
-      icon: getGatewayIcon(g.slug || gatewayValue),
+      value: g.id,
+      label: labelText,
+      description: descText,
+      icon: getGatewayIcon(g.slug),
       originalObject: g,
     };
   });
@@ -127,22 +147,21 @@ export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
           )}
 
           <RadioGroup
-            name="paymentMethod"
+            name="payment_gateway_id"
             options={radioOptions}
-            value={selectedPaymentMethod}
+            value={selectedGatewayId}
             allowDeselect={true}
             onChange={handlePaymentChange}
           />
         </div>
       )}
 
-      {errors.payment_method && (
+      {errors.payment_gateway_id && (
         <p className="text-xs text-[var(--color-error)] font-medium px-1">
-          {String(errors.payment_method.message)}
+          {String(errors.payment_gateway_id.message)}
         </p>
       )}
 
-      {/* Notes Field Added for Step 4 Validation */}
       <div>
         <label className="block text-sm font-medium mb-1">
           {t("payment.notes", "Order Notes (Optional)")}
@@ -168,7 +187,7 @@ export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
         <Button
           type="button"
           onClick={onNext}
-          disabled={!selectedPaymentMethod || loading}
+          disabled={!selectedGatewayId || loading}
         >
           {t("buttons.next", "Review Order")}
         </Button>

@@ -1,34 +1,39 @@
 // src/features/product/adapters/productCardAdapter.ts
 
-import { localize } from "@/shared/utils/localize";
-import type { ApiProduct } from "../types/api";
-import type { LocalizedText } from "@/shared/utils/localizedText";
+import type { ProductVariant } from "@/features/product-variants/model/types/productVariant.types";
+import type { Product } from "../model/types/product.types";
+
 
 export function mapProductCard(
-  product: ApiProduct,
-  lang: LocalizedText
+  product: Product,
 ) {
   // 1. Extract variants safely whether it's an array or an object containing a list
   const rawVariantsSource = product.variants;
   const variantsArray = Array.isArray(rawVariantsSource)
     ? rawVariantsSource
-    : Array.isArray((rawVariantsSource as any)?.list)
-      ? (rawVariantsSource as any).list
+    : Array.isArray((rawVariantsSource )?.list)
+      ? (rawVariantsSource).list
       : [];
 
   // 2. Find the lowest variant price if available
   const variantPrices = variantsArray
-    .map((v: any) => parseFloat(v.price))
+    .map((v: ProductVariant) => Number(v.price))
     .filter((p: number) => !isNaN(p));
 
   const minVariantPrice = variantPrices.length > 0 ? Math.min(...variantPrices) : null;
 
   // 3. Resolve images collection safely
+  const galleryImagesSource: string[] = Array.isArray(product.gallery)
+    ? product.gallery
+    : product.gallery?.images ?? [];
+
   const galleryImages = [
     product.thumbnail,
     product.featured_image,
-    ...(product.gallery ?? []).map((img: any) =>
-      typeof img === "string" ? img : img?.url
+    ...galleryImagesSource.map((img: string) =>
+      typeof img === "string"
+        ? img
+        : (img as unknown as { url?: string })?.url
     ),
   ].filter(Boolean) as string[];
 
@@ -49,13 +54,13 @@ export function mapProductCard(
     id: product.id,
     slug: product.slug,
 
-    name: localize(product.name, lang),
+    name: product.name,
 
     image: image,
 
     price: price,
 
-    oldPrice: product.old_price ?? undefined,
+    // oldPrice: product.old_price ?? undefined,
 
     link: `/products/${product.slug}`,
   };

@@ -1,72 +1,68 @@
-// src/pages/Home/components/SectionRenderer.tsx
+import { useMemo, type ComponentType } from "react";
 import {
   sectionRegistry,
   sectionKeyRegistry,
-  type SectionType,
-  type SectionKey,
+  normalizeSectionKey,
 } from "../registry";
-
-export interface SectionItem {
-  id: number;
-  title?: { ar: string; en: string; };
-  subtitle?: { ar: string; en: string; };
-  image?: string;
-  link?: string;
-  data?: Record<string, unknown>;
-}
-
-export interface Section {
-  id: number;
-  name: { ar: string; en: string; };
-  key: string;
-  type: string;
-  sort_order: number;
-  items: SectionItem[];
-}
+import type { Section } from "@/features/cms/section/model/types/section.types";
 
 interface SectionRendererProps {
-  sections: Section[];
+  sections?: Section[];
 }
 
-export default function SectionRenderer({ sections }: SectionRendererProps) {
+export default function SectionRenderer({ sections = [] }: SectionRendererProps) {
 
-  const sortedSections = [...sections].sort((a, b) => a.sort_order - b.sort_order);
+  const sortedSections = useMemo(() => {
+    if (!Array.isArray(sections)) return [];
 
+    return [...sections].sort(
+      (a, b) => (Number(a?.sort_order ?? 0) - Number(b?.sort_order ?? 0))
+    );
+  }, [sections]);
+
+  if (sortedSections.length === 0) {
+    return null;
+  }
+
+  console.log("sortedSections", sortedSections)
 
   return (
     <>
-      {sortedSections.map((section) => {
-        const keyExists = section.key in sectionRegistry;
-        const typeExists = section.type in sectionRegistry;
+      {sortedSections.map((section, index) => {
+        // تم التعديل هنا إلى section (المفرد)
 
-        // if (import.meta.env.DEV) {
-        //   console.group(`Section #${section.id}`);
-        //   console.log("key:", section.key, keyExists ? "✅" : "❌");
-        //   console.log("type:", section.type, typeExists ? "✅" : "❌");
-        //   console.groupEnd();
-        // }
-
+        
+        const normalizedKey = normalizeSectionKey(section?.key);
+        const normalizedType = normalizeSectionKey(section?.type as string | undefined);
+        
+        // console.log("normalizedKey", normalizedKey);
+        // console.log("normalizedType", normalizedType);
 
         const keyComponent =
-          section.key in sectionKeyRegistry
-            ? sectionKeyRegistry[section.key as keyof typeof sectionKeyRegistry]
-            : undefined;
-
+          normalizedKey && sectionKeyRegistry[normalizedKey as keyof typeof sectionKeyRegistry];
         const typeComponent =
-          section.type in sectionRegistry
-            ? sectionRegistry[section.type as keyof typeof sectionRegistry]
-            : undefined;
+          normalizedType && sectionRegistry[normalizedType as keyof typeof sectionRegistry];
 
-        const Component = keyComponent ?? typeComponent;
+        const Component = (keyComponent ?? typeComponent) as
+          | ComponentType<{ section: Section }>
+          | undefined;
+
 
         if (!Component) {
-          console.warn(
-            `No component found for key="${section.key}" type="${section.type}"`
-          );
+          if (import.meta.env.DEV) {
+            console.warn(
+              `⚠️ No renderer found for section key="${section?.key}" type="${section?.type}"`
+            );
+          }
           return null;
         }
 
-        return <Component key={section.id} section={section} />;
+        return (
+          <Component
+            key={section?.id ?? `${section?.key ?? "section"}-${index}`}
+            section={section}
+          />
+        );
       })}
     </>
   );
