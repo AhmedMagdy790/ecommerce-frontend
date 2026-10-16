@@ -9,14 +9,18 @@ import { LanguageProvider } from "@/shared/context/LanguageContext";
 import { AuthProvider } from "@/app/providers/AuthProvider";
 import ConfirmProvider from "@/shared/components/confirmModal/ConfirmModal";
 import { NotificationProvider } from "@/app/providers/NotificationProvider";
+
 import { AuthBootstrap } from "@/app/bootstrap/AuthBootstrap";
+import AppContentGate from "@/app/bootstrap/AppContentGate";
 import { AppBootstrap } from "../bootstrap/AppBootstrap";
 
 interface AppProvidersProps {
   children: ReactNode;
 }
 
-export default function AppProviders({ children }: AppProvidersProps) {
+export default function AppProviders({
+  children,
+}: AppProvidersProps) {
   return (
     <ThemeProvider>
       <DirectionProvider>
@@ -27,11 +31,13 @@ export default function AppProviders({ children }: AppProvidersProps) {
                 <HelmetProvider>
                   <AuthProvider>
                     <AuthBootstrap>
-                      <NotificationProvider>
-                        <ConfirmProvider>
-                          {children}
-                        </ConfirmProvider>
-                      </NotificationProvider>
+                      <AppContentGate>
+                        <NotificationProvider>
+                          <ConfirmProvider>
+                            {children}
+                          </ConfirmProvider>
+                        </NotificationProvider>
+                      </AppContentGate>
                     </AuthBootstrap>
                   </AuthProvider>
                 </HelmetProvider>

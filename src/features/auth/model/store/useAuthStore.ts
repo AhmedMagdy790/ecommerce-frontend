@@ -6,6 +6,9 @@ import type {
     LoginDto as ILoginPayload,
     RegisterDto as IRegisterPayload,
 } from "@/features/auth/model/types/user.dto";
+import { getTokenExpiration } from "../../hooks/useTokenExpiration";
+import { clearLastTokenActivity, saveLastTokenActivity } from "../../utils/auth.utils";
+import { hasLoggedInBefore } from "../../utils/authStorage";
 
 
 export const useAuthStore = create<IAuthState>()(
@@ -17,6 +20,9 @@ export const useAuthStore = create<IAuthState>()(
         isLoggingOut: false,
         isInitialized: false,
         isRefreshing: false,
+        accessTokenExpiresAt: null,
+        lastTokenActivityAt: null,
+        
 
         setUser: (user: IUser) => set({ user, isAuthenticated: !!user }),
         
@@ -31,12 +37,19 @@ export const useAuthStore = create<IAuthState>()(
 
             if (state.isInitialized || state.isRefreshing) return;
 
+            if (!hasLoggedInBefore()) {
+                set({
+                    isInitialized: true,
+                    isRefreshing: false,
+                });
+                return;
+            }
+
             set({ isRefreshing: true });
-            
+
             try {
                 const tokenData = await authService.refresh();
-
-                const newToken = tokenData?.data?.accessToken; 
+                const newToken = tokenData?.data?.accessToken;
 
                 if (!newToken) {
                     throw new Error("No access token returned");
@@ -51,18 +64,22 @@ export const useAuthStore = create<IAuthState>()(
                     user,
                     isAuthenticated: true,
                 });
-
             } catch (error) {
-                console.log("Session refresh failed on app init", error);
+                console.error("Session refresh failed on app init:", error);
+
                 set({
                     user: null,
                     accessToken: null,
+                    accessTokenExpiresAt: null,
                     isAuthenticated: false,
                 });
+
+                // لا تترك مؤشر الجلسة القديمة موجودًا
+                localStorage.removeItem("has_logged_in");
             } finally {
-                set({ 
-                    isInitialized: true, 
-                    isRefreshing: false 
+                set({
+                    isInitialized: true,
+                    isRefreshing: false,
                 });
             }
         },
@@ -75,16 +92,21 @@ export const useAuthStore = create<IAuthState>()(
 
                 const {
                     user,
-                    accessToken
+                    accessToken,
+                    expires_in
                 } = response.data;
 
                 if (!accessToken || !user) {
                     throw new Error("بيانات الدخول غير مكتملة");
                 }
 
+                localStorage.setItem("has_logged_in", "true");
+
                 set({
                     accessToken,
                     user,
+                    lastTokenActivityAt: saveLastTokenActivity(),
+                    accessTokenExpiresAt: getTokenExpiration(Number(expires_in)),
                     isAuthenticated: true,
                     isInitialized: true,
                 });
@@ -101,6 +123,27 @@ export const useAuthStore = create<IAuthState>()(
             } finally {
                 set({
                     isLoading: false,
+                });
+            }
+        },
+
+        logout: async () => {
+            set({ isLoggingOut: true });
+            try {
+                await authService.logout();
+            } finally {
+                localStorage.removeItem("has_logged_in");
+                clearLastTokenActivity();
+
+                set({
+                    user: null,
+                    accessToken: null,
+                    accessTokenExpiresAt: null,
+                    lastTokenActivityAt: null,
+                    isAuthenticated: false,
+                    isInitialized: true,
+                    isRefreshing: false,
+                    isLoggingOut: false,
                 });
             }
         },
@@ -136,16 +179,6 @@ export const useAuthStore = create<IAuthState>()(
             }
         },
 
-        logout: async () => {
-
-            set({ isLoggingOut: true });
-            try {
-                await authService.logout();
-            } finally {
-                set({ user: null, accessToken: null, isAuthenticated: false, isLoggingOut: false });
-            }
-        },
-
         fetchUser: async () => {
             try {
                 const response = await authService.me();
@@ -173,28 +206,41 @@ export const useAuthStore = create<IAuthState>()(
             }
         },
 
+                
         updateAccessToken: async () => {
             try {
                 const response = await authService.refresh();
-                
-                const {
-                    accessToken
-                } = response.data;
 
-                set({ accessToken });
+                const { accessToken, expires_in } = response.data;
+
+                if (
+                    !accessToken ||
+                    !Number.isFinite(Number(expires_in)) ||
+                    Number(expires_in) <= 0
+                ) {
+                    throw new Error("Invalid refresh response");
+                }
+
+                set({
+                    accessToken,
+                    lastTokenActivityAt: saveLastTokenActivity(),
+                    accessTokenExpiresAt: getTokenExpiration(Number(expires_in)),
+                    isAuthenticated: true,
+                });
 
                 return accessToken;
-
             } catch (error) {
                 set({
                     user: null,
                     accessToken: null,
+                    accessTokenExpiresAt: null,
                     isAuthenticated: false,
                 });
 
                 throw error;
             }
         },
+
 
         rotateAccessToken: async () => {
             try {

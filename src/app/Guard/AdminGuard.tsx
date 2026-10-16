@@ -9,6 +9,7 @@ export const AdminGuard = () => {
   const isInitialized = useAuthStore((state) => state.isInitialized);
   const location = useLocation();
 
+
   if (!isInitialized) {
     return null;
   }
@@ -22,8 +23,6 @@ export const AdminGuard = () => {
       />
     );
   }
-
-  console.log("isAdmin(user)", isAdmin(user))
 
   // 🟢 استخدام دالة الـ Helper بوضوح واحترافية
   if (!isAdmin(user)) {

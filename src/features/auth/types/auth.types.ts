@@ -26,6 +26,8 @@ export interface AuthState {
   user: User | null;
   accessToken: string | null;
   isAuthenticated: boolean;
+  accessTokenExpiresAt: number | null;
+  lastTokenActivityAt: number | null,
   isLoading: boolean;
   isLoggingOut: boolean;
   isInitialized: boolean;

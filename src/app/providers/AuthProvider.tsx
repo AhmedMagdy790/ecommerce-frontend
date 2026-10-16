@@ -1,3 +1,4 @@
+
 import {
   createContext,
   useCallback,
@@ -8,6 +9,7 @@ import {
 import { useAuthStore } from "@/features/auth/model/store/useAuthStore";
 import type { User } from "@/features/auth/model/types/user.types";
 import type { LoginDto } from "@/features/auth/model/types/user.dto";
+import { useTokenExpiration } from "@/features/auth/hooks/useTokenExpiration";
 
 export type { User };
 
@@ -35,8 +37,19 @@ export function AuthProvider({ children }: Props) {
     fetchUser,
     login: storeLogin,
     logout: storeLogout,
+    updateAccessToken,
   } = useAuthStore();
 
+  useTokenExpiration({
+    onExpire: async () => {
+      try {
+        await updateAccessToken();
+      } catch (error) {
+        console.error("Failed to refresh access token:", error);
+        await storeLogout();
+      }
+    },
+  });
 
   const login = useCallback(
     async (data: LoginDto) => {
@@ -45,19 +58,13 @@ export function AuthProvider({ children }: Props) {
     [storeLogin],
   );
 
-  const logout = useCallback(
-    async () => {
-      await storeLogout();
-    },
-    [storeLogout],
-  );
+  const logout = useCallback(async () => {
+    await storeLogout();
+  }, [storeLogout]);
 
-  const refreshUser = useCallback(
-    async () => {
-      await fetchUser();
-    },
-    [fetchUser],
-  );
+  const refreshUser = useCallback(async () => {
+    await fetchUser();
+  }, [fetchUser]);
 
   const value = useMemo<AuthContextType>(
     () => ({
@@ -85,6 +92,5 @@ export function AuthProvider({ children }: Props) {
     </AuthContext.Provider>
   );
 }
-
 
 export default AuthContext;

@@ -29,7 +29,7 @@ export interface AuthResponse {
   token?: string;
   accessToken?: string;
   token_type?: string;
-  expires_at?: string;
+  expires_in?: string;
   refresh_updated?: boolean;
 }
 
