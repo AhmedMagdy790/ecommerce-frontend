@@ -14,8 +14,9 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { slug } = useParams();
   const { isRTL } = useLang();
-  const { menuLinks, isLoading } = useMenuLinks("header");
+  const { menuLinks, isLoading, isFetching } = useMenuLinks("header");
 
+  console.log("isLoading", isLoading)
   return (
     <nav
       dir={isRTL ? "rtl" : "ltr"}
@@ -34,7 +35,7 @@ export default function Navbar() {
         <div className="hidden lg:flex items-center justify-center flex-1 mx-4">
           <DesktopMenu
             links={menuLinks}
-            isLoading={isLoading}
+            isLoading={isLoading || isFetching}
             currentSlug={slug}
           />
         </div>
@@ -57,7 +58,7 @@ export default function Navbar() {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         links={menuLinks}
-        isLoading={isLoading}
+        isLoading={isLoading || isFetching}
         currentSlug={slug}
       />
     </nav>

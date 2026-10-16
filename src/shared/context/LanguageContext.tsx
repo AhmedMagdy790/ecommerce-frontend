@@ -1,7 +1,6 @@
 import React, { createContext, useState, useContext, useEffect, useMemo, useCallback } from "react";
 import { UI_STRINGS, type TranslationSchema } from "@/locales/languages";
 import { langKeys } from "@/shared/utils/langHelpers";
-import { useQueryClient } from "@tanstack/react-query";
 import { type Language, type Paths } from "./typeLanguageContext";
 
 type TranslationPaths = Paths<TranslationSchema>;
@@ -35,7 +34,6 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
   const [lang, setLang] = useState<Language>(getInitialLanguage);
   const [isChangingLanguage, setIsChangingLanguage] = useState(false);
   
-  const queryClient = useQueryClient();
 
   const langObj = UI_STRINGS[lang];
   const rawDir = langObj?._config?.dir;
@@ -49,6 +47,7 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
   }, [lang, dir]);
 
   // دالة التغيير المحدثة
+  
   const changeLanguage = useCallback(
     async (newLang: Language): Promise<void> => {
       if (!langKeys.includes(newLang) || newLang === lang) {
@@ -58,10 +57,10 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
       setIsChangingLanguage(true);
 
       try {
-        // Save language first so Axios can read it immediately.
+        // Save the new language for Axios headers.
         localStorage.setItem("app_lang", newLang);
 
-        // Update the document direction and language.
+        // Update document language and direction.
         const nextDir =
           UI_STRINGS[newLang]?._config?.dir === "rtl" ? "rtl" : "ltr";
 
@@ -69,17 +68,17 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
         document.documentElement.lang = newLang;
         document.body.classList.toggle("is-rtl", nextDir === "rtl");
 
-        // Update React state immediately.
+        // Update React state.
         setLang(newLang);
 
-        // Wait for active queries to finish their refetch.
-        await queryClient.invalidateQueries();
+
       } finally {
         setIsChangingLanguage(false);
       }
     },
-    [lang, queryClient],
+    [lang],
   );
+
 
   const t = useCallback((path: TranslationPaths): string => {
     const value = getNestedValue(UI_STRINGS[lang], path as string);
