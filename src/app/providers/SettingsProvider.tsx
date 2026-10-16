@@ -8,7 +8,6 @@ interface SettingsContextType {
   settings: Settings;
   loading: boolean;
   refresh: () => Promise<void>;
-  updateSettings: (data: Record<string, unknown>) => Promise<boolean>;
 }
 
 const SettingsContext = createContext<SettingsContextType | null>(null);
@@ -22,8 +21,7 @@ export function SettingsProvider({ children }: SettingsProviderProps) {
   const { 
     settings: storeSettings, 
     isLoading: loading, 
-    getAllSettings, 
-    updateSettings 
+    getAllSettings
   } = useSettingsStore();
 
 
@@ -35,13 +33,10 @@ export function SettingsProvider({ children }: SettingsProviderProps) {
     () => ({
       settings,
       loading,
-      refresh: getAllSettings,
-      updateSettings,
+      refresh: getAllSettings
     }),
-    [settings, loading, getAllSettings, updateSettings]
+    [settings, loading, getAllSettings]
   );
-
-  console.log("storeSettings", storeSettings)
 
   return (
     <SettingsContext.Provider value={value}>

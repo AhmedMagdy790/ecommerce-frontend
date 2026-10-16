@@ -83,6 +83,8 @@ export const storeApi = {
     axiosInstance.post(API_ENDPOINTS.checkoutShipping, data)
   ),
   getPaymentGateways: <T = any>() => request<T>(() => axiosInstance.get(API_ENDPOINTS.paymentGateways)),
+
+  getAllSettings: <T = any>() => request<T>(() => axiosInstance.get(API_ENDPOINTS.settings.getAll)),
 };
 
 // 2. واجهة الإدارة (Admin API)
@@ -269,7 +271,6 @@ export const adminApi = {
   getPaymentGatewayOptions: <T = any>() => request<T>(() => axiosInstance.get(API_ENDPOINTS.admin.paymentGateways.paymentGatewayOptions)),
 
   // Settings
-  getAllSettings: <T = any>() => request<T>(() => axiosInstance.get(API_ENDPOINTS.admin.settings.getAll)),
   updateSettings: <T = any, D = Record<string, any>>(data: D) => request<T>(() => axiosInstance.put(API_ENDPOINTS.admin.settings.update, data)),
 };
 

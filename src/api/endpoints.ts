@@ -8,6 +8,10 @@ export const API_ENDPOINTS = {
     me: "/auth/me",
   },
 
+  settings: {
+    getAll: "/settings"
+  },
+
   profile: {
     update: "/profile/update",
     updatePassword: "/profile/update-password",
@@ -262,7 +266,6 @@ export const API_ENDPOINTS = {
     },
     
     settings: {
-      getAll: "/admin/settings",
       update: "/admin/settings"
     }
 
