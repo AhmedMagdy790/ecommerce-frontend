@@ -1,16 +1,18 @@
-import { Languages } from "lucide-react";
+import { Languages, LoaderCircle } from "lucide-react";
 import { useLang } from "@/shared/context/LanguageContext";
 import { langKeys } from "@/shared/utils/langHelpers";
-import { UI_STRINGS } from "@/locales/languages"; // ⭐ استيراد UI_STRINGS لجلب البيانات من config.json
+import { UI_STRINGS } from "@/locales/languages";
 
 export default function LanguageSwitcher() {
-  const { lang, changeLanguage } = useLang();
+  const { lang, changeLanguage, isChangingLanguage } = useLang();
 
-  // دالة تبديل اللغة بشكل دائري بين اللغات المتاحة
-  const handleToggle = () => {
+  const handleToggle = async () => {
+    if (isChangingLanguage || langKeys.length < 2) return;
+
     const currentIndex = langKeys.indexOf(lang);
     const nextIndex = (currentIndex + 1) % langKeys.length;
-    changeLanguage(langKeys[nextIndex]);
+
+    await changeLanguage(langKeys[nextIndex]);
   };
 
   const currentLangName = UI_STRINGS[lang]?._config?.nativeName || lang;
@@ -18,11 +20,14 @@ export default function LanguageSwitcher() {
   return (
     <button
       type="button"
-      onClick={handleToggle}
+      onClick={() => void handleToggle()}
+      disabled={isChangingLanguage}
       aria-label="Change language"
-      className="inline-flex items-center transition-all duration-fast hover:scale-105 active:scale-95"
+      aria-busy={isChangingLanguage}
+      className="inline-flex items-center transition-all duration-fast hover:scale-105 active:scale-95 disabled:cursor-wait disabled:opacity-70"
       style={{
         height: "40px",
+        minWidth: "80px",
         paddingLeft: "var(--spacing-3)",
         paddingRight: "var(--spacing-3)",
         borderRadius: "var(--radius-lg)",
@@ -32,7 +37,20 @@ export default function LanguageSwitcher() {
         gap: "var(--spacing-2)",
       }}
     >
-      <Languages size={18} style={{ color: "var(--color-primary)" }} />
+      {isChangingLanguage ? (
+        <LoaderCircle
+          size={18}
+          className="animate-spin"
+          aria-hidden="true"
+          style={{ color: "var(--color-primary)" }}
+        />
+      ) : (
+        <Languages
+          size={18}
+          aria-hidden="true"
+          style={{ color: "var(--color-primary)" }}
+        />
+      )}
 
       <span
         style={{
@@ -42,7 +60,7 @@ export default function LanguageSwitcher() {
           textTransform: "uppercase",
         }}
       >
-        {currentLangName}
+        {isChangingLanguage ? "..." : currentLangName}
       </span>
     </button>
   );

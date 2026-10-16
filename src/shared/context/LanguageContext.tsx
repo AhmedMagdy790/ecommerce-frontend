@@ -10,9 +10,10 @@ export interface LanguageContextType {
   lang: Language;
   dir: "ltr" | "rtl";
   isRTL: boolean;
+  isChangingLanguage: boolean;
   t: (path: TranslationPaths) => string;
   translate: (value?: Record<string, string | undefined>) => string;
-  changeLanguage: (newLang: Language) => void;
+  changeLanguage: (newLang: Language) => Promise<void>;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -32,6 +33,7 @@ const getInitialLanguage = (): Language => {
 
 export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
   const [lang, setLang] = useState<Language>(getInitialLanguage);
+  const [isChangingLanguage, setIsChangingLanguage] = useState(false);
   
   const queryClient = useQueryClient();
 
@@ -47,24 +49,37 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
   }, [lang, dir]);
 
   // دالة التغيير المحدثة
-  const changeLanguage = useCallback((newLang: Language) => {
-    if (langKeys.includes(newLang) && newLang !== lang) {
-      // أ) حفظ القيمة في localStorage فوراً لكي يقرأها Axios Interceptor في نفس اللحظة
-      localStorage.setItem("app_lang", newLang);
-      
-      // ب) تحديث الـ DOM فوراً
-      const nextDir = (UI_STRINGS[newLang] )?._config?.dir || "ltr";
-      document.documentElement.dir = nextDir;
-      document.documentElement.lang = newLang;
-      document.body.classList.toggle('is-rtl', nextDir === 'rtl');
+  const changeLanguage = useCallback(
+    async (newLang: Language): Promise<void> => {
+      if (!langKeys.includes(newLang) || newLang === lang) {
+        return;
+      }
 
-      // جـ) تحديث حالة React
-      setLang(newLang);
+      setIsChangingLanguage(true);
 
-      // د) إعادة جلب/إبطال كاش جميع الاستعلامات بالحالة الجديدة فوراً
-      queryClient.invalidateQueries();
-    }
-  }, [lang, queryClient]);
+      try {
+        // Save language first so Axios can read it immediately.
+        localStorage.setItem("app_lang", newLang);
+
+        // Update the document direction and language.
+        const nextDir =
+          UI_STRINGS[newLang]?._config?.dir === "rtl" ? "rtl" : "ltr";
+
+        document.documentElement.dir = nextDir;
+        document.documentElement.lang = newLang;
+        document.body.classList.toggle("is-rtl", nextDir === "rtl");
+
+        // Update React state immediately.
+        setLang(newLang);
+
+        // Wait for active queries to finish their refetch.
+        await queryClient.invalidateQueries();
+      } finally {
+        setIsChangingLanguage(false);
+      }
+    },
+    [lang, queryClient],
+  );
 
   const t = useCallback((path: TranslationPaths): string => {
     const value = getNestedValue(UI_STRINGS[lang], path as string);
@@ -79,9 +94,18 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
     return value[lang] || value["en"] || Object.values(value)[0] || "";
   }, [lang]);
 
-  const value = useMemo(() => ({
-    lang, dir, t, translate, changeLanguage, isRTL
-  }), [lang, dir, t, translate, changeLanguage, isRTL]);
+  const value = useMemo(
+    () => ({
+      lang,
+      dir,
+      t,
+      translate,
+      changeLanguage,
+      isRTL,
+      isChangingLanguage,
+    }),
+    [lang, dir, t, translate, changeLanguage, isRTL, isChangingLanguage],
+  );
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 };
