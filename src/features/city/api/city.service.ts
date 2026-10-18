@@ -2,9 +2,10 @@ import { adminApi } from "@/api/client";
 import type { 
   SuccessApiResponse 
 } from "@/shared/types/api.types";
-import type { CityFilters } from "../model/types/city.types";
+import type { City, CityFilters } from "../model/types/city.types";
 import type { CityFormData } from "../model/schema/citySchema";
 import type { CityListResponse, CitySingleResponse } from "../model/types/city.api";
+import type { TranslatedText } from "@/shared/types/types";
 
 export const cityService = {
 
@@ -14,7 +15,7 @@ export const cityService = {
   },
 
   getByCountryList(countryId: number | string) {
-    return adminApi.getCitiesListByCountry<CityListResponse>(countryId);
+    return adminApi.getCitiesListByCountry<{ data: City<TranslatedText>[]}>(countryId);
   },
 
   create(payload: CityFormData) {

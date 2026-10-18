@@ -49,8 +49,10 @@ export function useShippingRateOptions(initialCountryId?: number | string | null
     const fetchCitiesByCountry = async () => {
       try {
         setIsCitiesLoading(true);
+
         const response = await cityService.getByCountryList(selectedCountryId);
-        setCities(response.data?.items || []);
+
+        setCities(response.data || []);
       } catch (error) {
         console.error("Failed to fetch cities by country:", error);
         setCities([]);
@@ -67,6 +69,7 @@ export function useShippingRateOptions(initialCountryId?: number | string | null
     setCities([]);
     setSelectedCountryId(countryId);
   };
+
 
   // تحويل القوائم إلى صيغة خيارات مناسبة للـ CustomSelect
   const courierOptions = useMemo(() => {
