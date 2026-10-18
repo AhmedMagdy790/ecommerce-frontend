@@ -27,7 +27,8 @@ export const publicRoutes = {
   path: "/",
   element: <UserLayout />,
   children: [
-    // { index: true, element: <HomePage /> }, // المسار الافتراضي للـ "/"
+    
+    { index: true, element: <DynamicCmsPage /> },
     { path: "shop", element: <ShopPage /> },
     // { path: "search", element: <SearchPage /> },
 
@@ -54,6 +55,7 @@ export const publicRoutes = {
 
     // Profile Routes
     { path: "profile", element: <ProfilePage /> },
+
 
     { path: "pages/:slug", element: <DynamicCmsPage /> },
     // { path: "profile/orders", element: <OrdersPage /> },

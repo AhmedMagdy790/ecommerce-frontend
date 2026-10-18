@@ -9,9 +9,12 @@ import { useCmsPage } from "./hooks/useCmsPage";
 export default function DynamicCmsPage() {
   const { slug } = useParams();
   const { lang } = useLang();
-  const { data, isLoading, error, refetch } = useCmsPage(slug);
 
-  if (!slug) {
+  const pageSlug = location.pathname === "/" ? "home" : slug;
+
+  const { data, isLoading, error, refetch } = useCmsPage(pageSlug);
+
+  if (!pageSlug) {
     return (
       <PageError
         message={lang === "ar" ? "الرابط غير صالح" : "Invalid link"}
@@ -43,9 +46,9 @@ export default function DynamicCmsPage() {
   const pageObject = data?.page ?? data;
   const sectionsData = pageObject?.sections ?? [];
 
-  const pageTitle = pageObject?.meta_title || pageObject?.title || slug;
+  const pageTitle = pageObject?.meta_title || pageObject?.title || pageSlug;
   const pageDescription = pageObject?.meta_description;
-  const canonicalUrl = `${import.meta.env.VITE_APP_URL}/${slug}`;
+  const canonicalUrl = `${import.meta.env.VITE_APP_URL}/${pageSlug}`;
 
 
   return (
