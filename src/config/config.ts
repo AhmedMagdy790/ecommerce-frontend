@@ -13,6 +13,6 @@ export const env = {
   REVERB_PORT: import.meta.env.VITE_REVERB_PORT,
   REVERB_SCHEME: import.meta.env.VITE_REVERB_SCHEME,
   REVERB_APP_ID: import.meta.env.VITE_REVERB_APP_ID,
-  
+  VITE_API_TIMEOUT: import.meta.env.VITE_API_TIMEOUT || 20000
 };
 
