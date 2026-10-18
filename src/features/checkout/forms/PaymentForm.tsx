@@ -8,6 +8,7 @@ import { usePaymentGateways } from "../hooks/usePaymentGateways";
 import { useCart } from "@/pages/Cart/hook/useCart";
 import { RadioGroup, type RadioOption } from "@/shared/components/RadioGroup";
 import { shippingService } from "@/services/shippingService";
+import { useShippingCalculation } from "../hooks/useShippingCalculation";
 
 interface PaymentFormProps {
   onNext: () => void;
@@ -25,6 +26,8 @@ export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
   
   const { cartItems } = useCart();
 
+  const { setCalculatingShipping } = useShippingCalculation();
+
   const handlePaymentChange = (gatewayIdOption: unknown) => {
     if (!gatewayIdOption) {
       setValue("payment_gateway_id", "", { shouldValidate: true });
@@ -34,7 +37,6 @@ export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
       return;
     }
 
-    // البحث بالـ id الخاص بالبوابة
     const selectedGateway = gateways.find(
       (g) => String(g.id) === String(gatewayIdOption) || String(g.slug) === String(gatewayIdOption)
     );
@@ -43,11 +45,8 @@ export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
 
     const gatewayId = selectedGateway.id;
     const gatewaySlug = selectedGateway.slug;
-    
-    // استخراج اسم البوابة بأمان
     const rawName = selectedGateway.name;
 
-    // تحديث قيم الفورم بدقة
     setValue("payment_gateway_id", Number(gatewayId), { shouldValidate: true, shouldDirty: true });
     setValue("payment_method", gatewaySlug, { shouldValidate: true, shouldDirty: true });
     setValue("payment_method_name", rawName, { shouldValidate: true });
@@ -59,6 +58,9 @@ export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
         quantity: item.quantity
       }));
 
+      // تشغيل مؤشر التحميل الخاص بالشحن/الرسوم
+      setCalculatingShipping(true);
+
       shippingService.calculateShipping({
         city_id: Number(currentCityId),
         shipping_rate_id: Number(selectedShippingId),
@@ -66,10 +68,7 @@ export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
         payment_gateway_id: Number(gatewayId),
       })
         .then((calculation) => {
-          console.log("calculation payment", calculation);
-
           if (calculation) {
-            // استخراج القيم العددية من الـ Money Objects بشكل آمن وسليم
             const totalShippingAndFee = 
               Number(calculation.customer_total_shipping_cost?.amount) || 
               Number(calculation.actual_shipping_cost?.amount) || 
@@ -85,15 +84,19 @@ export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
               Number(calculation.breakdown?.cod_fee?.amount) || 
               0;
 
-            // تحديث قيم الفورم بدقة لتنعكس فوراً على الـ CheckoutSummary
             setValue("shipping_cost", totalShippingAndFee, { shouldValidate: true, shouldDirty: true });
             setValue("payment_fee", paymentFee, { shouldValidate: true, shouldDirty: true });
             setValue("cod_fee", codFee, { shouldValidate: true, shouldDirty: true });
           }
         })
-        .catch(() => null);
+        .catch(() => null)
+        .finally(() => {
+          // إيقاف مؤشر التحميل بغض النظر عن نجاح أو فشل الطلب
+          setCalculatingShipping(false);
+        });
     }
   };
+
 
   const getGatewayIcon = (slug: string) => {
     switch (slug?.toLowerCase()) {

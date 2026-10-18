@@ -20,46 +20,72 @@ export default function ShippingMethodForm({ onNext, onBack }: ShippingMethodFor
 
   const currentCityId = watch("city_id");
   const selectedShippingId = watch("shipping_rate_id");
-  const currency = watch("currency") || "USD";
+  const currency = watch("currency") || "EGY";
   const { cartItems } = useCart();
+
+
+
 
   const handleShippingChange = async (option: ShippingOption | null) => {
 
     if (!option) {
-      setValue("shipping_rate_id", "", { shouldValidate: true, shouldDirty: true });
-      setValue("shipping_cost", 0, { shouldValidate: true, shouldDirty: true });
-      setValue("shipping_method_name", "", { shouldValidate: true });
+      setValue("shipping_rate_id", "", {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+      setValue("shipping_cost", 0, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+      setValue("shipping_method_name", "", {
+        shouldValidate: true,
+      });
       return;
     }
 
     const targetRateId = option.shipping_rate_id ?? option.id;
 
-    // Handle deselection if the same option is clicked again
-    if (selectedShippingId !== undefined && selectedShippingId !== null && String(selectedShippingId) === String(targetRateId)) {
-      setValue("shipping_rate_id", "", { shouldValidate: true, shouldDirty: true });
-      setValue("shipping_cost", 0, { shouldValidate: true, shouldDirty: true });
-      setValue("shipping_method_name", "", { shouldValidate: true });
+    // Check for deselection before updating the selected ID
+    if (
+      selectedShippingId != null &&
+      selectedShippingId !== "" &&
+      String(selectedShippingId) === String(targetRateId)
+    ) {
+      setValue("shipping_rate_id", "", {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+      setValue("shipping_cost", 0, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+      setValue("shipping_method_name", "", {
+        shouldValidate: true,
+      });
       return;
     }
 
-    // Ensure keys match backend expectations: product_variant_id
+    // Set the selected rate before awaiting the calculation
+    setValue("shipping_rate_id", Number(targetRateId), {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+
     const items = cartItems?.map(item => ({
       product_variant_id: item.product_variant_id ?? item.id,
-      quantity: item.quantity
-    })) || [];
+      quantity: item.quantity,
+    })) ?? [];
 
-    // Call calculation service
+
     const calculation = await shippingService.calculateShipping({
       city_id: Number(currentCityId),
       shipping_rate_id: Number(targetRateId),
-      items: items,
-      payment_gateway_id: undefined
+      items,
+      payment_gateway_id: undefined,
     }).catch((err) => {
       console.error("Calculate shipping error:", err);
       return null;
     });
-
-    console.log("calculation", calculation);
 
     // استخراج القيمة والعملة بدقة من الـ Objects الخاصة بالاستجابة
     const fee = 
@@ -80,7 +106,6 @@ export default function ShippingMethodForm({ onNext, onBack }: ShippingMethodFor
     const shippingName = option.name ?? `Shipping Method #${targetRateId}`;
 
     // Update form context state
-    setValue("shipping_rate_id", Number(targetRateId), { shouldValidate: true, shouldDirty: true });
     setValue("shipping_cost", Number(fee), { shouldValidate: true, shouldDirty: true });
     setValue("currency", optionCurrency, { shouldValidate: true, shouldDirty: true });
     setValue("shipping_method_name", shippingName, { shouldValidate: true });

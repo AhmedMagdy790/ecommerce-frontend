@@ -1,4 +1,4 @@
-// src/pages/Checkout/CheckoutSummary.tsx
+// src/features/checkout/components/CheckoutSummary.tsx
 
 import { useFormContext } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -7,6 +7,9 @@ import { useCart } from "@/pages/Cart/hook/useCart";
 import { useCartCalculations } from "@/hooks/useCartCalculations";
 import { useSettings } from "@/hooks/useSettings";
 import { formatCurrency } from "@/shared/utils/currency";
+import { useShippingCalculation } from "../hooks/useShippingCalculation";
+import CheckoutSummarySkeleton from "./CheckoutSummarySkeleton";
+
 
 interface CheckoutSummaryProps {
   loading?: boolean;
@@ -37,6 +40,8 @@ export default function CheckoutSummary({ loading = false }: CheckoutSummaryProp
 
   const shippingCost = watch("shipping_cost") || 0;
   const paymentFee = watch("payment_fee") || 0;
+
+  const { calculatingShipping } = useShippingCalculation();
   
   const { settings } = useSettings();
 
@@ -45,7 +50,6 @@ export default function CheckoutSummary({ loading = false }: CheckoutSummaryProp
 
   const { cartItems, isLoading: isCartLoading } = useCart();
 
-  
   const { subtotal, shipping, tax, discount, total } = useCartCalculations(
     cartItems || [], 
     0,
@@ -55,7 +59,7 @@ export default function CheckoutSummary({ loading = false }: CheckoutSummaryProp
   );
 
   return (
-    <section className="rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] p-6 space-y-6 shadow-sm">
+    <section className="relative rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] p-6 space-y-6 shadow-sm">
       <div className="flex items-center gap-2 border-b border-[var(--color-border)] pb-4">
         <ShoppingBag className="h-5 w-5 text-[var(--color-primary)]" />
         <h2 className="text-lg font-semibold">{t("summary.title", "Order Summary")}</h2>
@@ -64,9 +68,7 @@ export default function CheckoutSummary({ loading = false }: CheckoutSummaryProp
       {/* Cart Items List */}
       <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
         {isCartLoading ? (
-          <div className="flex justify-center py-6">
-            <Loader2 className="h-6 w-6 animate-spin text-[var(--color-primary)]" />
-          </div>
+          <CheckoutSummarySkeleton />
         ) : cartItems && cartItems.length > 0 ? (
           cartItems.map((item: CheckoutCartItem, index: number) => {
             const variant = item.variant || item.product;
@@ -129,6 +131,7 @@ export default function CheckoutSummary({ loading = false }: CheckoutSummaryProp
 
       {/* Cost Calculations */}
       <div className="border-t border-[var(--color-border)] pt-4 space-y-2.5 text-sm">
+        {/* Subtotal */}
         <div className="flex justify-between text-[var(--color-text-secondary)]">
           <span>{t("summary.subtotal", "Subtotal")}</span>
           <span className="font-medium text-[var(--color-text)]">
@@ -136,16 +139,24 @@ export default function CheckoutSummary({ loading = false }: CheckoutSummaryProp
           </span>
         </div>
 
+        {/* Shipping */}
         <div className="flex justify-between text-[var(--color-text-secondary)]">
           <span className="flex items-center gap-1.5">
             <Truck size={14} />
             {t("summary.shipping", "Shipping")}
           </span>
-          <span className="font-medium text-[var(--color-text)]">
-            {shipping > 0 ? formatCurrency(shipping, currencySymbol) : t("summary.calculatedAtNext", "Calculated")}
+          <span className="font-medium text-[var(--color-text)] flex items-center gap-1">
+            {calculatingShipping ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-[var(--color-primary)]" />
+            ) : shipping > 0 ? (
+              formatCurrency(shipping, currencySymbol)
+            ) : (
+              t("summary.calculatedAtNext", "Calculated")
+            )}
           </span>
         </div>
 
+        {/* Tax */}
         {tax > 0 && (
           <div className="flex justify-between text-[var(--color-text-secondary)]">
             <span>{t("summary.tax", "Tax")}</span>
@@ -155,6 +166,7 @@ export default function CheckoutSummary({ loading = false }: CheckoutSummaryProp
           </div>
         )}
 
+        {/* Discount */}
         {discount > 0 && (
           <div className="flex justify-between text-[var(--color-success,rgb(34,197,94))]">
             <span>{t("summary.discount", "Discount")}</span>
@@ -164,6 +176,7 @@ export default function CheckoutSummary({ loading = false }: CheckoutSummaryProp
           </div>
         )}
 
+        {/* Payment Fee */}
         {paymentFee > 0 && (
           <div className="flex justify-between text-[var(--color-text-secondary)]">
             <span className="flex items-center gap-1.5">
@@ -176,6 +189,7 @@ export default function CheckoutSummary({ loading = false }: CheckoutSummaryProp
           </div>
         )}
 
+        {/* Total */}
         <div className="border-t border-[var(--color-border)] pt-3 flex justify-between text-base font-semibold text-[var(--color-text)]">
           <span>{t("summary.total", "Total")}</span>
           <span className="text-[var(--color-primary)]">
