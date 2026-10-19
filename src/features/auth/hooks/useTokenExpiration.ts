@@ -11,14 +11,16 @@ export const getTokenExpiration = (expiresIn?: number | null) => {
     return Date.now() + expiresIn * 1000;
 };
 
-interface UseTokenExpirationOptions {
-    onExpire?: () => void;
-}
-
 const MAX_TIMEOUT = 2_147_000_000;
+
+interface UseTokenExpirationOptions {
+    onExpire?: () => void | Promise<void>;
+    refreshBeforeMs?: number;
+}
 
 export function useTokenExpiration({
     onExpire,
+    refreshBeforeMs = 60_000,
 }: UseTokenExpirationOptions = {}) {
     const accessToken = useAuthStore(
         (state) => state.accessToken
@@ -34,13 +36,14 @@ export function useTokenExpiration({
         onExpireRef.current = onExpire;
     }, [onExpire]);
 
+    console.log("accessToken", accessToken)
+    console.log("expiresAt", expiresAt)
+
     useEffect(() => {
-        if (!accessToken || expiresAt === null) {
-            return;
-        }
+        if (!accessToken || expiresAt === null) return;
 
         let timer: number | undefined;
-        let expiredHandled = false;
+        let handled = false;
 
         const clearTimer = () => {
             if (timer !== undefined) {
@@ -52,21 +55,26 @@ export function useTokenExpiration({
         const checkExpiration = () => {
             clearTimer();
 
-            if (expiredHandled) {
-                return;
-            }
+            if (handled) return;
 
             const remaining = expiresAt - Date.now();
+            const timeUntilRefresh = remaining - refreshBeforeMs;
 
-            if (remaining <= 0) {
-                expiredHandled = true;
-                onExpireRef.current?.();
+            console.log("Token remaining:", Math.round(remaining / 1000), "seconds");
+            console.log("Refresh scheduled in:", Math.round(timeUntilRefresh / 1000), "seconds");
+
+            if (timeUntilRefresh <= 0) {
+                handled = true;
+
+                console.log("Refreshing access token early...");
+
+                void onExpireRef.current?.();
                 return;
             }
 
             timer = window.setTimeout(
                 checkExpiration,
-                Math.min(remaining, MAX_TIMEOUT)
+                Math.min(timeUntilRefresh, MAX_TIMEOUT)
             );
         };
 
@@ -85,11 +93,11 @@ export function useTokenExpiration({
 
         return () => {
             clearTimer();
-
             document.removeEventListener(
                 "visibilitychange",
                 handleVisibilityChange
             );
         };
-    }, [accessToken, expiresAt]);
+    }, [accessToken, expiresAt, refreshBeforeMs]);
 }
+

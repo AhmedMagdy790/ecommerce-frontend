@@ -9,7 +9,6 @@ import {
 import { useAuthStore } from "@/features/auth/model/store/useAuthStore";
 import type { User } from "@/features/auth/model/types/user.types";
 import type { LoginDto } from "@/features/auth/model/types/user.dto";
-import { useTokenExpiration } from "@/features/auth/hooks/useTokenExpiration";
 
 export type { User };
 
@@ -36,20 +35,8 @@ export function AuthProvider({ children }: Props) {
     isInitialized,
     fetchUser,
     login: storeLogin,
-    logout: storeLogout,
-    updateAccessToken,
+    logout: storeLogout
   } = useAuthStore();
-
-  useTokenExpiration({
-    onExpire: async () => {
-      try {
-        await updateAccessToken();
-      } catch (error) {
-        console.error("Failed to refresh access token:", error);
-        await storeLogout();
-      }
-    },
-  });
 
   const login = useCallback(
     async (data: LoginDto) => {

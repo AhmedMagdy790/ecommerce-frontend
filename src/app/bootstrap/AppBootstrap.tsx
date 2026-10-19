@@ -12,7 +12,6 @@ export function AppBootstrap({ children }: AppBootstrapProps) {
     if (started.current) return;
     started.current = true;
 
-    // تشغيل دالة التهيئة العامة عند بدء التطبيق
     requestAnimationFrame(() => {
       bootstrapApp().catch((error) => {
         console.error("AppBootstrap execution failed:", error);

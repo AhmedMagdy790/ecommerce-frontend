@@ -49,13 +49,23 @@ export const useAuthStore = create<IAuthState>()(
 
             try {
                 const tokenData = await authService.refresh();
-                const newToken = tokenData?.data?.accessToken;
+
+
+                const {
+                    accessToken: newToken,
+                    expires_in,
+                } = tokenData.data;
 
                 if (!newToken) {
                     throw new Error("No access token returned");
                 }
 
-                set({ accessToken: newToken });
+
+                set({
+                    accessToken: newToken,
+                    accessTokenExpiresAt: getTokenExpiration(Number(expires_in)),
+                    lastTokenActivityAt: saveLastTokenActivity(),
+                });
 
                 const meResponse = await authService.me();
                 const { user } = meResponse.data;
@@ -74,8 +84,7 @@ export const useAuthStore = create<IAuthState>()(
                     isAuthenticated: false,
                 });
 
-                // لا تترك مؤشر الجلسة القديمة موجودًا
-                localStorage.removeItem("has_logged_in");
+
             } finally {
                 set({
                     isInitialized: true,
@@ -212,6 +221,11 @@ export const useAuthStore = create<IAuthState>()(
                 const response = await authService.refresh();
 
                 const { accessToken, expires_in } = response.data;
+
+                console.log("Access token refreshed successfully");
+                console.log("New expiration:", new Date(
+                    getTokenExpiration(Number(expires_in))!
+                ).toLocaleTimeString());
 
                 if (
                     !accessToken ||

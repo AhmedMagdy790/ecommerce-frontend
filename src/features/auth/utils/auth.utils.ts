@@ -4,6 +4,7 @@ const LAST_TOKEN_ACTIVITY_KEY = "last_token_activity_at";
 export const saveLastTokenActivity = (): number => {
     const timestamp = Date.now();
 
+
     localStorage.setItem(
         LAST_TOKEN_ACTIVITY_KEY,
         String(timestamp),
