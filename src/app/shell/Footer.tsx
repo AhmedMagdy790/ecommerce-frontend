@@ -1,7 +1,63 @@
+// src/components/layout/Footer.tsx
+
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useLang } from "@/shared/context/LanguageContext";
+import { useMenuLinks } from "@/features/navigation/hooks/useMenuLinks";
+
+type FooterLinkItem = {
+  id: number;
+  title: string;
+  href: string;
+  isActive: boolean;
+  isExternal: boolean;
+  sortOrder?: number;
+  children?: FooterLinkItem[];
+};
 
 const Footer = () => {
-  const { lang, isRTL } = useLang();
+  const { isRTL } = useLang();
+  const { menuLinks, isLoading } = useMenuLinks("footer");
+  const { t } = useTranslation("footer");
+
+  const links: FooterLinkItem[] = menuLinks?.items ?? [];
+
+  const supportPaths = new Set([
+    "/pages/help",
+    "/pages/faq",
+    "/pages/contact",
+    "/pages/shipping-policy",
+    "/pages/return-refund-policy",
+  ]);
+
+  const legalPaths = new Set([
+    "/pages/privacy-policy",
+    "/pages/terms-and-conditions",
+  ]);
+
+  // فلترة الروابط النشطة فقط
+  const activeLinks = links.filter((link) => link.isActive);
+
+  const supportLinks = activeLinks.filter((link) =>
+    supportPaths.has(link.href)
+  );
+
+  const legalLinks = activeLinks.filter((link) =>
+    legalPaths.has(link.href)
+  );
+
+  const columns = [
+    {
+      title: t("sections.support", "الدعم"),
+      links: supportLinks,
+    },
+    {
+      title: t("sections.legal", "قانوني"),
+      links: legalLinks,
+    },
+  ];
+
+  const linkClass = "transition-colors hover:text-[var(--color-primary)]";
 
   return (
     <footer
@@ -14,7 +70,7 @@ const Footer = () => {
         paddingBottom: "var(--spacing-8)",
       }}
     >
-      <div 
+      <div
         className="mx-auto grid grid-cols-2 md:grid-cols-4"
         style={{
           maxWidth: "var(--container-2xl)",
@@ -24,10 +80,17 @@ const Footer = () => {
           marginBottom: "var(--spacing-16)",
         }}
       >
-        {/* Brand Column */}
-        <div className="col-span-2 md:col-span-1" style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-3)" }}>
-          <a 
-            href="/" 
+        {/* Brand */}
+        <div
+          className="col-span-2 md:col-span-1"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "var(--spacing-3)",
+          }}
+        >
+          <Link
+            to="/"
             className="block tracking-tighter transition-opacity hover:opacity-80"
             style={{
               fontSize: "var(--text-xl)",
@@ -38,111 +101,110 @@ const Footer = () => {
             }}
           >
             AURA.
-          </a>
-          <p 
+          </Link>
+
+          <p
             style={{
               fontSize: "var(--text-sm)",
               fontWeight: "var(--font-normal)",
-              fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)",
               color: "var(--color-text-secondary)",
               lineHeight: 1.6,
             }}
           >
-            {lang === "ar" 
-              ? "نارتقي بالأساسيات اليومية من خلال تصميم خالد جودة لا تُقدّر بثمن." 
-              : "Elevating everyday essentials with timeless design and uncompromising quality."}
+            {t(
+              "brandDescription",
+              "نرتقي بالأساسيات اليومية من خلال تصميم خالد وجودة لا تُقدّر بثمن."
+            )}
           </p>
         </div>
 
-        {/* Shop Column */}
+        {/* Shop */}
         <div>
-          <h4 
+          <h4
             style={{
               fontSize: "var(--text-base)",
               fontWeight: "var(--font-semibold)",
-              fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)",
               color: "var(--color-text-primary)",
               marginBottom: "var(--spacing-4)",
             }}
           >
-            {lang === "ar" ? "التسوق" : "Shop"}
+            {t("sections.shop", "التسوق")}
           </h4>
-          <ul 
+
+          <ul
             style={{
               display: "flex",
               flexDirection: "column",
               gap: "var(--spacing-3)",
               fontSize: "var(--text-sm)",
-              fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)",
               color: "var(--color-text-secondary)",
             }}
           >
-            <li><a href="#" className="transition-colors hover:text-[var(--color-primary)]">{lang === "ar" ? "وصل حديثاً" : "New Arrivals"}</a></li>
-            <li><a href="#" className="transition-colors hover:text-[var(--color-primary)]">{lang === "ar" ? "الأكثر مبيعاً" : "Best Sellers"}</a></li>
-            <li><a href="#" className="transition-colors hover:text-[var(--color-primary)]">{lang === "ar" ? "الإكسسوارات" : "Accessories"}</a></li>
+            <li>
+              <Link to="/products" className={linkClass}>
+                {t("links.allProducts", "جميع المنتجات")}
+              </Link>
+            </li>
+            <li>
+              <Link to="/pages/brands" className={linkClass}>
+                {t("links.brands", "العلامات التجارية")}
+              </Link>
+            </li>
           </ul>
         </div>
 
-        {/* Support Column */}
-        <div>
-          <h4 
-            style={{
-              fontSize: "var(--text-base)",
-              fontWeight: "var(--font-semibold)",
-              fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)",
-              color: "var(--color-text-primary)",
-              marginBottom: "var(--spacing-4)",
-            }}
-          >
-            {lang === "ar" ? "الدعم" : "Support"}
-          </h4>
-          <ul 
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "var(--spacing-3)",
-              fontSize: "var(--text-sm)",
-              fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)",
-              color: "var(--color-text-secondary)",
-            }}
-          >
-            <li><a href="#" className="transition-colors hover:text-[var(--color-primary)]">{lang === "ar" ? "اتصل بنا" : "Contact Us"}</a></li>
-            <li><a href="#" className="transition-colors hover:text-[var(--color-primary)]">{lang === "ar" ? "سياسة الشحن" : "Shipping Policy"}</a></li>
-            <li><a href="#" className="transition-colors hover:text-[var(--color-primary)]">{lang === "ar" ? "المرتجعات" : "Returns"}</a></li>
-          </ul>
-        </div>
+        {/* Dynamic Footer Columns */}
+        {columns.map((column) => (
+          <div key={column.title}>
+            <h4
+              style={{
+                fontSize: "var(--text-base)",
+                fontWeight: "var(--font-semibold)",
+                color: "var(--color-text-primary)",
+                marginBottom: "var(--spacing-4)",
+              }}
+            >
+              {column.title}
+            </h4>
 
-        {/* Legal Column */}
-        <div>
-          <h4 
-            style={{
-              fontSize: "var(--text-base)",
-              fontWeight: "var(--font-semibold)",
-              fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)",
-              color: "var(--color-text-primary)",
-              marginBottom: "var(--spacing-4)",
-            }}
-          >
-            {lang === "ar" ? "قانوني" : "Legal"}
-          </h4>
-          <ul 
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "var(--spacing-3)",
-              fontSize: "var(--text-sm)",
-              fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)",
-              color: "var(--color-text-secondary)",
-            }}
-          >
-            <li><a href="#" className="transition-colors hover:text-[var(--color-primary)]">{lang === "ar" ? "سياسة الخصوصية" : "Privacy Policy"}</a></li>
-            <li><a href="#" className="transition-colors hover:text-[var(--color-primary)]">{lang === "ar" ? "شروط الخدمة" : "Terms of Service"}</a></li>
-          </ul>
-        </div>
+            <ul
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "var(--spacing-3)",
+                fontSize: "var(--text-sm)",
+                color: "var(--color-text-secondary)",
+              }}
+            >
+              {isLoading ? (
+                <li>{t("loading", "جارٍ التحميل...")}</li>
+              ) : (
+                column.links.map((link) => (
+                  <li key={link.id}>
+                    {link.isExternal ? (
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={linkClass}
+                      >
+                        {link.title}
+                      </a>
+                    ) : (
+                      <Link to={link.href} className={linkClass}>
+                        {link.title}
+                      </Link>
+                    )}
+                  </li>
+                ))
+              )}
+            </ul>
+          </div>
+        ))}
       </div>
 
       {/* Bottom Bar */}
-      <div 
+      <div
         className="mx-auto flex flex-col md:flex-row justify-between items-center border-t"
         style={{
           maxWidth: "var(--container-2xl)",
@@ -153,28 +215,39 @@ const Footer = () => {
           gap: "var(--spacing-4)",
         }}
       >
-        <p 
+        <p
           style={{
             fontSize: "var(--text-xs)",
-            fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)",
             color: "var(--color-text-muted)",
           }}
         >
-          {lang === "ar" ? "© 2026 متجر أورا. جميع الحقوق محفوظة." : "© 2026 AURA Store. All rights reserved."}
+          {t("copyright", "© 2026 متجر أورا. جميع الحقوق محفوظة.")}
         </p>
-        
-        <div 
+
+        <div
           className="flex"
           style={{
             gap: "var(--spacing-6)",
             fontSize: "var(--text-xs)",
-            fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)",
             color: "var(--color-text-secondary)",
           }}
         >
-          <a href="#" className="transition-colors hover:text-[var(--color-primary)]">Instagram</a>
-          <a href="#" className="transition-colors hover:text-[var(--color-primary)]">Twitter</a>
-          <a href="#" className="transition-colors hover:text-[var(--color-primary)]">LinkedIn</a>
+          <a
+            href="https://www.instagram.com/"
+            target="_blank"
+            rel="noreferrer"
+            className={linkClass}
+          >
+            Instagram
+          </a>
+          <a
+            href="https://www.linkedin.com/"
+            target="_blank"
+            rel="noreferrer"
+            className={linkClass}
+          >
+            LinkedIn
+          </a>
         </div>
       </div>
     </footer>

@@ -22,6 +22,7 @@ export const publicRoutes = {
   children: [
     { index: true, element: <DynamicCmsPage /> },
     { path: "shop", element: <ShopPage /> },
+    { path: "products", element: <ShopPage /> },
     { path: "products/:slug", element: <ProductPage /> },
     { path: "cart", element: <CartPage /> },
     
