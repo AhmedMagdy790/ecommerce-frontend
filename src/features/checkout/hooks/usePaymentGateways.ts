@@ -1,32 +1,40 @@
-// src/pages/Checkout/hooks/usePaymentGateways.ts
-
 import { useState, useEffect } from "react";
 import { paymentService } from "@/services/paymentService";
 import type { PaymentGateway } from "@/features/payment/model/types/payment.types";
 
-
-export function usePaymentGateways() {
+export function usePaymentGateways(countryId: number | null) {
   const [gateways, setGateways] = useState<PaymentGateway<string>[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let isMounted = true;
+    if (countryId == null) return;
+
+    let isActive = true;
 
     async function fetchGateways() {
+      setLoading(true);
+      setError(null);
+
+
       try {
-        setLoading(true);
-        const gateways = await paymentService.getPaymentGateways();
-        if (isMounted) {
-          setGateways(gateways ?? []);
-          setError(null);
+        const result =
+          await paymentService.getPaymentGateways(Number(countryId));
+
+        if (isActive) {
+          setGateways(result ?? []);
         }
       } catch (err) {
-        if (isMounted) {
-          setError(err instanceof Error ? err.message : "Failed to load payment gateways");
+        if (isActive) {
+          setGateways([]);
+          setError(
+            err instanceof Error
+              ? err.message
+              : "Failed to load payment gateways",
+          );
         }
       } finally {
-        if (isMounted) {
+        if (isActive) {
           setLoading(false);
         }
       }
@@ -35,13 +43,13 @@ export function usePaymentGateways() {
     fetchGateways();
 
     return () => {
-      isMounted = false;
+      isActive = false;
     };
-  }, []);
+  }, [countryId]);
 
   return {
-    gateways,
-    loading,
-    error,
+    gateways: countryId == null ? [] : gateways,
+    loading: countryId != null && loading,
+    error: countryId == null ? null : error,
   };
 }

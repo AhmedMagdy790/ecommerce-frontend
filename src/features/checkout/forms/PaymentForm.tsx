@@ -18,7 +18,7 @@ interface PaymentFormProps {
 export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
   const { t } = useTranslation("checkout");
   const { register, watch, setValue, formState: { errors } } = useFormContext();
-  const { gateways, loading, error: gatewayError } = usePaymentGateways();
+  const { gateways, loading, error: gatewayError } = usePaymentGateways(watch("country_id"));
 
   const currentCityId = watch("city_id");
   const selectedShippingId = watch("shipping_rate_id");
@@ -58,7 +58,6 @@ export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
         quantity: item.quantity
       }));
 
-      // تشغيل مؤشر التحميل الخاص بالشحن/الرسوم
       setCalculatingShipping(true);
 
       shippingService.calculateShipping({
