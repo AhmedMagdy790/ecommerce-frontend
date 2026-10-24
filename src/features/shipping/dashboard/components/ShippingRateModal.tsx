@@ -83,9 +83,7 @@ export default function ShippingRateModal({ isOpen, closeModal, rate }: IShippin
         )}
 
         <div className="space-y-5 py-3">
-          {/* اختيار الدولة وشركة الشحن */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* 1. اختيار الدولة (يؤثر مباشرة على جلب المدن) */}
             <CustomSelect
               label={t("country.select", "Country")}
               disabled={isSubmitting || isCountriesLoading}
@@ -93,8 +91,9 @@ export default function ShippingRateModal({ isOpen, closeModal, rate }: IShippin
               options={countryOptions}
               value={selectedCountryId ?? ""}
               onChange={(countryId) => {
-                handleCountryChange(countryId);
-                setValue("city_id", 0); // تصفير اختيار المدينة عند تغيير الدولة
+
+                handleCountryChange(Number(countryId));
+                setValue("city_id", 0);
               }}
               error={errors.city_id?.message}
             />
