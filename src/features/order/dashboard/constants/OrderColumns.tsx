@@ -49,13 +49,13 @@ export const getOrderColumns = (
   {
     id: "total_amount",
     header: t("order.columns.total", "Total"),
-    accessor: (row) => row.amounts?.total_amount ?? row.total_amount ?? 0,
+    accessor: (row) => row.amounts?.total_amount ?? 0,
     render: (_, row) => {
-      const total = row.amounts?.total_amount ?? row.total_amount ?? 0;
+      const total = row.amounts?.total_amount ?? 0;
       const currency = row.amounts?.currency ?? "EGP";
       return (
         <span className="font-semibold text-emerald-600 dark:text-emerald-400">
-          {total.toFixed(2)} {currency}
+          {Number(total).toFixed(2)} {currency}
         </span>
       );
     },
@@ -88,11 +88,11 @@ export const getOrderColumns = (
     },
   },
   {
-    id: "payment_status",
+    id: "payment",
     header: t("order.columns.payment_status", "Payment"),
-    accessor: "payment_status",
-    render: (value) => {
-      const paymentStatus = String(value);
+    accessor: "payment",
+    render: (_, item) => {
+      const paymentStatus = String(item.payment.status);
       const isPaid = paymentStatus === "paid";
 
       return (

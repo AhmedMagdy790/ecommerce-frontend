@@ -3,7 +3,7 @@
 import type { User } from "@/features/auth/types/auth.types";
 import type { City } from "@/features/city/model/types/city.types";
 import type { Coupon } from "@/features/coupon/types/coupon.types";
-import type { GatewayPaymentStatus } from "@/features/payment/model/types/payment.types";
+import type { GatewayPaymentStatus, PaymentAttempt } from "@/features/payment/model/types/payment.types";
 import type { ShippingCourier } from "@/features/shipping/model/types/shipping.types";
 import type { TranslatedText } from "@/shared/types/types";
 
@@ -48,15 +48,24 @@ export interface Order<TText = TranslatedText | string> {
   
   order_number: string;
   status: OrderStatus;
-  payment_status: GatewayPaymentStatus;
-  payment_method: string;
-  payment_id: string | null;
 
-  sub_total: number;
-  shipping_cost: number;
-  discount_amount: number;
-  total_amount: number;
-  
+  amounts: {
+    sub_total: number | string;
+    shipping_cost: number | string;
+    discount_amount: number | string;
+    total_amount: number | string;
+    currency: string;
+    is_shipping_free?: boolean;
+  };
+
+  // 🟢 الهيكل الجديد للدفع ومحاولاته التاريخية
+  payment: {
+    id?: number | null;
+    status: GatewayPaymentStatus;
+    method: string;
+    attempts: PaymentAttempt[];
+  };
+
   notes: string | null;
   cancel_reason: string | null;
 
@@ -69,14 +78,15 @@ export interface Order<TText = TranslatedText | string> {
     email: string | null;
     phone_primary: string;
     phone_secondary: string | null;
+    type: string;
   } | null;
 
   shipping?: {
     address: string;
     address2?: string | null;
-    airway_bill_url: string | null;
     courier_id: number;
     tracking_number: string | null;
+    courier?: ShippingCourier<TText>;
   } | null;
 
   user?: User | null;
@@ -86,14 +96,7 @@ export interface Order<TText = TranslatedText | string> {
   items?: OrderItem[];
 
   items_count?: number;
-  
-  amounts?: {
-    currency?: string;
-    total_amount?: number;
-    discount_amount?: number;
-    shipping_cost?: number;
-    sub_total?: number;
-  };
+
 }
 
 export interface OrderFormData {

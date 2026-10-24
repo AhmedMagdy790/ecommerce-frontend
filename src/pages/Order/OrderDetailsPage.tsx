@@ -1,5 +1,6 @@
 // pages/Order/OrderDetailsPage.tsx
 
+import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -11,18 +12,20 @@ import {
   AlertCircle,
   Phone,
   Mail,
-  User
+  User,
+  Truck
 } from "lucide-react";
 
 import { useOrderById } from "@/features/order/hook/useOrderById";
 import { StatusBadge } from "@/features/order/components/StatusBadge";
 import { formatCurrency } from "@/lib/format";
 import { OrderSkeleton } from "@/features/order/components/OrderSkeleton";
-import { mapOrderToViewModel, type MappedOrderItem } from "./utils/order.mapper";
+import { mapOrderToViewModel } from "./utils/order.mapper";
+import type { OrderItem } from "@/features/order/model/types/order.types";
 
 export default function OrderDetailsPage() {
   const { t, i18n } = useTranslation("order");
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
 
   const isValidId = Boolean(id && id.trim() !== "");
   const { order: rawOrder, isLoading, error } = useOrderById(isValidId ? id : undefined);
@@ -56,7 +59,6 @@ export default function OrderDetailsPage() {
     );
   }
 
-  // تحويل البيانات الخام باستخدام الـ Mapper الجديد
   const order = mapOrderToViewModel(rawOrder);
   const formatPrice = (value: number) => formatCurrency(value, order.currency);
 
@@ -72,10 +74,8 @@ export default function OrderDetailsPage() {
       </Link>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
-        
         {/* القسم الرئيسي */}
         <section className="space-y-6">
-          
           {/* رأس الصفحة ورقم الطلب */}
           <div className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-background)] p-6 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-4">
@@ -83,7 +83,7 @@ export default function OrderDetailsPage() {
                 <h1 className="text-2xl sm:text-3xl font-bold">
                   {t("details.title", "تفاصيل الطلب")}
                 </h1>
-                <p className="mt-2 text-sm font-mono font-bold text-[var(--color-text)]">
+                <p className="mt-2 text-sm font-mono font-bold text-[var(--color-text-primary)]">
                   #{order.orderNumber}
                 </p>
                 <p className="mt-1 text-xs text-[var(--color-text-secondary)]">
@@ -107,15 +107,15 @@ export default function OrderDetailsPage() {
             </div>
 
             <div className="space-y-4">
-              {order.items.map((item: MappedOrderItem) => (
+              {order.items.map((item: OrderItem) => (
                 <div
                   key={item.id}
-                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl border border-[var(--color-border)] p-4 transition hover:bg-[var(--color-muted)]"
+                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl border border-[var(--color-border)] p-4 transition hover:bg-[var(--color-surface-secondary)]"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="h-20 w-20 flex-shrink-0 rounded-xl bg-[var(--color-muted)] flex items-center justify-center border border-[var(--color-border)] overflow-hidden">
+                    <div className="h-20 w-20 flex-shrink-0 rounded-xl bg-[var(--color-surface-secondary)] flex items-center justify-center border border-[var(--color-border)] overflow-hidden">
                       {item.image ? (
-                        <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
+                        <img src={item.image} className="h-full w-full object-cover" />
                       ) : (
                         <Package size={28} className="text-[var(--color-text-secondary)]" />
                       )}
@@ -145,33 +145,38 @@ export default function OrderDetailsPage() {
 
           {/* معلومات الشحن والعميل */}
           <div className="grid gap-6 md:grid-cols-2">
-            
             {/* عنوان الشحن */}
             <div className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-background)] p-6 shadow-sm">
               <div className="mb-4 flex items-center gap-2 text-[var(--color-primary)]">
                 <MapPin size={20} />
-                <h2 className="text-lg font-semibold text-[var(--color-text)]">
+                <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">
                   {t("details.shipping", "معلومات الشحن")}
                 </h2>
               </div>
 
               <div className="space-y-2 text-sm text-[var(--color-text-secondary)] leading-relaxed">
-                <p className="font-medium text-[var(--color-text)]">{order.customerName}</p>
+                <p className="font-medium text-[var(--color-text-primary)]">{order.customerName}</p>
                 <p>{order.shippingAddress}</p>
                 {order.cityName && (
                   <p>المدينة: {order.cityName}</p>
                 )}
+                {order.courierName && (
+                  <div className="flex items-center gap-2 mt-2 pt-2 border-t border-[var(--color-border)] text-xs">
+                    <Truck size={14} className="text-[var(--color-primary)]" />
+                    <span>شركة الشحن: <strong className="text-[var(--color-text-primary)]">{order.courierName}</strong></span>
+                  </div>
+                )}
                 {order.trackingNumber && (
-                  <p className="font-mono text-xs mt-2">رقم التتبع: {order.trackingNumber}</p>
+                  <p className="font-mono text-xs mt-1">رقم التتبع: {order.trackingNumber}</p>
                 )}
               </div>
             </div>
 
-            {/* معلومات التواصل والعميل */}
+            {/* بيانات العميل */}
             <div className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-background)] p-6 shadow-sm">
               <div className="mb-4 flex items-center gap-2 text-[var(--color-primary)]">
                 <User size={20} />
-                <h2 className="text-lg font-semibold text-[var(--color-text)]">
+                <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">
                   {t("details.customer", "بيانات العميل")}
                 </h2>
               </div>
@@ -193,12 +198,10 @@ export default function OrderDetailsPage() {
                 )}
               </div>
             </div>
-
           </div>
-
         </section>
 
-        {/* الشريط الجانبي (ملخص الحساب والدفع) */}
+        {/* الشريط الجانبي (الملخص) */}
         <aside className="sticky top-24 h-fit space-y-6">
           <div className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-background)] p-6 shadow-sm">
             <h2 className="mb-6 text-xl font-semibold border-b border-[var(--color-border)] pb-3">
@@ -213,7 +216,15 @@ export default function OrderDetailsPage() {
 
               <Row
                 label={t("shipping", "رسوم الشحن")}
-                value={formatPrice(order.shippingCost)}
+                value={
+                  order.isShippingFree ? (
+                    <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-bold text-green-700">
+                      {t("shipping.free", "مجاني")}
+                    </span>
+                  ) : (
+                    formatPrice(order.shippingCost)
+                  )
+                }
               />
 
               {order.discountAmount > 0 && (
@@ -233,7 +244,7 @@ export default function OrderDetailsPage() {
             </div>
 
             {/* طريقة الدفع */}
-            <div className="mt-8 rounded-2xl bg-[var(--color-muted)] p-4 border border-[var(--color-border)]">
+            <div className="mt-8 rounded-2xl bg-[var(--color-surface-secondary)] p-4 border border-[var(--color-border)]">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <CreditCard size={20} className="text-[var(--color-primary)]" />
@@ -254,17 +265,14 @@ export default function OrderDetailsPage() {
               </div>
             </div>
 
-            {/* ملاحظات الطلب إن وجدت */}
             {order.notes && (
-              <div className="mt-4 rounded-2xl bg-[var(--color-muted)] p-4 border border-[var(--color-border)] text-xs">
-                <span className="font-semibold block mb-1 text-[var(--color-text)]">ملاحظات العميل:</span>
+              <div className="mt-4 rounded-2xl bg-[var(--color-surface-secondary)] p-4 border border-[var(--color-border)] text-xs">
+                <span className="font-semibold block mb-1 text-[var(--color-text-primary)]">ملاحظات العميل:</span>
                 <p className="text-[var(--color-text-secondary)] leading-relaxed">{order.notes}</p>
               </div>
             )}
-
           </div>
         </aside>
-
       </div>
     </main>
   );
@@ -272,14 +280,15 @@ export default function OrderDetailsPage() {
 
 interface RowProps {
   label: string;
-  value: string;
+  value: string | React.ReactNode;
   bold?: boolean;
+  className?: string;
 }
 
-function Row({ label, value, bold = false }: RowProps) {
+function Row({ label, value, bold = false, className = "" }: RowProps) {
   return (
-    <div className="flex items-center justify-between text-sm">
-      <span className={bold ? "text-base font-bold text-[var(--color-text)]" : "text-[var(--color-text-secondary)]"}>
+    <div className={`flex items-center justify-between text-sm ${className}`}>
+      <span className={bold ? "text-base font-bold text-[var(--color-text-primary)]" : "text-[var(--color-text-secondary)]"}>
         {label}
       </span>
       <span className={bold ? "text-lg font-extrabold text-[var(--color-primary)]" : "font-semibold"}>
