@@ -1,17 +1,16 @@
+// src/components/CartButton.tsx
 import { Link } from "react-router-dom";
 import { ShoppingBag } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useLang } from "@/shared/context/LanguageContext";
-import { useCartStore } from "@/features/cart/model/store/cart.store";
+import { useCart } from "@/pages/Cart/hook/useCart";
+
 
 export default function CartButton() {
   const { t } = useTranslation("common");
-  const { lang, dir } = useLang();
+  const { lang, isRTL } = useLang();
 
-  // حساب مجموع العناصر مباشرة
-  const totalItems = useCartStore((state) => 
-    state.items.reduce((total, item) => total + (item.quantity || 0), 0)
-  );
+  const { totalItems, isLoading } = useCart();
 
   return (
     <Link
@@ -34,21 +33,21 @@ export default function CartButton() {
         className="transition-transform duration-normal group-hover:scale-110"
       />
 
-      {totalItems > 0 && (
+      {!isLoading && totalItems > 0 && (
         <span
           aria-live="polite"
           className="absolute flex items-center justify-center font-semibold animate-in zoom-in-50 duration-200"
           style={{
             top: "-6px",
-            [dir === "rtl" ? "left" : "right"]: "-6px",
-            minHeight: "18px",
-            minWidth: "18px",
+            [isRTL ? "left" : "right"]: "-6px",
+            minHeight: "20px",
+            minWidth: "20px",
             paddingLeft: "4px",
             paddingRight: "4px",
             borderRadius: "var(--radius-full)",
             backgroundColor: "var(--color-danger, var(--red-500, #ef4444))",
             color: "var(--color-text-inverse, #ffffff)",
-            fontSize: "10px",
+            fontSize: "14px",
             fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)",
             boxShadow: "var(--shadow-xs)",
           }}

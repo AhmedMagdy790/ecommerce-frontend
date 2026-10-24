@@ -16,21 +16,18 @@ export default function CartPage() {
   const { t } = useTranslation("cart");
   const { lang, isRTL } = useLang();
 
-  // 1. Destructure data and mutations from the hook
-  // 1. استدعاء clearCart و isClearing من الـ hook
   const {
     cartItems,
     isLoading,
     addToCart,
     removeFromCart,
-    clearCart, // <-- أضفها هنا
+    clearCart,
     isAdding,
     isRemoving,
-    isClearing // <-- أضفها هنا
+    isClearing
   } = useCart();
 
 
-  // 2. Pass the API data directly into your calculations hook
   const { subtotal, shipping, tax, total, discount } = useCartCalculations(cartItems || []);
 
   // 3. API-driven Handlers

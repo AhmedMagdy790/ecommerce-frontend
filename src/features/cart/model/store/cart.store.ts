@@ -34,12 +34,10 @@ export const useCartStore = create<CartState>((set, get) => ({
   isLoading: false,
   isOpen: false,
 
-  // 1. حساب مجموع قطع السلة
   getTotalItems: () => {
     return get().items.reduce((total, item) => total + (item.quantity || 0), 0);
   },
 
-  // 2. حساب إجمالي السعر مع دعم مرن للأسعار والأنواع المختلفة
   getSubtotal: () => {
     return get().items.reduce((sum, item) => {
       if (item.total_price !== undefined && item.total_price !== null) {
@@ -54,11 +52,11 @@ export const useCartStore = create<CartState>((set, get) => ({
     }, 0);
   },
 
-  // جلب عناصر السلة
   fetchCart: async () => {
     set({ isLoading: true });
     try {
       const items = await cartService.getCartItems();
+
       set({ items, isLoading: false });
     } catch (error) {
       console.error("Failed to fetch cart items", error);
@@ -66,7 +64,6 @@ export const useCartStore = create<CartState>((set, get) => ({
     }
   },
 
-  // إضافة منتج للسلة
   addToCart: async (payload: AddToCartPayload) => {
     set({ isLoading: true });
     try {
@@ -80,7 +77,6 @@ export const useCartStore = create<CartState>((set, get) => ({
     }
   },
 
-  // 3. تحديث الكمية باستخدام التحديث المتفائل (Optimistic Update السريع)
   updateQuantity: async (cartItemId: number | string, variantId: number | string, newQuantity: number) => {
     if (newQuantity <= 0) {
       await get().removeFromCart(cartItemId);
@@ -89,7 +85,6 @@ export const useCartStore = create<CartState>((set, get) => ({
 
     const previousItems = get().items;
 
-    // تحديث الشاشة فوراً دون انتظار السيرفر
     set({
       items: previousItems.map((item) =>
         item.id === cartItemId ? { ...item, quantity: newQuantity } : item
@@ -97,13 +92,12 @@ export const useCartStore = create<CartState>((set, get) => ({
     });
 
     try {
-      // يفضل استخدام updateQuantity في الـ service إن وجد، أو استخدام payload الإضافة حسب السيرفر
+
       await cartService.addToCart({
         product_variant_id: variantId,
         quantity: newQuantity,
       });
 
-      // مزامنة صامتة في الخلفية مع السيرفر لضمان القيمة
       const updatedItems = await cartService.getCartItems();
       set({ items: updatedItems });
     } catch (error) {
@@ -112,7 +106,6 @@ export const useCartStore = create<CartState>((set, get) => ({
     }
   },
 
-  // حذف عنصر من السلة بأسلوب متفائل
   removeFromCart: async (id: number | string) => {
     const previousItems = get().items;
 
@@ -128,7 +121,6 @@ export const useCartStore = create<CartState>((set, get) => ({
     }
   },
 
-  // تفريغ السلة بالكامل
   clearCart: async () => {
     const previousItems = get().items;
     set({ items: [] });
@@ -141,7 +133,6 @@ export const useCartStore = create<CartState>((set, get) => ({
     }
   },
 
-  // التحكم بفتح وإغلاق القائمة الجانبية للسلة
   toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
   openCart: () => set({ isOpen: true }),
   closeCart: () => set({ isOpen: false }),
