@@ -17,6 +17,7 @@ export function mapCountryToForm(
         ...countryDefaultValues,
         name: country.name ?? countryDefaultValues.name,
         code: country.code ?? countryDefaultValues.code,
+        currency: country.currency ?? countryDefaultValues.currency,
         // التحويل إلى String احتياطياً في حال كانت القادمة من الباك إند رقمية (Number)
         phone_code: country.phone_code ? String(country.phone_code) : countryDefaultValues.phone_code,
         is_active: country.is_active ?? countryDefaultValues.is_active,

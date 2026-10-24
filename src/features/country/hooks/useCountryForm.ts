@@ -81,6 +81,7 @@ export const useCountryForm = (
                 ...nameFields,
                 'code',
                 'phone_code',
+                "currency",
                 'is_active'
             ]);
         }

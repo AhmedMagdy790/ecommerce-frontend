@@ -5,6 +5,7 @@ export interface Country<TText = TranslatedText | string> {
   id: number;
   name: TText;
   code: string;
+  currency: string;
   phone_code: string;
   is_active: boolean;
   created_at: string;

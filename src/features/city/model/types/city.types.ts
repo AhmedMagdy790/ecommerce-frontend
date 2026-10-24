@@ -9,8 +9,8 @@ export interface City<TText = TranslatedText | string> {
   name: TText;
   city_code: string | null;
   is_active: boolean;
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
 
   // العلاقات (Relations)
   country?: Country;

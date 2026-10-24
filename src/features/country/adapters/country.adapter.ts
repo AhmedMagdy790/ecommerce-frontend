@@ -56,6 +56,7 @@ export const countryAdapter = {
     return {
       name: formData.name,
       code: formData.code.toUpperCase(),
+      currency: formData.currency.toUpperCase(),
       phone_code: formData.phone_code,
       is_active: formData.is_active ?? true,
     };
@@ -65,6 +66,7 @@ export const countryAdapter = {
     return {
       name: formData.name,
       code: formData.code.toUpperCase(),
+      currency: formData.currency.toUpperCase(),
       phone_code: formData.phone_code,
       is_active: formData.is_active,
     };

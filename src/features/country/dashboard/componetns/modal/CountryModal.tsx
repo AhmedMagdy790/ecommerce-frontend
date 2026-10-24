@@ -11,10 +11,6 @@ import BaseModel from "@/shared/components/BaseModal";
 import { type IModal, type TranslatedText } from "@/shared/types/types";
 import CustomSelect from "@/shared/components/CustomSelect";
 
-// import type { Country } from "../model/types/country.types";
-// import { useCountryForm } from "../hooks/useCountryForm";
-// import type { CountryFormInput } from "../model/schema/countrySchema";
-// import { ActionButtons } from "../../category/components/ActionButtons"; // أو يمكنك نقلها لـ shared إذا أردت
 import { checkLanguageError, getTranslatedError } from "@/shared/utils/helper";
 import { LanguageOptions } from "@/shared/components/LanguageOptions";
 import type { Country } from "@/features/country/model/types/country.types";
@@ -34,7 +30,6 @@ export default function CountryModal({ isOpen, closeModal, country }: ICountryMo
   const currentLangName = getCurrentLangName();
 
   const formRef = useRef<HTMLFormElement>(null);
-
 
   const { 
     methods, 
@@ -133,23 +128,33 @@ export default function CountryModal({ isOpen, closeModal, country }: ICountryMo
             />
           </div>
 
-          <div className="grid grid-cols-1 gap-4">
-            <Controller
-              name="is_active"
-              control={control}
-              render={({ field }) => (
-                <CustomSelect
-                  label={t("common.status", "Status")}
-                  disabled={isSubmitting}
-                  placeholder={t("common.selectStatus", "Select Status...")}
-                  options={statusOptions}
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={errors.is_active?.message}
-                />
-              )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Input
+              label={t("countries.currency", "Currency")}
+              placeholder="EYG"
+              error={errors.currency?.message}
+              {...register("currency")}
             />
+
+            <div className="grid grid-cols-1 gap-4">
+              <Controller
+                name="is_active"
+                control={control}
+                render={({ field }) => (
+                  <CustomSelect
+                    label={t("common.status", "Status")}
+                    disabled={isSubmitting}
+                    placeholder={t("common.selectStatus", "Select Status...")}
+                    options={statusOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={errors.is_active?.message}
+                  />
+                )}
+              />
+            </div>
           </div>
+
         </div>
       </form>
     </BaseModel>

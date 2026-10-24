@@ -12,6 +12,7 @@ import { CountryCard } from "../componetns/CountryCard";
 import { useCountryActions } from "../../hooks/useCountryActions";
 import CountryModal from "../componetns/modal/CountryModal";
 import { countryStatsStore } from "../../model/store/CountryStatusHooks";
+import { useLang } from "@/shared/context/LanguageContext";
 
 
 export default function CountryListPage() {
@@ -28,10 +29,10 @@ export default function CountryListPage() {
 
   const { handleDelete, handleStatusChange, togglingId } = useCountryActions(); 
   
-  const { t, i18n } = useTranslation();
-  const currentAppLang = i18n.language;
+  const { t } = useTranslation();
+  const { lang } = useLang();
 
-  // جلب حالة وحواضن المودال (الفتح، الإغلاق، وهل نحن في وضع تعديل مع البيانات الحالية)
+
   const { 
     isOpen, 
     closeModal, 
@@ -67,7 +68,7 @@ export default function CountryListPage() {
             <CountryCard
               key={country.id}
               country={country}
-              currentAppLang={currentAppLang}
+              currentAppLang={lang}
               togglingId={togglingId}
               onEdit={openEditModal}
               onDelete={handleDelete}
