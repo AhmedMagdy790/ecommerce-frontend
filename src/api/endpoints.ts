@@ -4,6 +4,7 @@ export const API_ENDPOINTS = {
     register: "/auth/register",
     logout: "/auth/logout",
     refresh: "/auth/refresh",
+    getAccessToken: "/auth/get-access-token",
     rotateRefresh: "/auth/rotate-refresh",
     me: "/auth/me",
   },
@@ -69,6 +70,7 @@ export const API_ENDPOINTS = {
     myOrders: "/orders/my-orders",
     details: (id: string | number) => `/orders/${id}`,
     cancel: (id: string | number) => `/orders/${id}/cancel`,
+    retryPayment: (id: string | number) => `/orders/${id}/retry-payment`,
   },
 
   pages: {
@@ -272,6 +274,13 @@ export const API_ENDPOINTS = {
   },
 
   paymentGateways: "/payment-gateways",
+  
+  payments: {
+    getGateways: "/payment-gateways",
+    paypalCapture: "/payment-gateways/paypal/capture",
+    stripeStatus: "/payment-gateways/stripe/verify",
+  },
+
   checkoutShipping: "/checkout/shipping",
   
 

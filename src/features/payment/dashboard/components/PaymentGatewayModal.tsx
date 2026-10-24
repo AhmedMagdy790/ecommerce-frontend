@@ -17,6 +17,7 @@ import type { PaymentGateway } from "../../model/types/payment.types";
 import { usePaymentGatewayForm } from "../../hooks/usePaymentGatewayForm";
 import type { PaymentGatewayFormInput } from "../../model/schema/paymentGatewaySchema";
 import { usePaymentGatewayOptions } from "../../hooks/usePaymentGatewayOptions";
+import { useCountryOptions } from "@/features/country/hooks/useCountryOptions";
 
 interface IPaymentGatewayModal extends IModal {
   gateway?: PaymentGateway<TranslatedText> | null;
@@ -38,6 +39,7 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
   } = usePaymentGatewayForm(gateway, closeModal, isOpen);
 
   const { gatewayOptions, isGatewaysLoading } = usePaymentGatewayOptions();
+  const { countryOptions, isCountriesLoading } = useCountryOptions();
 
   const {
     register,
@@ -47,7 +49,6 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
   } = methods;
 
   const selectedType = watch("type");
-  
   const hideCredentials = (selectedType && selectedType !== "online");
 
   const registerTranslatedField = (
@@ -69,21 +70,19 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
     { label: `🚀 ${t("payment.live", "Live Mode")}`, value: false },
   ], [t]);
 
-  // خيارات أنواع بوابات الدفع المتوافقة مع الـ Enum
   const typeOptions = useMemo(() => [
-    {
-      label: `🌐 ${t("payment.typeOnline", "Online")}`,
-      value: "online",
-    },
-    {
-      label: `💵 ${t("payment.typeOffline", "Offline")}`,
-      value: "offline",
-    },
-    {
-      label: `🏦 ${t("payment.typeTransfer", "Bank / Wallet Transfer")}`,
-      value: "transfer",
-    },
+    { label: `🌐 ${t("payment.typeOnline", "Online")}`, value: "online" },
+    { label: `💵 ${t("payment.typeOffline", "Offline")}`, value: "offline" },
+    { label: `🏦 ${t("payment.typeTransfer", "Bank / Wallet Transfer")}`, value: "transfer" },
   ], [t]);
+
+  const productTypeOptions = useMemo(() => [
+    { label: t("payment.allowsDigital", "Digital Products Only"), value: "digital" },
+    { label: t("payment.allowsPhysical", "Physical Products Only"), value: "physical" },
+    { label: t("payment.allowsBoth", "Both Digital & Physical"), value: "both" },
+  ], [t]);
+
+  void productTypeOptions;
 
   const hasLanguageError = (lang: string) => {
     return checkLanguageError(methods.formState.errors, lang, ["name", "description"]);
@@ -108,8 +107,8 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
           ? t("payment.editGateway", "Edit Payment Gateway")
           : t("payment.addNewGateway", "Add New Payment Gateway")
       }
-      description={t("payment.modalDescription", "Configure payment gateway credentials and transaction settings")}
-      maxWidth="max-w-2xl"
+      description={t("payment.modalDescription", "Configure payment gateway credentials, limits, and country rules")}
+      maxWidth="max-w-3xl"
     >
       <form ref={formRef} onSubmit={onSubmit} className="flex flex-col">
         {submitError && (
@@ -146,6 +145,51 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
             {...registerTranslatedField("description", currentLangCode)}
           />
 
+          <Controller
+            name="country_ids"
+            control={control}
+            render={({ field }) => (
+              <CustomSelect
+                label={t("payment.countries", "Supported Countries")}
+                disabled={isSubmitting || isCountriesLoading}
+                placeholder={
+                  isCountriesLoading 
+                    ? t("common.loading", "Loading...") 
+                    : t("payment.selectCountries", "Select Countries...")
+                }
+                isMulti 
+                options={countryOptions}
+                value={field.value ?? []}
+                onChange={field.onChange}
+                error={errors.country_ids?.message ? String(errors.country_ids.message) : undefined}
+              />
+            )}
+          />
+
+          <Controller
+            name="supported_currencies"
+            control={control}
+            render={({ field }) => (
+              <CustomSelect
+                label={t("payment.supportedCurrencies", "Supported Currencies")}
+                disabled={isSubmitting}
+                placeholder={t("payment.selectCurrencies", "Select currencies (e.g. USD, EGP)...")}
+                isMulti
+                options={[
+                  { label: "🇺🇸 USD - US Dollar", value: "USD" },
+                  { label: "🇪🇺 EUR - Euro", value: "EUR" },
+                  { label: "🇬🇧 GBP - British Pound", value: "GBP" },
+                  { label: "🇪🇬 EGP - Egyptian Pound", value: "EGP" },
+                  { label: "🇸🇦 SAR - Saudi Riyal", value: "SAR" },
+                  { label: "🇦🇪 AED - UAE Dirham", value: "AED" },
+                ]}
+                value={field.value ?? []}
+                onChange={field.onChange}
+                error={errors.supported_currencies?.message ? String(errors.supported_currencies.message) : undefined}
+              />
+            )}
+          />
+
           {/* الـ Slug والنوع */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Controller
@@ -155,11 +199,7 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
                 <CustomSelect
                   label={t("payment.gateway", "Payment Gateway")}
                   disabled={isSubmitting || isEditMode || isGatewaysLoading}
-                  placeholder={
-                    isGatewaysLoading 
-                      ? t("common.loading", "Loading...") 
-                      : t("payment.selectGateway", "Select Payment Gateway...")
-                  }
+                  placeholder={isGatewaysLoading ? t("common.loading", "Loading...") : t("payment.selectGateway", "Select Payment Gateway...")}
                   options={gatewayOptions}
                   value={field.value}
                   onChange={field.onChange}
@@ -185,7 +225,30 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
             />
           </div>
 
-          {/* الرسوم الإضافية وأيقونة البوابة (icon_name) */}
+          {/* الحدود المالية (Min / Max Amount) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Input
+              type="number"
+              step="0.01"
+              label={t("payment.minAmount", "Minimum Amount")}
+              placeholder="0.00"
+              error={errors.min_amount?.message}
+              icon={<DollarSign size={16} />}
+              {...register("min_amount", { valueAsNumber: true })}
+            />
+
+            <Input
+              type="number"
+              step="0.01"
+              label={t("payment.maxAmount", "Maximum Amount")}
+              placeholder="No limit"
+              error={errors.max_amount?.message}
+              icon={<DollarSign size={16} />}
+              {...register("max_amount", { valueAsNumber: true })}
+            />
+          </div>
+
+          {/* الرسوم الإضافية والأيقونة */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               type="number"
@@ -206,7 +269,7 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
             />
           </div>
 
-          {/* رفع الشعار (Logo File) */}
+          {/* رفع الشعار */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-[var(--color-text-secondary)]">
               {t("payment.logo", "Gateway Logo")}
@@ -229,9 +292,9 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
             )}
           </div>
 
-          {/* إخفاء إعدادات الاعتماد تلقائياً إذا كانت البوابة لا تتطلب ذلك (مثل الـ COD) */}
+          {/* إعدادات الاعتماد API Keys */}
           {!hideCredentials && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-[var(--color-background-secondary)] rounded-[var(--radius-md)] border border-[var(--color-border)] transition-all">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-[var(--color-background-secondary)] rounded-[var(--radius-md)] border border-[var(--color-border)]">
               <div className="md:col-span-2 text-xs font-semibold text-[var(--color-text-primary)]">
                 {t("payment.credentialsTitle", "إعدادات الاعتماد والربط (API Keys)")}
               </div>
@@ -252,8 +315,8 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
             </div>
           )}
 
-          {/* حالات التشغيل (الحالة العامة ووضع الاختبار) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+          {/* الحالة العامة ووضع الاختبار */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Controller
               name="is_active"
               control={control}

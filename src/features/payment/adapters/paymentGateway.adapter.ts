@@ -64,6 +64,14 @@ export const paymentGatewayAdapter = {
       is_test_mode: formData.is_test_mode ?? false,
       icon_name: formData.icon_name ?? null,
       extra_fees: formData.extra_fees ?? 0,
+      
+      supported_currencies: formData.supported_currencies ?? [],
+      min_amount: formData.min_amount ?? null,
+      max_amount: formData.max_amount ?? null,
+      allows_digital: formData.allows_digital ?? false,
+      allows_physical: formData.allows_physical ?? false,
+      country_ids: formData.country_ids ?? [],
+
       ...(formData.logo instanceof File ? { logo: formData.logo } : {}),
     };
   },
@@ -79,6 +87,14 @@ export const paymentGatewayAdapter = {
       is_test_mode: formData.is_test_mode,
       icon_name: formData.icon_name,
       extra_fees: formData.extra_fees,
+      
+      supported_currencies: formData.supported_currencies ?? [],
+      min_amount: formData.min_amount ?? null,
+      max_amount: formData.max_amount ?? null,
+      allows_digital: formData.allows_digital,
+      allows_physical: formData.allows_physical,
+      country_ids: formData.country_ids ?? [],
+
       ...(formData.logo instanceof File ? { logo: formData.logo } : {}),
     };
   },

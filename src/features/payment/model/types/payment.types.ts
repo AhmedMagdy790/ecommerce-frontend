@@ -13,13 +13,37 @@ export interface PaymentGateway<TText = TranslatedText | string> {
   icon_name: string | null;
   extra_fees: number;
   logo: string | null;
+
+  supported_currencies: string[];
+  min_amount: number | null;
+  max_amount: number | null;
+  allows_digital: boolean;
+  allows_physical: boolean;
+
   created_at: string;
   updated_at: string;
 
-  // العلاقات (Relations)
+  country_ids: number[] | null;
+
   media?: Media;
+  countries?: Array<{
+    id: number;
+    name: TText;
+    code: string;
+    currency: string;
+  }>;
 }
 
+export interface PaymentAttempt {
+    id: number;
+    gateway: string;
+    payment_gateway_id: number | null;
+    amount: string;
+    currency: string;
+    status: 'pending' | 'success' | 'failed' | 'cancelled';
+    failure_reason: string | null;
+    created_at: string;
+}
 
 export type GatewayPaymentStatus = 'unpaid' | 'paid' | 'partially_refunded' | 'refunded';
 
@@ -28,7 +52,6 @@ export interface PaymentGatewayStats {
   active: number;
   inactive: number;
 }
-
 
 export interface PaymentGatewayFilters {
   search?: string;
