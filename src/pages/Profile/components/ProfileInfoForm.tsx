@@ -10,6 +10,7 @@ import {
 } from "../schemas/profile.schema";
 import { Input } from "@/shared/components/ui/Input";
 import ProfileHeader from "./ProfileHeader";
+import { Button } from "@/shared/components/Button";
 
 interface ProfileInfoFormProps {
   profile?: UserProfile;
@@ -98,28 +99,19 @@ export default function ProfileInfoForm({
           paddingTop: "var(--spacing-4)" 
         }}
       >
-        <button
+        <Button
           type="submit"
           disabled={isSaving || !isDirty || !isValid}
-          className="transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer"
-          style={{
-            paddingLeft: "var(--spacing-5)",
-            paddingRight: "var(--spacing-5)",
-            paddingTop: "var(--spacing-2.5)",
-            paddingBottom: "var(--spacing-2.5)",
-            backgroundColor: "var(--button-bg)",
-            color: "var(--button-text)",
-            fontSize: "var(--text-sm)",
-            fontWeight: "var(--font-medium)",
-            borderRadius: "var(--radius-lg)",
-            boxShadow: "var(--shadow-sm)"
-          }}
+
         >
           {isSaving && (
-            <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            <span 
+              className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin" 
+              style={{ borderColor: "var(--button-text)", borderTopColor: "transparent" }}
+            />
           )}
           {isSaving ? t("actions.saving", "Saving...") : t("actions.save", "Save Changes")}
-        </button>
+        </Button>
       </div>
     </form>
   );

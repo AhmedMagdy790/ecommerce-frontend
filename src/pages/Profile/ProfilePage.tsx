@@ -24,20 +24,6 @@ export default function ProfilePage() {
     [t]
   );
 
-  const tabContent: Record<TabKey, React.ReactNode> = {
-    info: (
-      <ProfileInfoForm
-        profile={profile}
-        onSave={async (data) => {
-          await updateProfile(data);
-        }}
-        isSaving={isSaving}
-      />
-    ),
-    security: <SecuritySection />,
-    orders: <OrdersSection />,
-  };
-
   if (isLoading) {
     return <ProfileSkeleton />;
   }
@@ -92,7 +78,17 @@ export default function ProfilePage() {
           }}
         >
           <Suspense fallback={<ProfileSkeleton />}>
-            {tabContent[activeTab]}
+            {activeTab === "info" && (
+              <ProfileInfoForm
+                profile={profile}
+                onSave={async (data) => {
+                  await updateProfile(data);
+                }}
+                isSaving={isSaving}
+              />
+            )}
+            {activeTab === "security" && <SecuritySection />}
+            {activeTab === "orders" && <OrdersSection />}
           </Suspense>
         </div>
       </div>

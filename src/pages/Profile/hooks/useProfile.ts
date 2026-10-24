@@ -22,7 +22,7 @@ export function useProfile() {
     queryKey: PROFILE_QUERY_KEY,
     queryFn: async () => {
       const response = await authApi.me();
-      // استخراج الـ user مباشرة من الاستجابة بناءً على شكل الـ API لديك
+
       return response.data?.user;
     },
     staleTime: 1000 * 60 * 5, 
