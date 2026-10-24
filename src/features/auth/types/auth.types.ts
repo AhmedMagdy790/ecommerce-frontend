@@ -41,6 +41,6 @@ export interface AuthState {
   createAcount(data: import("../model/types/user.dto").RegisterDto): Promise<void>;
   logout(): Promise<void>;
   fetchUser(): Promise<void>;
-  updateAccessToken(): Promise<string | undefined>;
+  updateAccessToken(): Promise<string>;
   rotateAccessToken(): Promise<boolean>;
 }

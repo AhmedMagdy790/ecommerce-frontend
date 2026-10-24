@@ -8,8 +8,9 @@ import type {
 } from "@/features/auth/model/types/user.dto";
 import { getTokenExpiration } from "../../hooks/useTokenExpiration";
 import { clearLastTokenActivity, saveLastTokenActivity } from "../../utils/auth.utils";
-import { hasLoggedInBefore } from "../../utils/authStorage";
+import { broadcastAuthEvent } from "../../utils/authChannel";
 
+let refreshPromise: Promise<string> | null = null;
 
 export const useAuthStore = create<IAuthState>()(
     (set, get) => ({
@@ -30,61 +31,74 @@ export const useAuthStore = create<IAuthState>()(
         
         setInitialized: (val: boolean) => set({ isInitialized: val }),
 
-        clearAuth: () => set({ user: null, accessToken: null, isAuthenticated: false, isInitialized: true, isLoggingOut: false }),
+        clearAuth: () => {
+            clearLastTokenActivity();
 
+            set({
+                user: null,
+                accessToken: null,
+                isAuthenticated: false,
+                accessTokenExpiresAt: null,
+                lastTokenActivityAt: null,
+                isInitialized: true,
+                isLoggingOut: false,
+            });
+        },
+
+        
         initializeAuth: async () => {
-            const state = get();
-
-            if (state.isInitialized || state.isRefreshing) return;
-
-            if (!hasLoggedInBefore()) {
-                set({
-                    isInitialized: true,
-                    isRefreshing: false,
-                });
+            console.log("get().isInitialized", get().isInitialized)
+            console.log("get().isRefreshing", get().isRefreshing)
+            if (get().isInitialized || get().isRefreshing) {
                 return;
             }
 
             set({ isRefreshing: true });
 
             try {
-                const tokenData = await authService.refresh();
+                const response = await authService.getAccessToken();
 
+                const { accessToken, expires_in } = response.data;
 
-                const {
-                    accessToken: newToken,
-                    expires_in,
-                } = tokenData.data;
+                const expiresInSeconds = Number(expires_in);
 
-                if (!newToken) {
-                    throw new Error("No access token returned");
+                if (
+                    !accessToken ||
+                    !Number.isFinite(expiresInSeconds) ||
+                    expiresInSeconds <= 0
+                ) {
+                    throw new Error("Invalid access token response");
                 }
 
-
                 set({
-                    accessToken: newToken,
-                    accessTokenExpiresAt: getTokenExpiration(Number(expires_in)),
+                    accessToken,
+                    accessTokenExpiresAt: getTokenExpiration(expiresInSeconds),
                     lastTokenActivityAt: saveLastTokenActivity(),
                 });
 
                 const meResponse = await authService.me();
                 const { user } = meResponse.data;
 
+                if (!user) {
+                    throw new Error("User data missing from /auth/me");
+                }
+
                 set({
                     user,
                     isAuthenticated: true,
                 });
             } catch (error) {
-                console.error("Session refresh failed on app init:", error);
+                console.error("[AUTH INIT] Session restoration failed", error);
 
                 set({
                     user: null,
                     accessToken: null,
                     accessTokenExpiresAt: null,
+                    lastTokenActivityAt: null,
                     isAuthenticated: false,
                 });
 
-
+                clearLastTokenActivity();
             } finally {
                 set({
                     isInitialized: true,
@@ -92,24 +106,19 @@ export const useAuthStore = create<IAuthState>()(
                 });
             }
         },
-
+       
         login: async (data: ILoginPayload) => {
             set({ isLoading: true });
 
             try {
                 const response = await authService.login(data);
 
-                const {
-                    user,
-                    accessToken,
-                    expires_in
-                } = response.data;
+                const { user, accessToken, expires_in } = response.data;
 
                 if (!accessToken || !user) {
                     throw new Error("بيانات الدخول غير مكتملة");
                 }
 
-                localStorage.setItem("has_logged_in", "true");
 
                 set({
                     accessToken,
@@ -119,6 +128,8 @@ export const useAuthStore = create<IAuthState>()(
                     isAuthenticated: true,
                     isInitialized: true,
                 });
+
+                broadcastAuthEvent("LOGIN");
 
             } catch (error) {
                 set({
@@ -130,14 +141,14 @@ export const useAuthStore = create<IAuthState>()(
                 throw error;
 
             } finally {
-                set({
-                    isLoading: false,
-                });
+                set({ isLoading: false });
             }
         },
 
+
         logout: async () => {
             set({ isLoggingOut: true });
+
             try {
                 await authService.logout();
             } finally {
@@ -154,6 +165,8 @@ export const useAuthStore = create<IAuthState>()(
                     isRefreshing: false,
                     isLoggingOut: false,
                 });
+
+                broadcastAuthEvent("LOGOUT");
             }
         },
 
@@ -189,72 +202,50 @@ export const useAuthStore = create<IAuthState>()(
         },
 
         fetchUser: async () => {
-            try {
-                const response = await authService.me();
+            const response = await authService.me();
+            const { user } = response.data;
 
-                const { user } = response.data;
-
-                set({
-                    user,
-                    isAuthenticated: true,
-                });
-
-            } catch (error) {
-                console.log("fetchUser error", error);
-
-                set({
-                    user: null,
-                    accessToken: null,
-                    isAuthenticated: false,
-                });
-
-            } finally {
-                set({
-                    isInitialized: true,
-                });
-            }
+            set({
+                user,
+                isAuthenticated: true,
+            });
         },
-
-                
+        
         updateAccessToken: async () => {
-            try {
-                const response = await authService.refresh();
+            if (refreshPromise) {
+                return refreshPromise;
+            }
 
+            refreshPromise = (async () => {
+                const response = await authService.getAccessToken();
                 const { accessToken, expires_in } = response.data;
 
-                console.log("Access token refreshed successfully");
-                console.log("New expiration:", new Date(
-                    getTokenExpiration(Number(expires_in))!
-                ).toLocaleTimeString());
+                const expiresInSeconds = Number(expires_in);
 
                 if (
                     !accessToken ||
-                    !Number.isFinite(Number(expires_in)) ||
-                    Number(expires_in) <= 0
+                    !Number.isFinite(expiresInSeconds) ||
+                    expiresInSeconds <= 0
                 ) {
-                    throw new Error("Invalid refresh response");
+                    throw new Error("Invalid access token response");
                 }
 
                 set({
                     accessToken,
+                    accessTokenExpiresAt: getTokenExpiration(expiresInSeconds),
                     lastTokenActivityAt: saveLastTokenActivity(),
-                    accessTokenExpiresAt: getTokenExpiration(Number(expires_in)),
                     isAuthenticated: true,
                 });
 
                 return accessToken;
-            } catch (error) {
-                set({
-                    user: null,
-                    accessToken: null,
-                    accessTokenExpiresAt: null,
-                    isAuthenticated: false,
-                });
+            })();
 
-                throw error;
+            try {
+                return await refreshPromise;
+            } finally {
+                refreshPromise = null;
             }
         },
-
 
         rotateAccessToken: async () => {
             try {

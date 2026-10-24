@@ -82,7 +82,11 @@ export const storeApi = {
   request<T>(() =>
     axiosInstance.post(API_ENDPOINTS.checkoutShipping, data)
   ),
-  getPaymentGateways: <T = any>() => request<T>(() => axiosInstance.get(API_ENDPOINTS.paymentGateways)),
+
+
+  getPaymentGateways: <T = any>(params?: Record<string, any>) => request<T>(() => axiosInstance.get(API_ENDPOINTS.payments.getGateways, { params })),
+  getPaypalCapture: <T = any, D = Record<string, any>>(data: D) => request<T>(() => axiosInstance.post(API_ENDPOINTS.payments.paypalCapture, data)),
+  getStripeCheckoutStatus: <T = any, D = Record<string, any>>(data: D) => request<T>(() => axiosInstance.post(API_ENDPOINTS.payments.stripeStatus, data)),
 
   getAllSettings: <T = any>() => request<T>(() => axiosInstance.get(API_ENDPOINTS.settings.getAll)),
 };
@@ -281,6 +285,7 @@ export const authApi = {
   logout: <T = any>() => request<T>(() => axiosInstance.post(API_ENDPOINTS.auth.logout)),
   me: <T = any>() => request<T>(() => axiosInstance.get(API_ENDPOINTS.auth.me)),
   refresh: <T = any>() => request<T>(() => axiosInstance.post(API_ENDPOINTS.auth.refresh)),
+  getAccessToken: <T = any>() => request<T>(() => axiosInstance.post(API_ENDPOINTS.auth.getAccessToken)),
   rotateRefresh: <T = any>() => request<T>(() => axiosInstance.post(API_ENDPOINTS.auth.rotateRefresh)),
 };
 
@@ -293,6 +298,7 @@ export const profileApi = {
 // 4. الطلبات والـ Storefront الخاصة بالمستخدم
 export const orderApi = {
   getMyOrders: <T = any>() => request<T>(() => axiosInstance.get(API_ENDPOINTS.orders.myOrders)),
+  retryPayment: <T = any, D = Record<string, any>>(id: string | number, data?: D) => request<T>(() => axiosInstance.post(API_ENDPOINTS.orders.retryPayment(id), data)),
   getOrderById: <T = any>(id: string | number) => request<T>(() => axiosInstance.get(API_ENDPOINTS.orders.details(id))),
   cancelOrder: <T = any, D = Record<string, any>>(id: string | number, data?: D) => request<T>(() => axiosInstance.post(API_ENDPOINTS.orders.cancel(id), data)),
 };

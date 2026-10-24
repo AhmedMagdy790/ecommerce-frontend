@@ -8,17 +8,17 @@ export function TokenExpirationMonitor() {
         (state) => state.updateAccessToken
     );
 
-    console.log("start TokenExpirationMonitor")
 
     useTokenExpiration({
-        refreshBeforeMs: 840_000, // اختبار فقط: 14 دقيقة
+        refreshBeforeMs: 60_000,
         onExpire: async () => {
             try {
-                console.log("Refreshing access token early...");
                 await updateAccessToken();
-                console.log("Access token refreshed successfully");
             } catch (error) {
-                console.error("Access token refresh failed:", error);
+                console.error(
+                    "Access token refresh failed:",
+                    error
+                );
             }
         },
     });

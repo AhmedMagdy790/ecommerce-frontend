@@ -1,36 +1,58 @@
 
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 import { useAuthStore } from "@/features/auth/model/store/useAuthStore";
 import { TokenExpirationMonitor } from "@/features/auth/hooks/TokenExpirationMonitor";
+import { useAuthTabSync } from "@/features/auth/hooks/useAuthTabSync";
 
 interface Props {
   children: ReactNode;
 }
 
 export const AuthBootstrap = ({ children }: Props) => {
+  useAuthTabSync();
+
   const isInitialized = useAuthStore(
     (state) => state.isInitialized,
+  );
+
+  const isRefreshing = useAuthStore(
+    (state) => state.isRefreshing,
   );
 
   const initializeAuth = useAuthStore(
     (state) => state.initializeAuth,
   );
 
+  const initializationStarted = useRef(false);
+
   useEffect(() => {
-    if (isInitialized) return;
+    if (
+      isInitialized ||
+      isRefreshing ||
+      initializationStarted.current
+    ) {
+      return;
+    }
 
-    void initializeAuth().catch((error: unknown) => {
-      console.error("AUTH BOOTSTRAP FAILED:", error);
+    initializationStarted.current = true;
 
-      useAuthStore.setState({
-        isInitialized: true,
-        isRefreshing: false,
+    void initializeAuth()
+      .catch((error: unknown) => {
+        console.error(
+          "[AUTH BOOTSTRAP] Initialization failed:",
+          error,
+        );
+
+        useAuthStore.setState({
+          isInitialized: true,
+          isRefreshing: false,
+        });
+      })
+      .finally(() => {
+        initializationStarted.current = false;
       });
-    });
-  }, [isInitialized, initializeAuth]);
-
-  console.log("isInitialized", isInitialized)
+  }, [isInitialized, isRefreshing, initializeAuth]);
 
   return (
     <>

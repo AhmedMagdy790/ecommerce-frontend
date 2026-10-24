@@ -28,15 +28,13 @@ interface Props {
 }
 
 export function AuthProvider({ children }: Props) {
-  const {
-    user,
-    isAuthenticated,
-    isLoading,
-    isInitialized,
-    fetchUser,
-    login: storeLogin,
-    logout: storeLogout
-  } = useAuthStore();
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const isLoading = useAuthStore((state) => state.isLoading);
+  const isInitialized = useAuthStore((state) => state.isInitialized);
+  const fetchUser = useAuthStore((state) => state.fetchUser);
+  const storeLogin = useAuthStore((state) => state.login);
+  const storeLogout = useAuthStore((state) => state.logout);
 
   const login = useCallback(
     async (data: LoginDto) => {

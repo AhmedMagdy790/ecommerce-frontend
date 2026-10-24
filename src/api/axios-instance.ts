@@ -1,8 +1,7 @@
 // src/api/axios-instance.ts
-import axios, { type InternalAxiosRequestConfig } from 'axios';
-import { env } from '@/config/config';
-import { setupInterceptors } from './interceptors';
-import { useAuthStore } from '@/features/auth/model/store/useAuthStore';
+import axios, { type InternalAxiosRequestConfig } from "axios";
+import { env } from "@/config/config";
+import { setupInterceptors } from "./interceptors";
 
 const axiosInstance = axios.create({
   baseURL: `${env.API_BASE_URL}/api/v1`,
@@ -17,7 +16,11 @@ const axiosInstance = axios.create({
 const getCookie = (name: string): string | undefined => {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(";").shift();
+
+  if (parts.length === 2) {
+    return parts.pop()?.split(";").shift();
+  }
+
   return undefined;
 };
 
@@ -29,15 +32,7 @@ axiosInstance.interceptors.request.use(
       config.headers["X-XSRF-TOKEN"] = decodeURIComponent(xsrfToken);
     }
 
-    const accessToken = useAuthStore.getState().accessToken;
-
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
-    }
-
     const currentLang = localStorage.getItem("app_lang") || "ar";
-    
-    console.log(currentLang)
     config.headers["Accept-Language"] = currentLang;
 
     return config;

@@ -37,6 +37,12 @@ export const authServices = {
     >();
   },
 
+  getAccessToken() {
+    return authApi.getAccessToken<
+      SuccessApiResponse<AuthResponse>
+    >();
+  },
+
   refresh() {
     return authApi.refresh<
       SuccessApiResponse<AuthResponse>

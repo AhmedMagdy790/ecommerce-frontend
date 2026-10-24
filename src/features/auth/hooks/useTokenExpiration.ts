@@ -1,17 +1,29 @@
-
 import { useEffect, useRef } from "react";
 import { useAuthStore } from "@/features/auth/model/store/useAuthStore";
 
+const LOG_PREFIX = "[TOKEN EXPIRATION]";
+const MAX_TIMEOUT = 2_147_000_000;
 
 export const getTokenExpiration = (expiresIn?: number | null) => {
-    if (typeof expiresIn !== "number" || expiresIn <= 0) {
+    if (
+        typeof expiresIn !== "number" ||
+        !Number.isFinite(expiresIn) ||
+        expiresIn <= 0
+    ) {
+        console.warn(`${LOG_PREFIX} Invalid expiresIn`, { expiresIn });
         return null;
     }
 
-    return Date.now() + expiresIn * 1000;
-};
+    const expiresAt = Date.now() + expiresIn * 1000;
 
-const MAX_TIMEOUT = 2_147_000_000;
+    console.log(`${LOG_PREFIX} Expiration calculated`, {
+        now: new Date().toISOString(),
+        expiresInSeconds: expiresIn,
+        expiresAt: new Date(expiresAt).toISOString(),
+    });
+
+    return expiresAt;
+};
 
 interface UseTokenExpirationOptions {
     onExpire?: () => void | Promise<void>;
@@ -22,6 +34,8 @@ export function useTokenExpiration({
     onExpire,
     refreshBeforeMs = 60_000,
 }: UseTokenExpirationOptions = {}) {
+    console.log("start useTokenExpiration")
+
     const accessToken = useAuthStore(
         (state) => state.accessToken
     );
@@ -34,19 +48,22 @@ export function useTokenExpiration({
 
     useEffect(() => {
         onExpireRef.current = onExpire;
+
     }, [onExpire]);
 
-    console.log("accessToken", accessToken)
-    console.log("expiresAt", expiresAt)
-
     useEffect(() => {
-        if (!accessToken || expiresAt === null) return;
+
+        if (!accessToken || expiresAt === null) {
+
+            return;
+        }
 
         let timer: number | undefined;
         let handled = false;
 
         const clearTimer = () => {
             if (timer !== undefined) {
+
                 window.clearTimeout(timer);
                 timer = undefined;
             }
@@ -55,31 +72,45 @@ export function useTokenExpiration({
         const checkExpiration = () => {
             clearTimer();
 
-            if (handled) return;
+            if (handled) {
+                console.log(`${LOG_PREFIX} Check skipped: already handled`);
+                return;
+            }
 
-            const remaining = expiresAt - Date.now();
+            const now = Date.now();
+            const remaining = expiresAt - now;
             const timeUntilRefresh = remaining - refreshBeforeMs;
 
-            console.log("Token remaining:", Math.round(remaining / 1000), "seconds");
-            console.log("Refresh scheduled in:", Math.round(timeUntilRefresh / 1000), "seconds");
+ 
 
             if (timeUntilRefresh <= 0) {
                 handled = true;
 
-                console.log("Refreshing access token early...");
+                Promise.resolve(onExpireRef.current?.())
+                    .then(() => {
+                        console.log(
+                            `${LOG_PREFIX} onExpire completed successfully`
+                        );
+                    })
+                    .catch((error: unknown) => {
+                        console.error(
+                            `${LOG_PREFIX} onExpire failed`,
+                            error
+                        );
+                    });
 
-                void onExpireRef.current?.();
                 return;
             }
 
-            timer = window.setTimeout(
-                checkExpiration,
-                Math.min(timeUntilRefresh, MAX_TIMEOUT)
-            );
+            const delay = Math.min(timeUntilRefresh, MAX_TIMEOUT);
+
+            timer = window.setTimeout(checkExpiration, delay);
         };
 
         const handleVisibilityChange = () => {
+
             if (document.visibilityState === "visible") {
+
                 checkExpiration();
             }
         };
@@ -92,7 +123,9 @@ export function useTokenExpiration({
         );
 
         return () => {
+
             clearTimer();
+
             document.removeEventListener(
                 "visibilitychange",
                 handleVisibilityChange
@@ -100,4 +133,3 @@ export function useTokenExpiration({
         };
     }, [accessToken, expiresAt, refreshBeforeMs]);
 }
-
