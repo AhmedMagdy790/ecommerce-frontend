@@ -16,7 +16,6 @@ export default function Navbar() {
   const { isRTL } = useLang();
   const { menuLinks, isLoading, isFetching } = useMenuLinks("header");
 
-  console.log("isLoading", isLoading)
   return (
     <nav
       dir={isRTL ? "rtl" : "ltr"}

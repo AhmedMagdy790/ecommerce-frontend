@@ -73,7 +73,8 @@ export const navItems: NavItem[] = [
     icon: React.createElement(CreditCardIcon, { className: "size-5" }),
     name: "Payment Gateways",
     subItems: [
-      { name: "All Gateways", path: "/admin/payment-gateways" }
+      { name: "All Gateways", path: "/admin/payment-gateways" },
+      { name: "Countries", path: "/admin/countries" }, // إضافة رابط الدول هنا
     ],
   },
   {

@@ -1,3 +1,5 @@
+// src/shared/components/CustomSelect.tsx
+
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useLang } from "../context/LanguageContext";
@@ -10,14 +12,15 @@ export type Option = {
 };
 
 type Props = {
-  value?: string | number | boolean | null;
-  onChange: (value: any) => void;
+  value?: Option["value"] | Option["value"][];
+  onChange: (value: Option["value"] | Option["value"][] | "") => void;
   label?: string;
   options: Option[];
   placeholder?: string;
   searchStatus?: boolean;
   error?: string;
   disabled?: boolean;
+  isMulti?: boolean;
   renderOption?: (option: Option) => React.ReactNode; 
   renderSelectedOption?: (option: Option) => React.ReactNode;
 };
@@ -33,6 +36,7 @@ export default function CustomSelect({
   searchStatus = true,
   error,
   disabled = false,
+  isMulti = false,
 }: Props) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -42,26 +46,27 @@ export default function CustomSelect({
   const triggerRef = useRef<HTMLButtonElement>(null);
   const [dropdownStyles, setDropdownStyles] = useState<React.CSSProperties>({});
 
-  const selectedOption = useMemo(() => {
-    if (value === undefined || value === null || value === "") return undefined;
-    return options?.find((o) => String(o.value).trim() === String(value).trim());
-  }, [options, value]);
+  // تحديد الخيارات المحددة (سواء كانت قيمة مفردة أو مصفوفة)
+  const selectedOptions = useMemo(() => {
+    console.log("value selct", value)
+    if (value === undefined || value === null || value === "") return [];
+    if (isMulti && Array.isArray(value)) {
+      return options?.filter((o) => value.map(String).includes(String(o.value).trim())) || [];
+    }
+    const found = options?.find((o) => String(o.value).trim() === String(value).trim());
+    return found ? [found] : [];
+  }, [options, value, isMulti]);
 
   const updateDropdownPosition = () => {
     if (triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
       const windowHeight = window.innerHeight;
-      
-
       const estimatedDropdownHeight = 300; 
-      
       const spaceBelow = windowHeight - rect.bottom;
-      
       const isNearBottom = spaceBelow < estimatedDropdownHeight;
 
       setDropdownStyles({
         position: "fixed",
-
         ...(isNearBottom
           ? {
               bottom: `${windowHeight - rect.top + 8}px`,
@@ -70,7 +75,6 @@ export default function CustomSelect({
               zIndex: 99999,
             }
           : {
-              // الوضع الافتراضي: يفتح لأسفل
               top: `${rect.bottom + 8}px`,
               left: `${rect.left}px`,
               width: `${rect.width}px`,
@@ -127,6 +131,24 @@ export default function CustomSelect({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleSelect = (optionValue: Option["value"]) => {
+    if (isMulti) {
+      const currentArray: Option["value"][] = Array.isArray(value) ? [...value] : [];
+      const index = currentArray.findIndex((v) => String(v) === String(optionValue));
+      
+      if (index > -1) {
+        currentArray.splice(index, 1); // إزالة إذا كانت موجودة مسبقاً
+      } else {
+        currentArray.push(optionValue); // إضافة إذا لم تكن موجودة
+      }
+      onChange(currentArray);
+    } else {
+      setOpen(false);
+      setSearch("");
+      onChange(String(value).trim() === String(optionValue).trim() ? "" : optionValue);
+    }
+  };
+
   return (
     <div className="w-full relative" ref={wrapperRef}>
       {/* Label */}
@@ -148,13 +170,14 @@ export default function CustomSelect({
         disabled={disabled}
         onClick={() => {
           if (!disabled) {
-                setDropdownStyles({});
+            setDropdownStyles({});
             setOpen((prev) => !prev);
           }
         }}
         className={`
           w-full 
-          h-11 
+          min-h-[44px] 
+          py-2
           px-4 
           bg-[var(--color-background)]
           border 
@@ -174,7 +197,7 @@ export default function CustomSelect({
           ${disabled ? "opacity-50 cursor-not-allowed" : ""}
         `}
       >
-        <div className="flex items-center gap-2 truncate">
+        <div className="flex items-center gap-2 flex-wrap truncate">
           {error && (
             <span
               className="w-2.5 h-2.5 rounded-full bg-[var(--color-error)] shrink-0 animate-pulse"
@@ -182,19 +205,28 @@ export default function CustomSelect({
             />
           )}
 
-          <span
-            className={
-              selectedOption
-                ? "text-[var(--color-text-primary)] font-medium truncate"
-                : "text-[var(--color-text-muted)] font-normal truncate"
-            }
-          >
-            {selectedOption
-              ? renderSelectedOption
-                ? renderSelectedOption(selectedOption)
-                : selectedOption.label
-              : placeholder}
-          </span>
+          {selectedOptions.length > 0 ? (
+            isMulti ? (
+              <div className="flex flex-wrap gap-1">
+                {selectedOptions.map((opt) => (
+                  <span
+                    key={String(opt.value)}
+                    className="bg-[var(--color-primary)]/10 text-[var(--color-primary)] px-2 py-0.5 rounded text-xs font-medium"
+                  >
+                    {opt.label}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <span className="text-[var(--color-text-primary)] font-medium truncate">
+                {renderSelectedOption ? renderSelectedOption(selectedOptions[0]) : selectedOptions[0].label}
+              </span>
+            )
+          ) : (
+            <span className="text-[var(--color-text-muted)] font-normal truncate">
+              {placeholder}
+            </span>
+          )}
         </div>
 
         <svg
@@ -275,20 +307,18 @@ export default function CustomSelect({
                 </li>
               ) : (
                 filteredOptions.map((option) => {
-                  const isSelected = String(option.value).trim() === String(value).trim();
+                  const isSelected = isMulti
+                    ? Array.isArray(value) && value.map(String).includes(String(option.value).trim())
+                    : String(option.value).trim() === String(value).trim();
+                  
                   const isDisabled = option.disabled;
 
                   return (
                     <li
                       key={String(option.value)}
                       onClick={() => {
-                        if (isDisabled || option.value == null) {
-                          return;
-                        }
-
-                        setOpen(false);
-                        setSearch("");
-                        onChange(isSelected ? "" : option.value);
+                        if (isDisabled || option.value == null) return;
+                        handleSelect(option.value);
                       }}
                       className={`
                         px-3 
@@ -308,11 +338,7 @@ export default function CustomSelect({
                         ${isDisabled ? "opacity-50 cursor-not-allowed bg-[var(--color-surface-secondary)]/50" : ""}
                       `}
                     >
-                      {renderOption ? (
-                        renderOption(option)
-                      ) : (
-                        <span>{option.label}</span>
-                      )}
+                      {renderOption ? renderOption(option) : <span>{option.label}</span>}
 
                       {isSelected && (
                         <span className="text-[var(--color-primary)] text-xs font-bold">

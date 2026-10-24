@@ -1,8 +1,8 @@
+
 import { create } from "zustand";
 import { storeApi } from "@/api/client";
 
 type SettingValue = string | number | boolean | null;
-
 type SettingsData = Record<string, SettingValue>;
 
 interface ISettingsState {
@@ -11,26 +11,38 @@ interface ISettingsState {
   getAllSettings: () => Promise<void>;
 }
 
+// Shared across callers and Strict Mode's simulated remount.
+let settingsRequest: Promise<void> | null = null;
+
 export const useSettingsStore = create<ISettingsState>((set, get) => ({
   settings: null,
   isLoading: false,
 
   getAllSettings: async () => {
-    if (get().isLoading) return;
+    // Settings already loaded.
+    if (get().settings !== null) return;
+
+    // Reuse the in-flight request.
+    if (settingsRequest) return settingsRequest;
 
     set({ isLoading: true });
 
-    try {
-      const response = await storeApi.getAllSettings();
-      const settingsData = response?.data?.settings;
+    settingsRequest = (async () => {
+      try {
+        const response = await storeApi.getAllSettings();
+        const settingsData = response?.data?.settings;
 
-      if (settingsData) {
-        set({ settings: settingsData });
+        if (settingsData != null) {
+          set({ settings: settingsData });
+        }
+      } catch (error: unknown) {
+        console.error("Failed to fetch public settings:", error);
+      } finally {
+        settingsRequest = null;
+        set({ isLoading: false });
       }
-    } catch (error: unknown) {
-      console.error("Failed to fetch public settings:", error);
-    } finally {
-      set({ isLoading: false });
-    }
+    })();
+
+    return settingsRequest;
   },
 }));
