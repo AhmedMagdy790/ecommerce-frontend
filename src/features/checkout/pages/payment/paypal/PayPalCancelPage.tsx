@@ -1,43 +1,71 @@
+// src/pages/Order/PayPalCancelPage.tsx
+
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { AlertTriangle } from "lucide-react";
+import { Container } from "@/shared/components/layout/Container";
+import { useLang } from "@/shared/context/LanguageContext";
+import { Button } from "@/shared/components/ui/Button";
 
 export const PayPalCancelPage: React.FC = () => {
+  const { t } = useTranslation("checkout");
+  const { isRTL, lang } = useLang();
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] bg-[var(--color-background)] p-4">
-      <div className="bg-[var(--color-surface)] border border-[var(--color-border)] p-8 rounded-[var(--radius-2xl)] shadow-[var(--shadow-xl)] max-w-md w-full text-center space-y-5">
-        
-        {/* أيقونة الإلغاء */}
-        <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner">
-          !
-        </div>
-
-        <h2 className="text-xl font-bold text-[var(--color-text-primary)]">
-          تم إلغاء عملية الدفع
-        </h2>
-
-        <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
-          لم يتم خصم أي مبلغ من حسابك. يمكنك المحاولة مرة أخرى أو اختيار طريقة دفع مختلفة.
-        </p>
-
-        <div className="pt-3 flex gap-3">
-          <button
-            onClick={() => navigate("/checkout")}
-            className="w-1/2 py-3 px-4 bg-[var(--button-bg)] hover:bg-[var(--button-bg-hover)] text-[var(--button-text)] rounded-[var(--radius-xl)] text-xs font-semibold shadow-[var(--shadow-md)] transition duration-[var(--duration-normal)]"
+    <main 
+      dir={isRTL ? "rtl" : "ltr"}
+      className="flex min-h-[85vh] items-center justify-center bg-background py-12 transition-colors duration-[var(--duration-normal)]"
+    >
+      <Container size="sm">
+        <div className="w-full rounded-panel border border-border bg-surface p-8 text-center shadow-xs space-y-5">
+          
+          {/* Cancel/Warning Icon */}
+          <div 
+            aria-hidden="true"
+            className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 ring-8 ring-amber-500/5"
           >
-            العودة للدفع
-          </button>
+            <AlertTriangle size={32} strokeWidth={2.25} />
+          </div>
 
-          <button
-            onClick={() => navigate("/cart")}
-            className="w-1/2 py-3 px-4 border border-[var(--color-border)] hover:bg-[var(--color-surface-secondary)] text-[var(--color-text-primary)] rounded-[var(--radius-xl)] text-xs font-semibold transition duration-[var(--duration-normal)]"
+          <h2 
+            className="text-xl font-bold text-text-primary"
+            style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
           >
-            سلة المشتريات
-          </button>
-        </div>
+            {t("paypal.canceledTitle", { defaultValue: lang === "ar" ? "تم إلغاء عملية الدفع" : "Payment Canceled" })}
+          </h2>
 
-      </div>
-    </div>
+          <p 
+            className="text-xs leading-relaxed text-text-secondary"
+            style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+          >
+            {t("paypal.canceledMessage", { 
+              defaultValue: lang === "ar" 
+                ? "لم يتم خصم أي مبلغ من حسابك. يمكنك المحاولة مرة أخرى أو اختيار طريقة دفع مختلفة." 
+                : "No funds were deducted from your account. You can try again or choose a different payment method." 
+            })}
+          </p>
+
+          <div className="pt-3 flex flex-col sm:flex-row gap-3">
+            <Button
+              onClick={() => navigate("/checkout")}
+              className="flex-1 py-3 text-xs font-bold"
+            >
+              {t("paypal.returnToCheckout", { defaultValue: lang === "ar" ? "العودة للدفع" : "Return to Checkout" })}
+            </Button>
+
+            <Button
+              variant="outline"
+              onClick={() => navigate("/cart")}
+              className="flex-1 py-3 text-xs font-bold"
+            >
+              {t("paypal.viewCart", { defaultValue: lang === "ar" ? "سلة المشتريات" : "View Cart" })}
+            </Button>
+          </div>
+
+        </div>
+      </Container>
+    </main>
   );
 };

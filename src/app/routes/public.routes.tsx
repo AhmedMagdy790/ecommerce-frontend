@@ -46,7 +46,6 @@ export const publicRoutes = {
 
     { path: "pages/:slug", element: <DynamicCmsPage /> },
 
-    // 🟢 حماية صفحة البروفايل والمسارات التابعة لها باستخدام AuthGuard
     {
       element: <AuthGuard />,
       children: [

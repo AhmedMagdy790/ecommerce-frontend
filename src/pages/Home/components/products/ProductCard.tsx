@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useLang } from "@/shared/context/LanguageContext";
 import type { CmsProductCardViewModel } from "@/features/product/adapters/cmsProductCardAdapter";
 
 interface ProductCardProps {
@@ -13,8 +12,6 @@ interface ProductCardProps {
 const PLACEHOLDER_IMAGE = "/images/placeholders/product.webp";
 
 export default function ProductCard({ product, badge }: ProductCardProps) {
-  const { lang, isRTL } = useLang();
-
   // استخراج القيم بأمان سواء جاء الكائن مباشرة كـ ViewModel أو كـ Raw Product Object
   const title = product.name || "";
   const rawImage = product.image || PLACEHOLDER_IMAGE;
@@ -24,8 +21,8 @@ export default function ProductCard({ product, badge }: ProductCardProps) {
 
   const [imgSrc, setImgSrc] = useState(rawImage);
 
-  // تنسيق السعر بناءً على عملة الجنيه المصري (EGP) وتغيير الترقيم حسب اللغة
-  const formattedPrice = new Intl.NumberFormat(lang === "ar" ? "ar-EG" : "en-EG", {
+  // تنسيق السعر بعملة الجنيه المصري (EGP) بالاعتماد على التنسيق الافتراضي للمتصفح
+  const formattedPrice = new Intl.NumberFormat("ar-EG", {
     style: "currency",
     currency: "EGP",
     minimumFractionDigits: 2,
@@ -34,11 +31,10 @@ export default function ProductCard({ product, badge }: ProductCardProps) {
   return (
     <Link
       to={link}
-      dir={isRTL ? "rtl" : "ltr"}
-      className="group relative flex flex-col overflow-hidden rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-sm)] transition-all duration-[var(--duration-normal)] ease-[var(--ease-default)] hover:-translate-y-1.5 hover:shadow-[var(--shadow-xl)] hover:border-[var(--color-primary)]/40"
+      className="group relative flex flex-col overflow-hidden rounded-panel border border-border bg-surface shadow-xs transition-all duration-[var(--duration-normal)] ease-[var(--ease-default)] hover:-translate-y-1.5 hover:shadow-xl hover:border-primary/40"
     >
       {/* Image Container with Subtle Zoom & Badge Area */}
-      <div className="relative aspect-square overflow-hidden bg-[var(--color-surface-secondary)]">
+      <div className="relative aspect-square overflow-hidden bg-surface-secondary">
         <img
           src={imgSrc}
           alt={title}
@@ -49,7 +45,7 @@ export default function ProductCard({ product, badge }: ProductCardProps) {
         
         {/* Optional Badge */}
         {badge && (
-          <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 rounded-[var(--radius-full)] bg-[var(--color-primary)] px-3 py-1 text-[var(--text-xs)] font-[var(--font-bold)] text-white shadow-md">
+          <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 rounded-full bg-primary px-3 py-1 text-xs font-bold text-white shadow-sm">
             {badge}
           </div>
         )}
@@ -59,26 +55,26 @@ export default function ProductCard({ product, badge }: ProductCardProps) {
       </div>
 
       {/* Content Area */}
-      <div className="flex flex-1 flex-col p-[var(--spacing-5)] sm:p-[var(--spacing-6)]">
-        <h3 className="mb-[var(--spacing-2)] line-clamp-1 text-[var(--text-base)] sm:text-[var(--text-lg)] font-[var(--font-semibold)] text-[var(--color-text-primary)] tracking-tight">
+      <div className="flex flex-1 flex-col p-5 sm:p-6">
+        <h3 className="mb-2 line-clamp-1 text-base sm:text-lg font-bold text-text-primary tracking-tight">
           {title}
         </h3>
 
         {description && (
-          <p className="mb-[var(--spacing-4)] sm:mb-[var(--spacing-6)] flex-1 line-clamp-2 text-[var(--text-xs)] sm:text-[var(--text-sm)] leading-relaxed text-[var(--color-text-secondary)]">
+          <p className="mb-4 sm:mb-6 flex-1 line-clamp-2 text-xs sm:text-sm leading-relaxed text-text-secondary font-medium">
             {description}
           </p>
         )}
 
         {/* Footer / Price & Action Pill */}
-        <div className="mt-auto flex items-center justify-between pt-[var(--spacing-3)] border-t border-[var(--color-border)]/60">
-          <span className="text-[var(--text-base)] sm:text-[var(--text-lg)] font-[var(--font-bold)] text-[var(--color-primary)]">
+        <div className="mt-auto flex items-center justify-between pt-3 border-t border-border/60">
+          <span className="text-base sm:text-lg font-bold text-primary">
             {formattedPrice}
           </span>
 
-          <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-[var(--radius-full)] bg-[var(--color-surface-secondary)] border border-[var(--color-border)] text-[var(--color-text-primary)] transition-all duration-[var(--duration-fast)] group-hover:bg-[var(--color-primary)] group-hover:text-[var(--color-text-inverse)] group-hover:border-transparent">
+          <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-surface-secondary border border-border text-text-primary transition-all duration-[var(--duration-fast)] group-hover:bg-primary group-hover:text-white group-hover:border-transparent">
             <svg 
-              className={`w-4 h-4 transition-transform duration-300 group-hover:scale-110 ${isRTL ? "rotate-180 -scale-x-100" : ""}`} 
+              className="w-4 h-4 transition-transform duration-300 group-hover:scale-110 rtl:rotate-180 rtl:-scale-x-100" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"

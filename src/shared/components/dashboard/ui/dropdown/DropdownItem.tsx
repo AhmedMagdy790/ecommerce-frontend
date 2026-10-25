@@ -1,29 +1,40 @@
-// src/shared/components/dashboard/ui/dropdown/DropdownItem.tsx
-
 import type React from "react";
 import { Link } from "react-router-dom";
 
 interface DropdownItemProps {
-  /** Renders as a router link ('a'), a standard button ('button'), or custom action */
+  /** Renders as a router link or a standard button */
   tag?: "a" | "button";
+
   /** Destination route if rendered as a Link */
   to?: string;
+
   /** Primary click handler */
-  onClick?: (e: React.MouseEvent) => void | Promise<void>;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => void | Promise<void>;
+
   /** Secondary or cascading click handler */
-  onItemClick?: (e: React.MouseEvent) => void | Promise<void>;
+  onItemClick?: (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => void | Promise<void>;
+
   /** Base CSS styles applied by default */
   baseClassName?: string;
-  /** Additional CSS classes for custom overrides */
+
+  /** Additional CSS classes */
   className?: string;
-  /** Content rendered inside the dropdown item */
+
+  /** Content rendered inside the item */
   children: React.ReactNode;
-  /** Optional aria-label for accessibility */
+
+  /** Accessible name when the visible content is insufficient */
   ariaLabel?: string;
+
+  /** Optional menu item role for use inside a proper ARIA menu */
+  role?: "menuitem" | "menuitemcheckbox" | "menuitemradio";
+
+  /** Disable interaction */
+  disabled?: boolean;
 }
 
 const DEFAULT_BASE_CLASSES =
-  "flex items-center w-full gap-[var(--spacing-3,12px)] p-[var(--spacing-2,10px)] mt-1 rounded-[var(--radius-lg,8px)] text-[var(--text-sm,14px)] text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--color-surface-secondary)] hover:text-[var(--color-text-primary)] cursor-pointer group text-start bg-transparent border-none select-none";
+  "group mt-1 flex w-full select-none items-center gap-3 rounded-control bg-transparent p-2.5 text-start text-sm text-text-secondary transition-colors hover:bg-surface-hover hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50";
 
 export const DropdownItem: React.FC<DropdownItemProps> = ({
   tag = "button",
@@ -34,40 +45,59 @@ export const DropdownItem: React.FC<DropdownItemProps> = ({
   className = "",
   children,
   ariaLabel,
+  role,
+  disabled = false,
 }) => {
   const combinedClasses = `${baseClassName} ${className}`.trim();
 
-  // Unified click handler to support mouse, touch, and keyboard interactions reliably
-  const handleAction = async (e: React.MouseEvent) => {
-    // Prevent event bubbling to avoid triggering parent overlay closes prematurely
-    e.stopPropagation();
-    
-    await onClick?.(e);
-    await onItemClick?.(e);
+
+  const handleAction = async (
+    event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>,
+  ) => {
+    if (disabled) {
+      event.preventDefault();
+      return;
+    }
+
+    try {
+      await onClick?.(event);
+      await onItemClick?.(event);
+    } catch (error) {
+      console.error("DropdownItem action failed:", error);
+    }
   };
 
-  // Render as a React Router Link
+
   if (tag === "a" && to) {
     return (
       <Link
         to={to}
-        role="menuitem"
+        role={role}
         aria-label={ariaLabel}
+        aria-disabled={disabled || undefined}
+        tabIndex={disabled ? -1 : undefined}
         className={combinedClasses}
-        onClick={handleAction}
+        onClick={(event) => {
+          if (disabled) {
+            event.preventDefault();
+            return;
+          }
+
+          void handleAction(event);
+        }}
       >
         {children}
       </Link>
     );
   }
 
-  // Render as a standard interactive Button
   return (
     <button
       type="button"
-      role="menuitem"
+      role={role}
       aria-label={ariaLabel}
-      onClick={handleAction}
+      disabled={disabled}
+      onClick={(event) => void handleAction(event)}
       className={combinedClasses}
     >
       {children}

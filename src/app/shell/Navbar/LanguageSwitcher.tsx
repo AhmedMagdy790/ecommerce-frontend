@@ -1,65 +1,67 @@
 import { Languages, LoaderCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useLang } from "@/shared/context/LanguageContext";
 import { langKeys } from "@/shared/utils/langHelpers";
 import { UI_STRINGS } from "@/locales/languages";
 
 export default function LanguageSwitcher() {
+  const { t } = useTranslation("common");
   const { lang, changeLanguage, isChangingLanguage } = useLang();
 
+  const canChangeLanguage = langKeys.length > 1;
+
   const handleToggle = async () => {
-    if (isChangingLanguage || langKeys.length < 2) return;
+    if (isChangingLanguage || !canChangeLanguage) return;
 
     const currentIndex = langKeys.indexOf(lang);
-    const nextIndex = (currentIndex + 1) % langKeys.length;
+    const nextIndex =
+      currentIndex === -1 ? 0 : (currentIndex + 1) % langKeys.length;
 
     await changeLanguage(langKeys[nextIndex]);
   };
 
-  const currentLangName = UI_STRINGS[lang]?._config?.nativeName || lang;
+  const currentLangName = UI_STRINGS[lang]?._config?.nativeName ?? lang;
+
+  const nextLangIndex =
+    langKeys.indexOf(lang) === -1
+      ? 0
+      : (langKeys.indexOf(lang) + 1) % langKeys.length;
+
+  const nextLang = langKeys[nextLangIndex];
+  const nextLangName =
+    UI_STRINGS[nextLang]?._config?.nativeName ?? nextLang;
 
   return (
     <button
       type="button"
       onClick={() => void handleToggle()}
-      disabled={isChangingLanguage}
-      aria-label="Change language"
+      disabled={isChangingLanguage || !canChangeLanguage}
+      aria-label={t("language.changeTo", {
+        language: nextLangName,
+        defaultValue: `Change language to ${nextLangName}`,
+      })}
       aria-busy={isChangingLanguage}
-      className="inline-flex items-center transition-all duration-fast hover:scale-105 active:scale-95 disabled:cursor-wait disabled:opacity-70"
-      style={{
-        height: "40px",
-        minWidth: "80px",
-        paddingLeft: "var(--spacing-3)",
-        paddingRight: "var(--spacing-3)",
-        borderRadius: "var(--radius-lg)",
-        backgroundColor: "var(--color-surface-secondary)",
-        border: "1px solid var(--color-border)",
-        color: "var(--color-text-primary)",
-        gap: "var(--spacing-2)",
-      }}
+      title={t("language.current", {
+        language: currentLangName,
+        defaultValue: `Current language: ${currentLangName}`,
+      })}
+      className="inline-flex h-10 min-w-20 items-center justify-center gap-2 rounded-control border border-border bg-surface-secondary px-3 text-text-primary transition-colors hover:border-border-hover hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-70"
     >
       {isChangingLanguage ? (
         <LoaderCircle
           size={18}
-          className="animate-spin"
+          className="shrink-0 animate-spin text-primary"
           aria-hidden="true"
-          style={{ color: "var(--color-primary)" }}
         />
       ) : (
         <Languages
           size={18}
+          className="shrink-0 text-primary"
           aria-hidden="true"
-          style={{ color: "var(--color-primary)" }}
         />
       )}
 
-      <span
-        style={{
-          fontSize: "var(--text-xs)",
-          fontWeight: "var(--font-semibold)",
-          fontFamily: "var(--font-sans)",
-          textTransform: "uppercase",
-        }}
-      >
+      <span className="text-xs font-semibold uppercase">
         {isChangingLanguage ? "..." : currentLangName}
       </span>
     </button>

@@ -12,11 +12,13 @@ import { useCheckoutForm } from "../hooks/useCheckoutForm";
 import { useCheckoutStep } from "../hooks/useCheckoutStep";
 import { useCheckoutSubmit } from "../hooks/useCheckoutSubmit";
 import { ShippingCalculationProvider } from "../context/ShippingCalculationProvider";
-
+import { useLang } from "@/shared/context/LanguageContext";
+import { Container } from "@/shared/components/layout/Container";
 
 
 export default function CheckoutPage() {
   const { t } = useTranslation("checkout");
+  const { isRTL, lang } = useLang();
 
   const methods = useCheckoutForm();
 
@@ -33,7 +35,6 @@ export default function CheckoutPage() {
     error,
   } = useCheckoutSubmit();
 
-
   const onSubmitHandler = methods.handleSubmit(
     async (data) => {
       await submit(data);
@@ -45,21 +46,29 @@ export default function CheckoutPage() {
 
   return (
     <FormProvider {...methods}>
-      {/* تغليف صفحة الـ Checkout أو الأجزاء التي تحتاج لحساب الشحن بهذا المزود */}
       <ShippingCalculationProvider>
-        <div className="min-h-screen bg-[var(--color-background)] px-4 py-10 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-7xl space-y-8">
+        <main
+          dir={isRTL ? "rtl" : "ltr"}
+          className="min-h-screen bg-background text-text-primary py-10 transition-colors duration-[var(--duration-normal)]"
+        >
+          <Container size="2xl" className="space-y-8">
 
-            {/* Header */}
+            {/* Header Section */}
             <div className="space-y-2 text-center">
-              <h1 className="text-3xl font-bold tracking-tight">
-                {t("page.title", "Checkout")}
+              <h1 
+                className="text-3xl sm:text-4xl font-bold tracking-tight text-text-primary"
+                style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+              >
+                {t("page.title", { defaultValue: lang === "ar" ? "إتمام الشراء" : "Checkout" })}
               </h1>
 
-              <p className="text-sm text-[var(--color-text-secondary)]">
+              <p 
+                className="text-sm text-text-secondary max-w-lg mx-auto"
+                style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+              >
                 {t(
                   "page.subtitle",
-                  "Complete your purchase securely by filling out the steps below."
+                  { defaultValue: lang === "ar" ? "أكمل عملية الشراء بأمان من خلال ملء الخطوات أدناه." : "Complete your purchase securely by filling out the steps below." }
                 )}
               </p>
             </div>
@@ -70,13 +79,13 @@ export default function CheckoutPage() {
               onStepClick={setStep}
             />
 
-            {/* Submission Error */}
+            {/* Submission Error Banner */}
             {error && <CheckoutError error={String(error)} />}
 
-            {/* Main Layout */}
+            {/* Main Layout Grid */}
             <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
 
-              {/* Checkout Form */}
+              {/* Checkout Form Container */}
               <div className="lg:col-span-7 xl:col-span-8">
                 <CheckoutSteps
                   currentStep={currentStep}
@@ -86,14 +95,14 @@ export default function CheckoutPage() {
                 />
               </div>
 
-              {/* Order Summary */}
-              <div className="sticky top-6 lg:col-span-5 xl:col-span-4">
+              {/* Order Financial Summary Sidebar */}
+              <div className="sticky top-[calc(var(--topbar-height,40px)+var(--navbar-height,70px)+var(--spacing-6))] lg:col-span-5 xl:col-span-4">
                 <CheckoutSummary loading={loading} />
               </div>
 
             </div>
-          </div>
-        </div>
+          </Container>
+        </main>
       </ShippingCalculationProvider>
     </FormProvider>
   );

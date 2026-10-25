@@ -3,9 +3,10 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useLang } from "@/shared/context/LanguageContext";
-import type { Section } from "@/features/cms/section/model/types/section.types";
 import ProductCard from "../products/ProductCard";
 import { mapCmsProducts } from "@/features/product/adapters/cmsProductCardAdapter";
+import { Container } from "@/shared/components/layout/Container";
+import type { Section } from "@/features/cms/section/model/types/section.types";
 
 interface NewArrivalsProps {
   section: Section<string>;
@@ -15,14 +16,12 @@ export default function NewArrivals({ section }: NewArrivalsProps) {
   const { t } = useTranslation("home");
   const { lang, isRTL } = useLang();
 
-  console.log("section", section)
-  console.log("section", section)
+  const rawItems = Array.isArray(section?.data) ? section.data : [];
+  
+  // تحويل البيانات باستخدام Adapter
+  const products = mapCmsProducts(rawItems, lang);
 
-    const rawItems = Array.isArray(section?.data) ? section.data : [];
-  
-    // 2. تحويل البيانات باستخدام Adapter
-    const products = mapCmsProducts(rawItems, lang);
-  
+  if (!products.length) return null;
 
   const sectionTitle = section.name || (lang === "ar" ? "وصل حديثاً" : "New Arrivals");
   const badgeText = lang === "ar" ? "جديد" : "NEW";
@@ -30,15 +29,15 @@ export default function NewArrivals({ section }: NewArrivalsProps) {
   return (
     <section 
       dir={isRTL ? "rtl" : "ltr"}
-      className="px-[var(--spacing-6)] py-[var(--spacing-16)]"
+      className="py-16 bg-background"
     >
-      <div className="mx-auto max-w-[var(--container-2xl,1400px)]">
+      <Container>
         {/* Section Header */}
-        <div className="mb-[var(--spacing-10)] flex items-center justify-between border-b border-[var(--color-border)] pb-[var(--spacing-4)]">
+        <div className="mb-10 flex items-center justify-between border-b border-border pb-4">
           {sectionTitle && (
-            <div className="flex items-center gap-[var(--spacing-3)]">
-              <span className="h-6 w-1.5 rounded-[var(--radius-full)] bg-[var(--color-primary)]" />
-              <h2 className="text-[var(--text-2xl)] sm:text-[var(--text-3xl)] font-[var(--font-bold)] text-[var(--color-text-primary)] tracking-tight">
+            <div className="flex items-center gap-3">
+              <span className="h-6 w-1.5 rounded-full bg-primary" />
+              <h2 className="text-2xl sm:text-3xl font-bold text-text-primary tracking-tight">
                 {sectionTitle}
               </h2>
             </div>
@@ -46,14 +45,14 @@ export default function NewArrivals({ section }: NewArrivalsProps) {
 
           <Link
             to="/products?sort=newest"
-            className="text-[var(--text-sm)] font-[var(--font-semibold)] text-[var(--color-primary)] transition-colors hover:text-[var(--color-primary-dark)] hover:underline"
+            className="text-sm font-semibold text-primary transition-colors hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-control"
           >
             {t("newArrivals.viewAll", lang === "ar" ? "عرض الكل" : "View All")}
           </Link>
         </div>
 
         {/* Responsive Products Grid */}
-        <div className="grid grid-cols-2 gap-[var(--spacing-4)] sm:gap-[var(--spacing-6)] md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
           {products.map((product, idx) => (
             <ProductCard
               key={product.id ?? idx} 
@@ -62,7 +61,7 @@ export default function NewArrivals({ section }: NewArrivalsProps) {
             />
           ))}
         </div>
-      </div>
+      </Container>
     </section>
   );
 }

@@ -2,13 +2,17 @@ import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { passwordSchema, type PasswordFormValues } from "../schemas/password.schema";
+import {
+  passwordSchema,
+  type PasswordFormValues,
+} from "../schemas/password.schema";
+
 import { Input } from "@/shared/components/ui/Input";
-import { useUpdatePassword } from "../hooks/useUpdatePassword"; // استدعاء الهوك العزل
+import { useUpdatePassword } from "../hooks/useUpdatePassword";
 
 export default function SecuritySection() {
   const { t } = useTranslation("profile");
-  const { updatePassword, isSubmitting } = useUpdatePassword(); // استخدام الهوك
+  const { updatePassword, isSubmitting } = useUpdatePassword();
 
   const {
     register,
@@ -17,27 +21,37 @@ export default function SecuritySection() {
     formState: { errors },
   } = useForm<PasswordFormValues>({
     resolver: zodResolver(passwordSchema),
+    mode: "onBlur",
   });
 
-  // الـ onSubmit أصبح يستدعي دالة جاهزة من الهوك المعزول
-  const onSubmit = (data: PasswordFormValues) => {
-    updatePassword(data, () => reset());
+  const onSubmit = async (data: PasswordFormValues) => {
+    await updatePassword(data, () => reset());
   };
 
   return (
     <section>
-      <h2 className="text-xl font-bold text-[var(--color-text-primary)] mb-2">
-        {t("sections.security.title", "Security & Password")}
-      </h2>
-      <p className="text-sm text-[var(--color-text-secondary)] mb-6">
-        {t("sections.security.description", "Manage your password and security settings.")}
-      </p>
+      <header className="mb-6">
+        <h2 className="mb-2 text-xl font-bold text-text-primary">
+          {t("sections.security.title", "Security & Password")}
+        </h2>
+
+        <p className="text-sm text-text-secondary">
+          {t(
+            "sections.security.description",
+            "Manage your password and security settings.",
+          )}
+        </p>
+      </header>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <Input
           id="current_password"
           type="password"
-          label={t("sections.security.currentPassword", "Current Password")}
+          autoComplete="current-password"
+          label={t(
+            "sections.security.currentPassword",
+            "Current Password",
+          )}
           placeholder="••••••••"
           error={errors.current_password?.message}
           {...register("current_password")}
@@ -46,6 +60,7 @@ export default function SecuritySection() {
         <Input
           id="new_password"
           type="password"
+          autoComplete="new-password"
           label={t("sections.security.newPassword", "New Password")}
           placeholder="••••••••"
           error={errors.new_password?.message}
@@ -55,22 +70,48 @@ export default function SecuritySection() {
         <Input
           id="new_password_confirmation"
           type="password"
-          label={t("sections.security.confirmPassword", "Confirm New Password")}
+          autoComplete="new-password"
+          label={t(
+            "sections.security.confirmPassword",
+            "Confirm New Password",
+          )}
           placeholder="••••••••"
           error={errors.new_password_confirmation?.message}
           {...register("new_password_confirmation")}
         />
 
-        <div className="flex justify-end pt-4 border-t border-[var(--color-border)]">
+        <div className="flex justify-end border-t border-border pt-4">
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-5 py-2.5 bg-[var(--button-bg)] text-[var(--button-text)] text-sm font-medium rounded-[var(--radius-lg)] hover:bg-[var(--button-bg-hover)] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer shadow-sm"
+            className="
+              inline-flex cursor-pointer items-center gap-2
+              rounded-control bg-primary px-5 py-2.5
+              text-sm font-medium text-text-inverse shadow-sm
+              transition-colors hover:bg-primary-hover
+              focus-visible:outline-2 focus-visible:outline-offset-2
+              focus-visible:outline-primary
+              disabled:cursor-not-allowed disabled:opacity-50
+            "
           >
             {isSubmitting && (
-              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span
+                aria-hidden="true"
+                className="
+                  size-4 animate-spin rounded-full
+                  border-2 border-current border-t-transparent
+                "
+              />
             )}
-            {isSubmitting ? "Updating..." : "Update Password"}
+
+            <span>
+              {isSubmitting
+                ? t("sections.security.updating", "Updating...")
+                : t(
+                    "sections.security.updatePassword",
+                    "Update Password",
+                  )}
+            </span>
           </button>
         </div>
       </form>

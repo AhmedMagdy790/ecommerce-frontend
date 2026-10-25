@@ -1,3 +1,4 @@
+
 import { createContext } from "react";
 
 export type Theme = "light" | "dark" | "system";
@@ -5,6 +6,7 @@ export type Theme = "light" | "dark" | "system";
 export interface ThemeContextType {
   theme: Theme;
   resolvedTheme: "light" | "dark";
+  isChangingTheme: boolean;
   setTheme: (theme: Theme) => void;
   toggleTheme: () => void;
 }

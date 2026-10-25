@@ -3,6 +3,7 @@
 import { useTranslation } from "react-i18next";
 import { ArrowRight, ArrowLeft, ShoppingBag } from "lucide-react";
 import { useLang } from "@/shared/context/LanguageContext";
+import { Container } from "@/shared/components/layout/Container";
 
 interface Product {
   id: string | number;
@@ -46,85 +47,87 @@ export default function RelatedProducts({
   return (
     <section 
       dir={isRTL ? "rtl" : "ltr"}
-      className="mt-[var(--spacing-16)] border-t border-[var(--color-border)] pt-[var(--spacing-10)]"
+      className="mt-16 border-t border-border pt-10 bg-background"
     >
-      {/* Header */}
-      <div className="flex items-center justify-between mb-[var(--spacing-8)]">
-        <h2 
-          className="text-[var(--text-2xl)] sm:text-[var(--text-3xl)] font-[var(--font-bold)] tracking-tight text-[var(--color-text-primary)]"
-          style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
-        >
-          {sectionTitle}
-        </h2>
+      <Container>
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <h2 
+            className="text-2xl sm:text-3xl font-bold tracking-tight text-text-primary"
+            style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+          >
+            {sectionTitle}
+          </h2>
 
-        <a
-          href="/shop"
-          className="inline-flex items-center gap-[var(--spacing-2)] text-[var(--text-sm)] font-[var(--font-semibold)] text-[var(--color-primary)] transition-opacity hover:opacity-80 group"
-          style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
-        >
-          <span>{lang === "ar" ? "عرض الكل" : "View All"}</span>
-          {isRTL ? (
-            <ArrowLeft size={16} className="transition-transform duration-300 group-hover:-translate-x-1" />
-          ) : (
-            <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
-          )}
-        </a>
-      </div>
+          <a
+            href="/shop"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-primary transition-opacity hover:opacity-80 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-control"
+            style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+          >
+            <span>{lang === "ar" ? "عرض الكل" : "View All"}</span>
+            {isRTL ? (
+              <ArrowLeft size={16} className="transition-transform duration-300 group-hover:-translate-x-1" />
+            ) : (
+              <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
+            )}
+          </a>
+        </div>
 
-      {/* Products Grid */}
-      <div className="grid grid-cols-2 gap-[var(--spacing-4)] sm:gap-[var(--spacing-6)] md:grid-cols-3 lg:grid-cols-4">
-        {products.map((product) => {
-          const productName = getLocalizedText(product.name);
+        {/* Products Grid */}
+        <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+          {products.map((product) => {
+            const productName = getLocalizedText(product.name);
 
-          return (
-            <a
-              key={product.id}
-              href={product.link || `/products/${product.id}`}
-              className="group relative flex flex-col overflow-hidden rounded-[var(--radius-3xl)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-sm)] transition-all duration-[var(--duration-normal)] ease-[var(--ease-default)] hover:-translate-y-1.5 hover:shadow-[var(--shadow-xl)] hover:border-[var(--color-primary)]/40"
-            >
-              {/* Image Container */}
-              <div className="relative aspect-square w-full overflow-hidden bg-[var(--color-surface-secondary)]">
-                <img
-                  src={product.image || "https://images.unsplash.com/photo-1523275335684-37898b6baf30"}
-                  alt={productName || "Product Image"}
-                  className="h-full w-full object-cover object-center transition-transform duration-700 ease-[var(--ease-default)] group-hover:scale-110"
-                  loading="lazy"
-                />
+            return (
+              <a
+                key={product.id}
+                href={product.link || `/products/${product.id}`}
+                className="group relative flex flex-col overflow-hidden rounded-panel border border-border bg-surface shadow-xs transition-all duration-[var(--duration-normal)] ease-[var(--ease-default)] hover:-translate-y-1.5 hover:shadow-xl hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                {/* Image Container */}
+                <div className="relative aspect-square w-full overflow-hidden bg-surface-secondary">
+                  <img
+                    src={product.image || "https://images.unsplash.com/photo-1523275335684-37898b6baf30"}
+                    alt={productName || "Product Image"}
+                    className="h-full w-full object-cover object-center transition-transform duration-700 ease-[var(--ease-default)] group-hover:scale-110"
+                    loading="lazy"
+                  />
 
-                {/* Quick Add Overlay Button on Hover */}
-                <div className="absolute inset-x-3 bottom-3 opacity-0 translate-y-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
-                  <span className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-[var(--radius-xl)] bg-[var(--color-surface)]/90 backdrop-blur-md text-[var(--color-text-primary)] text-[var(--text-xs)] font-[var(--font-semibold)] shadow-md border border-[var(--color-border)] hover:bg-[var(--color-primary)] hover:text-white transition-colors">
-                    <ShoppingBag size={14} />
-                    <span>{lang === "ar" ? "عرض التفاصيل" : "Quick View"}</span>
-                  </span>
-                </div>
-              </div>
-
-              {/* Product Info */}
-              <div className="flex flex-col flex-1 p-[var(--spacing-4)] sm:p-[var(--spacing-5)] justify-between">
-                <h3 
-                  className="font-[var(--font-semibold)] text-[var(--text-sm)] sm:text-[var(--text-base)] text-[var(--color-text-primary)] line-clamp-2 mb-[var(--spacing-3)] group-hover:text-[var(--color-primary)] transition-colors"
-                  style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
-                >
-                  {productName}
-                </h3>
-
-                <div className="flex items-baseline gap-[var(--spacing-2)] flex-wrap">
-                  <span className="text-[var(--text-base)] sm:text-[var(--text-lg)] font-[var(--font-bold)] text-[var(--color-primary)]">
-                    ${product.price}
-                  </span>
-
-                  {product.oldPrice && (
-                    <span className="text-[var(--text-xs)] sm:text-[var(--text-sm)] text-[var(--color-text-muted)] line-through">
-                      ${product.oldPrice}
+                  {/* Quick Add Overlay Button on Hover */}
+                  <div className="absolute inset-x-3 bottom-3 opacity-0 translate-y-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
+                    <span className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-card bg-surface/90 backdrop-blur-md text-text-primary text-xs font-semibold shadow-md border border-border hover:bg-primary hover:text-white transition-colors">
+                      <ShoppingBag size={14} />
+                      <span>{lang === "ar" ? "عرض التفاصيل" : "Quick View"}</span>
                     </span>
-                  )}
+                  </div>
                 </div>
-              </div>
-            </a>
-          );
-        })}
-      </div>
+
+                {/* Product Info */}
+                <div className="flex flex-col flex-1 p-4 sm:p-5 justify-between">
+                  <h3 
+                    className="font-semibold text-sm sm:text-base text-text-primary line-clamp-2 mb-3 group-hover:text-primary transition-colors"
+                    style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+                  >
+                    {productName}
+                  </h3>
+
+                  <div className="flex items-baseline gap-2 flex-wrap">
+                    <span className="text-base sm:text-lg font-bold text-primary">
+                      ${product.price}
+                    </span>
+
+                    {product.oldPrice && (
+                      <span className="text-xs sm:text-sm text-text-muted line-through">
+                        ${product.oldPrice}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      </Container>
     </section>
   );
 }

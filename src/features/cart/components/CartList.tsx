@@ -28,14 +28,7 @@ export default function CartList({
     <ul
       dir={isRTL ? "rtl" : "ltr"}
       role="list"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "var(--spacing-4)",
-        listStyle: "none",
-        margin: 0,
-        padding: 0,
-      }}
+      className="flex flex-col gap-4 list-none m-0 p-0 w-full"
     >
       {validItems.map((item, index) => {
         // Debug safeguard log
@@ -45,7 +38,7 @@ export default function CartList({
         }
 
         return (
-          <li key={item.id ?? index} style={{ width: "100%" }}>
+          <li key={item.id ?? index} className="w-full">
             <CartItem
               item={item}
               onIncrease={onIncrease}

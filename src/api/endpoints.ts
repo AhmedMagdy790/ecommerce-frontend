@@ -42,7 +42,7 @@ export const API_ENDPOINTS = {
     list: "/cart",
     add: "/cart",
     destroy: (id: string | number) => `/cart/${id}`,
-    clear: "/cart/clea"
+    clear: "/cart/clear"
   },
 
   wishlist: {

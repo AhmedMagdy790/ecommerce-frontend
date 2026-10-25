@@ -50,7 +50,6 @@ export default function DynamicCmsPage() {
   const pageDescription = pageObject?.meta_description;
   const canonicalUrl = `${import.meta.env.VITE_APP_URL}/${pageSlug}`;
 
-
   return (
     <>
       <SEO
@@ -59,8 +58,8 @@ export default function DynamicCmsPage() {
         canonical={canonicalUrl}
       />
 
-      {/* عرض الأقسام ديناميكياً عبر المنسق */}
-      <main className="flex flex-col gap-12 pb-16">
+      {/* عرض الأقسام ديناميكياً عبر المنسق مع الالتزام بمسافات النظام */}
+      <main className="flex flex-col gap-16 pb-20 bg-background">
         <SectionRenderer sections={sectionsData} />
       </main>
     </>

@@ -1,4 +1,3 @@
-// src/components/layout/Navbar.tsx
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useLang } from "@/shared/context/LanguageContext";
@@ -8,58 +7,65 @@ import DesktopMenu from "./DesktopMenu";
 import NavbarActions from "./NavbarActions";
 import MobileMenu from "./MobileMenu";
 import MobileMenuButton from "./MobileMenuButton";
+
 import { useMenuLinks } from "@/features/navigation/hooks/useMenuLinks";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+
   const { slug } = useParams();
   const { isRTL } = useLang();
+
   const { menuLinks, isLoading, isFetching } = useMenuLinks("header");
+  const isMenuLoading = isLoading || isFetching;
+
+  const closeMobileMenu = () => setIsOpen(false);
 
   return (
-    <nav
+    <header
       dir={isRTL ? "rtl" : "ltr"}
-      className="relative w-full border-b transition-colors duration-normal backdrop-blur-xl bg-[var(--color-background)]/80 z-40"
-      style={{
-        backgroundColor: "var(--header-bg)",
-        borderColor: "var(--header-border)",
-      }}
+      className="relative z-40 w-full border-b border-header-border bg-header/80 text-text-primary backdrop-blur-xl"
     >
-      <div className="mx-auto flex h-16 max-w-[var(--container-2xl)] items-center justify-between px-4 sm:px-6 md:px-8 gap-4">
-        
-        {/* Left: Logo */}
-        <Logo />
+      <div className="mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8">
+        {/* Main row: Logo, navigation, actions */}
+        <div className="flex min-h-16 min-w-0 items-center justify-between gap-3">
+          {/* Logo */}
+          <div className="min-w-0 shrink-0">
+            <Logo />
+          </div>
 
-        {/* Center: Floating Navigation Menu */}
-        <div className="hidden lg:flex items-center justify-center flex-1 mx-4">
-          <DesktopMenu
-            links={menuLinks}
-            isLoading={isLoading || isFetching}
-            currentSlug={slug}
-          />
-        </div>
-
-        {/* Right: Actions & Mobile Toggle */}
-        <div className="flex items-center gap-2">
-          <NavbarActions />
-
-          <div className="lg:hidden ml-1">
-            <MobileMenuButton
-              isOpen={isOpen}
-              onToggle={() => setIsOpen((prev) => !prev)}
+          {/* Desktop navigation */}
+          <div className="hidden min-w-0 flex-1 items-center justify-center lg:flex">
+            <DesktopMenu
+              links={menuLinks}
+              isLoading={isMenuLoading}
+              currentSlug={slug}
             />
+          </div>
+
+          {/* Actions */}
+          <div className="ms-auto flex shrink-0 items-center gap-1 sm:gap-2 lg:ms-0">
+            <NavbarActions />
+
+            {/* Mobile menu button */}
+            <div className="shrink-0 lg:hidden">
+              <MobileMenuButton
+                isOpen={isOpen}
+                onToggle={() => setIsOpen((previous) => !previous)}
+              />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile navigation panel */}
       <MobileMenu
         isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
+        onClose={closeMobileMenu}
         links={menuLinks}
-        isLoading={isLoading || isFetching}
+        isLoading={isMenuLoading}
         currentSlug={slug}
       />
-    </nav>
+    </header>
   );
 }

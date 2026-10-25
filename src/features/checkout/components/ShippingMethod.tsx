@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useShippingOptions } from "@/features/checkout/hooks/useShippingOptions";
 import { RadioGroup, type RadioOption } from "@/shared/components/RadioGroup";
 import type { ShippingOption } from "@/features/shipping/model/types/shipping.types";
+import { useLang } from "@/shared/context/LanguageContext";
 
 interface ShippingMethodProps {
   cityId?: number | string;
@@ -20,14 +21,26 @@ export default function ShippingMethod({
   currency = "USD",
 }: ShippingMethodProps) {
   const { t } = useTranslation("checkout");
+  const { isRTL, lang } = useLang();
   const { options, loading, error } = useShippingOptions(cityId);
 
   if (!cityId) {
     return (
-      <section className="rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] p-6">
-        <h2 className="mb-6 text-xl font-semibold">{t("shipping.title", "Shipping Method")}</h2>
-        <p className="text-sm text-[var(--color-text-secondary)]">
-          {t("shipping.selectCityFirst", "Please select a city first to view shipping options.")}
+      <section 
+        dir={isRTL ? "rtl" : "ltr"} 
+        className="rounded-panel border border-border bg-surface p-6 shadow-xs"
+      >
+        <h2 
+          className="mb-4 text-xl font-bold text-text-primary"
+          style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+        >
+          {t("shipping.title", { defaultValue: lang === "ar" ? "طريقة الشحن" : "Shipping Method" })}
+        </h2>
+        <p 
+          className="text-sm text-text-secondary"
+          style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+        >
+          {t("shipping.selectCityFirst", { defaultValue: lang === "ar" ? "يرجى تحديد المدينة أولاً لعرض خيارات الشحن المتاحة." : "Please select a city first to view shipping options." })}
         </p>
       </section>
     );
@@ -35,10 +48,18 @@ export default function ShippingMethod({
 
   if (loading) {
     return (
-      <section className="rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] p-6">
-        <h2 className="mb-6 text-xl font-semibold">{t("shipping.title", "Shipping Method")}</h2>
+      <section 
+        dir={isRTL ? "rtl" : "ltr"} 
+        className="rounded-panel border border-border bg-surface p-6 shadow-xs"
+      >
+        <h2 
+          className="mb-6 text-xl font-bold text-text-primary"
+          style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+        >
+          {t("shipping.title", { defaultValue: lang === "ar" ? "طريقة الشحن" : "Shipping Method" })}
+        </h2>
         <div className="flex items-center justify-center py-8">
-          <Loader2 className="h-6 w-6 animate-spin text-[var(--color-primary)]" />
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </div>
       </section>
     );
@@ -46,16 +67,24 @@ export default function ShippingMethod({
 
   if (error) {
     return (
-      <section className="rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] p-6">
-        <h2 className="mb-6 text-xl font-semibold">{t("shipping.title", "Shipping Method")}</h2>
-        <p className="text-sm text-[var(--color-error)]">{error}</p>
+      <section 
+        dir={isRTL ? "rtl" : "ltr"} 
+        className="rounded-panel border border-border bg-surface p-6 shadow-xs"
+      >
+        <h2 
+          className="mb-4 text-xl font-bold text-text-primary"
+          style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+        >
+          {t("shipping.title", { defaultValue: lang === "ar" ? "طريقة الشحن" : "Shipping Method" })}
+        </h2>
+        <p className="text-sm text-red-600 dark:text-red-400 font-medium">{error}</p>
       </section>
     );
   }
 
   const radioOptions: RadioOption[] = options.map((option: ShippingOption<string>) => {
     const optionId = option.shipping_rate_id ?? option.id;
-    const courierName = option.name || t("shipping.defaultCourier", "Standard Shipping");
+    const courierName = option.name || t("shipping.defaultCourier", { defaultValue: lang === "ar" ? "الشحن القياسي" : "Standard Shipping" });
 
     const cost = Number(option.cost ?? 0);
     const currencySymbol = option.currency || currency;
@@ -64,10 +93,11 @@ export default function ShippingMethod({
     const deliveryTo = option.delivery?.to ?? deliveryFrom;
 
     const formattedCost = cost === 0
-      ? t("shipping.free", "Free")
+      ? t("shipping.free", { defaultValue: lang === "ar" ? "مجاني" : "Free" })
       : `${currencySymbol} ${cost.toFixed(2)}`;
 
-    const estimatedDaysText = t("shipping.estimatedDays", "Estimated delivery: {{from}} - {{to}} days", {
+    const estimatedDaysText = t("shipping.estimatedDays", {
+      defaultValue: lang === "ar" ? `التوصيل المتوقع: ${deliveryFrom} - ${deliveryTo} أيام` : `Estimated delivery: ${deliveryFrom} - ${deliveryTo} days`,
       from: deliveryFrom,
       to: deliveryTo,
     });
@@ -77,15 +107,18 @@ export default function ShippingMethod({
       label: (
         <div className="flex items-center justify-between w-full gap-4">
           <div className="flex items-center gap-3">
-            <div className="text-[var(--color-primary)] p-2 rounded-lg bg-[var(--color-surface)]">
+            <div className="text-primary p-2 rounded-card bg-surface-secondary border border-border">
               <Truck size={20} />
             </div>
-            <span className="font-medium text-[var(--color-text-primary)]">
+            <span 
+              className="font-semibold text-text-primary"
+              style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+            >
               {courierName}
             </span>
           </div>
 
-          <span className="font-semibold text-[var(--color-text-primary)]">
+          <span className="font-bold text-text-primary">
             {formattedCost}
           </span>
         </div>
@@ -108,14 +141,23 @@ export default function ShippingMethod({
   };
 
   return (
-    <section className="rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] p-6">
-      <h2 className="mb-6 text-xl font-semibold">
-        {t("shipping.title", "Shipping Method")}
+    <section 
+      dir={isRTL ? "rtl" : "ltr"} 
+      className="rounded-panel border border-border bg-surface p-6 shadow-xs"
+    >
+      <h2 
+        className="mb-6 text-xl font-bold text-text-primary border-b border-border pb-4"
+        style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+      >
+        {t("shipping.title", { defaultValue: lang === "ar" ? "طريقة الشحن" : "Shipping Method" })}
       </h2>
 
       {options.length === 0 ? (
-        <p className="text-sm text-[var(--color-text-secondary)]">
-          {t("shipping.noOptions", "No shipping methods available for this city.")}
+        <p 
+          className="text-sm text-text-secondary"
+          style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+        >
+          {t("shipping.noOptions", { defaultValue: lang === "ar" ? "لا توجد طرق شحن متاحة لهذه المدينة." : "No shipping methods available for this city." })}
         </p>
       ) : (
         <RadioGroup

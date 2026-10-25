@@ -1,5 +1,8 @@
-import { ArrowRight } from "lucide-react";
+// src/pages/Cart/components/CheckoutButton.tsx
+
+import { ArrowRight, ArrowLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useLang } from "@/shared/context/LanguageContext";
 
 interface CheckoutButtonProps {
   loading?: boolean;
@@ -13,38 +16,51 @@ export default function CheckoutButton({
   onClick,
 }: CheckoutButtonProps) {
   const { t } = useTranslation("cart");
+  const { lang, isRTL } = useLang();
 
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={loading || disabled}
+      dir={isRTL ? "rtl" : "ltr"}
       className="
         flex
         w-full
         items-center
         justify-center
-        gap-2
-        rounded-xl
-        bg-[var(--color-primary)]
-        px-6
-        py-3
+        gap-3
+        rounded-card
+        bg-primary
+        px-8
+        py-4
+        text-base
         font-semibold
-        text-[var(--color-text-inverse)]
-        transition-colors
-        duration-[var(--duration-fast)]
-        hover:bg-[var(--color-primary-hover)]
+        text-text-inverse
+        shadow-xl
+        transition-all
+        duration-[var(--duration-normal)]
+        ease-[var(--ease-default)]
+        hover:bg-primary-hover
+        hover:scale-[1.01]
+        active:scale-95
         disabled:cursor-not-allowed
-        disabled:opacity-60
+        disabled:opacity-50
+        disabled:scale-100
+        focus-visible:outline-none
+        focus-visible:ring-2
+        focus-visible:ring-primary
       "
     >
       <span>
         {loading
-          ? t("processing")
-          : t("checkout")}
+          ? t("processing", { defaultValue: lang === "ar" ? "جاري المعالجة..." : "Processing..." })
+          : t("checkout", { defaultValue: lang === "ar" ? "إتمام الشراء" : "Proceed to Checkout" })}
       </span>
 
-      {!loading && <ArrowRight size={18} />}
+      {!loading && (
+        isRTL ? <ArrowLeft size={18} /> : <ArrowRight size={18} />
+      )}
     </button>
   );
 }

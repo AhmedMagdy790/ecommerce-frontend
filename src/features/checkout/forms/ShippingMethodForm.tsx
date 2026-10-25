@@ -8,6 +8,7 @@ import { useCart } from "@/pages/Cart/hook/useCart";
 import ShippingMethod from "../components/ShippingMethod";
 import { shippingService } from "@/services/shippingService";
 import type { ShippingOption } from "@/features/shipping/model/types/shipping.types";
+import { useLang } from "@/shared/context/LanguageContext";
 
 interface ShippingMethodFormProps {
   onNext: () => void;
@@ -16,6 +17,7 @@ interface ShippingMethodFormProps {
 
 export default function ShippingMethodForm({ onNext, onBack }: ShippingMethodFormProps) {
   const { t } = useTranslation("checkout");
+  const { isRTL, lang } = useLang();
   const { watch, setValue, formState: { errors } } = useFormContext();
 
   const currentCityId = watch("city_id");
@@ -23,11 +25,7 @@ export default function ShippingMethodForm({ onNext, onBack }: ShippingMethodFor
   const currency = watch("currency") || "EGY";
   const { cartItems } = useCart();
 
-
-
-
   const handleShippingChange = async (option: ShippingOption | null) => {
-
     if (!option) {
       setValue("shipping_rate_id", "", {
         shouldValidate: true,
@@ -76,7 +74,6 @@ export default function ShippingMethodForm({ onNext, onBack }: ShippingMethodFor
       quantity: item.quantity,
     })) ?? [];
 
-
     const calculation = await shippingService.calculateShipping({
       city_id: Number(currentCityId),
       shipping_rate_id: Number(targetRateId),
@@ -87,7 +84,7 @@ export default function ShippingMethodForm({ onNext, onBack }: ShippingMethodFor
       return null;
     });
 
-    // استخراج القيمة والعملة بدقة من الـ Objects الخاصة بالاستجابة
+    // Extract fee and currency accurately from API response objects
     const fee = 
       Number(calculation?.actual_shipping_cost?.amount) || 
       Number(calculation?.customer_shipping_cost?.amount) || 
@@ -112,7 +109,7 @@ export default function ShippingMethodForm({ onNext, onBack }: ShippingMethodFor
   };
 
   return (
-    <div className="space-y-6">
+    <div dir={isRTL ? "rtl" : "ltr"} className="space-y-6">
       <ShippingMethod
         cityId={currentCityId}
         value={selectedShippingId}
@@ -121,14 +118,14 @@ export default function ShippingMethodForm({ onNext, onBack }: ShippingMethodFor
       />
 
       {errors.shipping_rate_id && (
-        <p className="text-xs text-[var(--color-error)] font-medium px-1">
+        <p className="text-xs text-red-600 dark:text-red-400 font-medium px-1">
           {String(errors.shipping_rate_id.message)}
         </p>
       )}
 
-      <div className="flex items-center justify-between gap-4 pt-4">
+      <div className="flex items-center justify-between gap-4 pt-4 border-t border-border">
         <Button type="button" variant="secondary" onClick={onBack}>
-          {t("buttons.back", "Back")}
+          {t("buttons.back", { defaultValue: lang === "ar" ? "السابق" : "Back" })}
         </Button>
 
         <Button
@@ -136,7 +133,7 @@ export default function ShippingMethodForm({ onNext, onBack }: ShippingMethodFor
           onClick={onNext}
           disabled={!selectedShippingId}
         >
-          {t("buttons.next", "Continue to Payment")}
+          {t("buttons.next", { defaultValue: lang === "ar" ? "المتابعة إلى الدفع" : "Continue to Payment" })}
         </Button>
       </div>
     </div>

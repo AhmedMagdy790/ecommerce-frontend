@@ -1,13 +1,15 @@
-import type { UserProfile } from "@/shared/types/userType";
+
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import type { UserProfile } from "@/shared/types/userType";
 import {
   profileSchema,
   type ProfileFormValues,
 } from "../schemas/profile.schema";
+
 import { Input } from "@/shared/components/ui/Input";
 import ProfileHeader from "./ProfileHeader";
 import { Button } from "@/shared/components/Button";
@@ -44,27 +46,33 @@ export default function ProfileInfoForm({
     if (!profile) return;
 
     reset({
-      name: profile.name,
-      email: profile.email,
+      name: profile.name ?? "",
+      email: profile.email ?? "",
       phone: profile.phone ?? "",
     });
-  }, [profile, reset]);
+  }, [
+    profile?.name,
+    profile?.email,
+    profile?.phone,
+    reset,
+  ]);
 
   const onSubmit = async (data: ProfileFormValues) => {
     await onSave(data);
   };
 
   return (
-    <form 
+    <form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6 transition-all"
-
+      className="space-y-6"
+      aria-busy={isSaving}
     >
       <ProfileHeader />
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5" style={{ gap: "var(--spacing-5)" }}>
+
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
         <Input
           id="name"
+          autoComplete="name"
           label={t("name")}
           placeholder={t("placeholders.name")}
           error={errors.name?.message}
@@ -74,6 +82,7 @@ export default function ProfileInfoForm({
         <Input
           id="email"
           type="email"
+          autoComplete="email"
           label={t("email")}
           placeholder={t("placeholders.email")}
           error={errors.email?.message}
@@ -84,6 +93,7 @@ export default function ProfileInfoForm({
           <Input
             id="phone"
             type="tel"
+            autoComplete="tel"
             label={t("phone")}
             placeholder={t("placeholders.phone")}
             error={errors.phone?.message}
@@ -92,25 +102,24 @@ export default function ProfileInfoForm({
         </div>
       </div>
 
-      <div 
-        className="flex justify-end pt-4 border-t"
-        style={{ 
-          borderColor: "var(--color-border)",
-          paddingTop: "var(--spacing-4)" 
-        }}
-      >
+      <div className="flex justify-end border-t border-border pt-4">
         <Button
           type="submit"
           disabled={isSaving || !isDirty || !isValid}
-
         >
           {isSaving && (
-            <span 
-              className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin" 
-              style={{ borderColor: "var(--button-text)", borderTopColor: "transparent" }}
+            <span
+              aria-hidden="true"
+              className="
+                size-4 animate-spin rounded-full
+                border-2 border-current border-t-transparent
+              "
             />
           )}
-          {isSaving ? t("actions.saving", "Saving...") : t("actions.save", "Save Changes")}
+
+          {isSaving
+            ? t("actions.saving", "Saving...")
+            : t("actions.save", "Save Changes")}
         </Button>
       </div>
     </form>

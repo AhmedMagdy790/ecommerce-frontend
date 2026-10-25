@@ -3,6 +3,7 @@
 import type { Section } from "@/features/cms/section/model/types/section.types";
 import { useLang } from "@/shared/context/LanguageContext";
 import { ArrowRight, ArrowLeft } from "lucide-react";
+import { Container } from "@/shared/components/layout/Container";
 
 interface CategoriesProps {
   section: Section<string>;
@@ -28,24 +29,24 @@ export default function Categories({ section }: CategoriesProps) {
   return (
     <section 
       dir={isRTL ? "rtl" : "ltr"}
-      className="w-full py-[var(--spacing-16)] px-[var(--spacing-4)] sm:px-[var(--spacing-6)] lg:px-[var(--spacing-8)] bg-[var(--color-background)]"
+      className="w-full py-16 bg-background"
     >
-      <div className="mx-auto max-w-[var(--container-2xl)]">
+      <Container>
         
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-[var(--spacing-10)] gap-[var(--spacing-4)]">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
           <div>
-            <span className="text-[var(--text-xs)] font-[var(--font-semibold)] text-[var(--color-primary)] uppercase tracking-wider block mb-[var(--spacing-2)]">
+            <span className="text-xs font-semibold text-primary uppercase tracking-wider block mb-2">
               {lang === "ar" ? "الأقسام المميزة" : "Featured Categories"}
             </span>
-            <h2 className="text-[var(--text-3xl)] sm:text-[var(--text-4xl)] font-[var(--font-bold)] tracking-tight text-[var(--color-text-primary)]">
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-text-primary">
               {sectionTitle}
             </h2>
           </div>
 
           <a
             href="/categories"
-            className="inline-flex items-center gap-[var(--spacing-2)] text-[var(--text-sm)] font-[var(--font-semibold)] text-[var(--color-primary)] transition-all hover:opacity-80 group w-fit"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-primary transition-all hover:opacity-80 group w-fit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-control"
           >
             <span>{lang === "ar" ? "عرض كل التصنيفات" : "View All Categories"}</span>
             {isRTL ? (
@@ -57,12 +58,12 @@ export default function Categories({ section }: CategoriesProps) {
         </div>
 
         {/* Categories Grid */}
-        <div className="grid grid-cols-1 gap-[var(--spacing-6)] sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {categories.map((category) => (
             <a
               key={category.id}
               href={category.link}
-              className="group relative block aspect-[16/10] sm:aspect-[4/3] overflow-hidden rounded-[var(--radius-3xl)] bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[var(--shadow-sm)] transition-all duration-[var(--duration-normal)] ease-[var(--ease-default)] hover:-translate-y-1.5 hover:shadow-[var(--shadow-xl)] hover:border-[var(--color-primary)]/40"
+              className="group relative block aspect-[16/10] sm:aspect-[4/3] overflow-hidden rounded-panel bg-surface border border-border shadow-xs transition-all duration-[var(--duration-normal)] ease-[var(--ease-default)] hover:-translate-y-1.5 hover:shadow-xl hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             >
               <img
                 src={category.image}
@@ -74,12 +75,12 @@ export default function Categories({ section }: CategoriesProps) {
               {/* Cinematic Overlays */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent transition-opacity duration-300 group-hover:from-black/90" />
               
-              <div className="absolute inset-x-0 bottom-0 p-[var(--spacing-6)] sm:p-[var(--spacing-8)] flex items-end justify-between">
-                <h3 className="text-[var(--text-xl)] sm:text-[var(--text-2xl)] font-[var(--font-bold)] text-white tracking-tight">
+              <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 flex items-end justify-between">
+                <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
                   {category.name}
                 </h3>
 
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20 backdrop-blur-md text-white border border-white/30 transition-transform duration-300 group-hover:scale-110 group-hover:bg-[var(--color-primary)] group-hover:border-transparent">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20 backdrop-blur-md text-white border border-white/30 transition-transform duration-300 group-hover:scale-110 group-hover:bg-primary group-hover:border-transparent">
                   {isRTL ? <ArrowLeft size={18} /> : <ArrowRight size={18} />}
                 </span>
               </div>
@@ -87,7 +88,7 @@ export default function Categories({ section }: CategoriesProps) {
           ))}
         </div>
 
-      </div>
+      </Container>
     </section>
   );
 }

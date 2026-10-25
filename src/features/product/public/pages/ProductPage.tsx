@@ -13,13 +13,12 @@ import { useProduct } from "../hook/useProduct";
 import { mapProductDetails } from "../../adapters/productDetailsAdapter";
 import ProductSkeleton from "../components/ProductSkeleton";
 import ProductErrorState from "../components/ProductErrorState";
+import { Container } from "@/shared/components/layout/Container";
 
 export default function ProductPage() {
   const { slug } = useParams<{ slug: string }>();
   const { t } = useTranslation("product");
   const { isRTL } = useLang();
-
-
 
   // 2. Fetch Product data via React Query
   const {
@@ -47,27 +46,27 @@ export default function ProductPage() {
   return (
     <main 
       dir={isRTL ? "rtl" : "ltr"}
-      className="w-full px-[var(--spacing-4)] sm:px-[var(--spacing-6)] lg:px-[var(--spacing-8)] py-[var(--spacing-12)] bg-[var(--color-background)]"
+      className="w-full py-12 bg-background"
     >
-      <div className="mx-auto max-w-[var(--container-2xl)]">
+      <Container size="2xl">
 
         {/* Breadcrumb Navigation Trail */}
-        <nav aria-label="Breadcrumb" className="mb-[var(--spacing-8)] flex items-center gap-[var(--spacing-2)] text-[var(--text-xs)] text-[var(--color-text-muted)]">
-          <a href="/" className="hover:text-[var(--color-primary)] transition-colors">
+        <nav aria-label="Breadcrumb" className="mb-8 flex items-center gap-2 text-xs text-text-muted">
+          <a href="/" className="hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-control">
             {t("nav.home", "Home")}
           </a>
           <span>/</span>
-          <a href="/shop" className="hover:text-[var(--color-primary)] transition-colors">
+          <a href="/shop" className="hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-control">
             {t("nav.shop", "Shop")}
           </a>
           <span>/</span>
-          <span className="text-[var(--color-text-primary)] font-[var(--font-medium)] truncate max-w-[200px]">
+          <span className="text-text-primary font-medium truncate max-w-[200px]">
             {productData.name}
           </span>
         </nav>
 
         {/* Main Product Layout (Gallery & Information) */}
-        <section className="grid gap-[var(--spacing-10)] lg:grid-cols-2 items-start">
+        <section className="grid gap-10 lg:grid-cols-2 items-start">
           <ProductGallery data={productData.gallery} />
           <ProductInfo data={productData} />
         </section>
@@ -96,7 +95,7 @@ export default function ProductPage() {
           }}
         />
 
-      </div>
+      </Container>
     </main>
   );
 }

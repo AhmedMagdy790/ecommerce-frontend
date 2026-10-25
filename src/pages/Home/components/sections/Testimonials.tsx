@@ -1,6 +1,8 @@
 // src/pages/Home/components/sections/Testimonials.tsx
+
 import type { Section } from "@/features/cms/section/model/types/section.types";
 import { useLang } from "@/shared/context/LanguageContext";
+import { Container } from "@/shared/components/layout/Container";
 
 interface Testimonial {
   id: string | number;
@@ -34,29 +36,29 @@ export default function Testimonials({ section }: TestimonialsProps) {
   return (
     <section
       dir={isRTL ? "rtl" : "ltr"}
-      className="relative overflow-hidden bg-[var(--color-surface)] px-[var(--spacing-6)] py-[var(--spacing-20)]"
+      className="relative overflow-hidden bg-surface py-20"
     >
       {/* Background Ambient Glow */}
-      <div className="absolute left-1/2 top-1/2 h-[300px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--color-primary)] opacity-10 blur-[140px] pointer-events-none" />
+      <div className="absolute left-1/2 top-1/2 h-[300px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary opacity-10 blur-[140px] pointer-events-none" />
 
-      <div className="relative mx-auto max-w-[var(--container-xl)]">
+      <Container className="relative">
         
         {/* Section Header */}
-        <div className="mx-auto mb-[var(--spacing-16)] max-w-2xl text-center">
-          <div className="mb-[var(--spacing-4)] inline-flex items-center gap-[var(--spacing-2)] rounded-[var(--radius-full)] border border-[var(--color-border)] bg-[var(--color-background)] px-[var(--spacing-4)] py-[var(--spacing-1.5)] shadow-[var(--shadow-xs)]">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-[var(--color-primary)]" />
-            <span className="text-[var(--text-xs)] font-[var(--font-semibold)] uppercase tracking-wider text-[var(--color-primary)]">
+        <div className="mx-auto mb-16 max-w-2xl text-center">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-1.5 shadow-xs">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
+            <span className="text-xs font-semibold uppercase tracking-wider text-primary">
               {lang === "ar" ? "آراء عملاؤنا المميزون" : "Customer Experiences"}
             </span>
           </div>
 
-          <h2 className="text-[var(--text-3xl)] font-[var(--font-bold)] tracking-tight text-[var(--color-text-primary)] sm:text-[var(--text-4xl)]">
+          <h2 className="text-3xl font-bold tracking-tight text-text-primary sm:text-4xl">
             {sectionTitle}
           </h2>
         </div>
 
         {/* Testimonials Grid */}
-        <div className="grid gap-[var(--spacing-8)] md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {testimonials.map((item, index) => {
             const authorName = item.title || "";
             const authorRole = item.data?.role || "";
@@ -66,11 +68,11 @@ export default function Testimonials({ section }: TestimonialsProps) {
             return (
               <div
                 key={item.id || index}
-                className="group flex flex-col justify-between rounded-[var(--radius-3xl)] border border-[var(--color-border)] bg-[var(--color-background)] p-[var(--spacing-8)] shadow-[var(--shadow-sm)] transition-all duration-300 hover:-translate-y-1.5 hover:border-[var(--color-primary)]/40 hover:shadow-[var(--shadow-xl)]"
+                className="group flex flex-col justify-between rounded-panel border border-border bg-background p-8 shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-xl"
               >
                 <div>
                   {/* Rating Stars */}
-                  <div className="mb-[var(--spacing-4)] flex gap-1">
+                  <div className="mb-4 flex gap-1">
                     {Array.from({ length: rating }).map((_, i) => (
                       <svg
                         key={i}
@@ -84,36 +86,36 @@ export default function Testimonials({ section }: TestimonialsProps) {
 
                   {/* Comment */}
                   {commentText && (
-                    <p className="mb-[var(--spacing-8)] italic text-[var(--text-base)] leading-relaxed text-[var(--color-text-secondary)]">
+                    <p className="mb-8 italic text-base leading-relaxed text-text-secondary">
                       "{commentText}"
                     </p>
                   )}
                 </div>
 
                 {/* Author Info */}
-                <div className="flex items-center gap-[var(--spacing-4)] border-t border-[var(--color-border)]/60 pt-[var(--spacing-4)]">
+                <div className="flex items-center gap-4 border-t border-border/60 pt-4">
                   {item.image ? (
                     <img
                       src={item.image}
                       alt={authorName || "Customer"}
-                      className="h-12 w-12 rounded-full border border-[var(--color-border)] object-cover"
+                      className="h-12 w-12 rounded-full border border-border object-cover"
                       loading="lazy"
                     />
                   ) : (
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface-secondary)] font-bold text-[var(--color-primary)]">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full border border-border bg-surface-secondary font-bold text-primary">
                       {authorName ? authorName.charAt(0) : "C"}
                     </div>
                   )}
 
                   <div>
                     {authorName && (
-                      <h3 className="text-[var(--text-base)] font-semibold text-[var(--color-text-primary)]">
+                      <h3 className="text-base font-semibold text-text-primary">
                         {authorName}
                       </h3>
                     )}
 
                     {authorRole && (
-                      <p className="text-[var(--text-xs)] text-[var(--color-text-muted)]">
+                      <p className="text-xs text-text-muted">
                         {authorRole}
                       </p>
                     )}
@@ -124,7 +126,7 @@ export default function Testimonials({ section }: TestimonialsProps) {
           })}
         </div>
 
-      </div>
+      </Container>
     </section>
   );
 }

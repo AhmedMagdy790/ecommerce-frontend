@@ -1,8 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Filter, X, Search, RotateCcw, ChevronDown, ChevronUp } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  Filter,
+  X,
+  Search,
+  RotateCcw,
+  ChevronDown,
+  ChevronUp,
+} from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+
 import type { Category } from '@/features/category/model/types/category.types';
 import type { Brand } from '@/features/brand/types/brand.types';
 import type { ProductFilters as IProductFilters } from '@/features/product/model/types/product.types';
+import { useLang } from '@/shared/context/LanguageContext';
 
 interface ProductFiltersProps {
   filters: IProductFilters;
@@ -10,9 +20,9 @@ interface ProductFiltersProps {
   onReset: () => void;
   categories?: Category<string>[];
   brands?: Brand<string>[];
-  isMobileOpen?: boolean;
-  onCloseMobile?: () => void;
 }
+
+type FilterSection = 'search' | 'category' | 'price' | 'brand';
 
 export const ProductFilters: React.FC<ProductFiltersProps> = ({
   filters,
@@ -20,286 +30,450 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
   onReset,
   categories = [],
   brands = [],
-  isMobileOpen = false,
-  onCloseMobile,
 }) => {
-  // Local state for inputs
-  const [localSearch, setLocalSearch] = useState(filters.search || '');
-  const [minPrice, setMinPrice] = useState<string>(filters.min_price?.toString() || '');
-  const [maxPrice, setMaxPrice] = useState<string>(filters.max_price?.toString() || '');
+  const { t } = useTranslation('productFilters');
+  const { isRTL } = useLang();
+
+  // حالة محلية للتحكم في فتح وإغلاق الـ Sidebar عبر الزر
+  const [isOpen, setIsOpen] = useState(false);
+
+  const [localSearch, setLocalSearch] = useState(filters.search ?? '');
+  const [priceInputs, setPriceInputs] = useState({
+    minPrice: filters.min_price?.toString() ?? '',
+    maxPrice: filters.max_price?.toString() ?? '',
+    minFilter: filters.min_price,
+    maxFilter: filters.max_price,
+  });
+
+  if (
+    priceInputs.minFilter !== filters.min_price ||
+    priceInputs.maxFilter !== filters.max_price
+  ) {
+    setPriceInputs({
+      minPrice: filters.min_price?.toString() ?? '',
+      maxPrice: filters.max_price?.toString() ?? '',
+      minFilter: filters.min_price,
+      maxFilter: filters.max_price,
+    });
+  }
+
+  const { minPrice, maxPrice } = priceInputs;
 
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const isSearchFocusedRef = useRef(false);
 
-  // 1. المزامنة الخارجية تحدث **فقط** إذا لم يكن المستخدم يكتب داخل الحقل حالياً (ليس Active)
-  // useEffect(() => {
-  //   if (document.activeElement !== searchInputRef.current) {
-  //     setLocalSearch(filters.search || '');
-  //   }
-  // }, [filters.search]);
+  const filtersRef = useRef(filters);
+  const onChangeRef = useRef(onChange);
 
-  // const [priceFilterValues, setPriceFilterValues] = useState({
-  //   min: filters.min_price,
-  //   max: filters.max_price,
-  // });
-
-  // const displayedMinPrice =
-  //   priceFilterValues.min === filters.min_price
-  //     ? minPrice
-  //     : filters.min_price?.toString() || '';
-  // const displayedMaxPrice =
-  //   priceFilterValues.max === filters.max_price
-  //     ? maxPrice
-  //     : filters.max_price?.toString() || '';
-
-  // 2. Debounced search effect (إرسال البحث بدون إعادة كتابة الـ Input)
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const trimmed = localSearch.trim();
-      const currentFilterSearch = filters.search || '';
-      
-      if (trimmed !== currentFilterSearch) {
-        onChange({ ...filters, search: trimmed || undefined, page: 1 });
-      }
-    }, 500);
+    filtersRef.current = filters;
+    onChangeRef.current = onChange;
+  }, [filters, onChange]);
 
-    return () => clearTimeout(timer);
-  }, [localSearch]);
-
-  // Collapse Accordion states
-  const [openSections, setOpenSections] = useState({
+  const [openSections, setOpenSections] = useState<
+    Record<FilterSection, boolean>
+  >({
     search: true,
     category: true,
     price: true,
     brand: true,
   });
 
-  const toggleSection = (section: keyof typeof openSections) => {
-    setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  const toggleSection = (section: FilterSection) => {
+    setOpenSections((previous) => ({
+      ...previous,
+      [section]: !previous[section],
+    }));
   };
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const trimmed = localSearch.trim();
-    onChange({ ...filters, search: trimmed, page: 1 });
+  useEffect(() => {
+    if (!isSearchFocusedRef.current) {
+      setLocalSearch(filters.search ?? '');
+    }
+  }, [filters.search]);
+
+  useEffect(() => {
+    const trimmedSearch = localSearch.trim();
+
+    if (trimmedSearch === (filters.search ?? '').trim()) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      const currentFilters = filtersRef.current;
+
+      if (trimmedSearch === (currentFilters.search ?? '').trim()) {
+        return;
+      }
+
+      onChangeRef.current({
+        ...currentFilters,
+        search: trimmedSearch || undefined,
+        page: 1,
+      });
+    }, 500);
+
+    return () => window.clearTimeout(timer);
+  }, [localSearch, filters.search]);
+
+  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const search = localSearch.trim();
+
+    if (search !== (filters.search ?? '').trim()) {
+      onChange({
+        ...filters,
+        search: search || undefined,
+        page: 1,
+      });
+    }
   };
 
   const handlePriceApply = () => {
+    const min = minPrice.trim() ? Number(minPrice) : undefined;
+    const max = maxPrice.trim() ? Number(maxPrice) : undefined;
+
+    if (
+      (min !== undefined && (!Number.isFinite(min) || min < 0)) ||
+      (max !== undefined && (!Number.isFinite(max) || max < 0)) ||
+      (min !== undefined && max !== undefined && min > max)
+    ) {
+      return;
+    }
+
     onChange({
       ...filters,
-      min_price: minPrice ? Number(minPrice) : undefined,
-      max_price: maxPrice ? Number(maxPrice) : undefined,
+      min_price: min,
+      max_price: max,
       page: 1,
     });
   };
 
-  const handleCategorySelect = (categoryId?: number | string) => {
-    const nextCategory = filters.category_id === categoryId ? undefined : categoryId;
-    onChange({ ...filters, category_id: nextCategory, page: 1 });
+  const handleCategorySelect = (categoryId: number | string) => {
+    const isSelected =
+      String(filters.category_id ?? '') === String(categoryId);
+
+    onChange({
+      ...filters,
+      category_id: isSelected ? undefined : categoryId,
+      page: 1,
+    });
   };
 
   const handleBrandSelect = (brandId: number | string) => {
-    const nextBrand = filters.brand === brandId || filters.brand_id === brandId ? undefined : brandId;
-    onChange({ ...filters, brand_id: nextBrand, page: 1 });
+    const selectedBrand = filters.brand_id ?? filters.brand;
+    const isSelected = String(selectedBrand ?? '') === String(brandId);
+
+    onChange({
+      ...filters,
+      brand_id: isSelected ? undefined : brandId,
+      brand: undefined,
+      page: 1,
+    });
   };
 
   const handleResetAll = () => {
     setLocalSearch('');
-    setMinPrice('');
-    setMaxPrice('');
+    setPriceInputs((previous) => ({
+      ...previous,
+      minPrice: '',
+      maxPrice: '',
+    }));
     onReset();
   };
 
+  const sectionButtonClass =
+    'flex w-full items-center justify-between gap-3 rounded-control py-2 text-sm font-semibold text-text-primary transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary';
+
+  const inputClass =
+    'w-full rounded-control border border-border bg-surface px-3 py-2 text-sm text-text-primary placeholder:text-text-muted transition-colors focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20';
+
+  const renderSectionToggle = (
+    section: FilterSection,
+    label: string,
+  ) => (
+    <button
+      type="button"
+      onClick={() => toggleSection(section)}
+      aria-expanded={openSections[section]}
+      aria-controls={`product-filter-${section}`}
+      className={sectionButtonClass}
+    >
+      <span>{label}</span>
+      {openSections[section] ? (
+        <ChevronUp aria-hidden="true" className="h-4 w-4 shrink-0" />
+      ) : (
+        <ChevronDown aria-hidden="true" className="h-4 w-4 shrink-0" />
+      )}
+    </button>
+  );
+
   const FilterContent = (
-    <div className="flex flex-col gap-[var(--spacing-6)] p-[var(--spacing-4)] lg:p-0">
-      {/* Filter Header & Reset Button */}
-      <div className="flex items-center justify-between pb-[var(--spacing-3)] border-b border-[var(--color-border)]">
-        <div className="flex items-center gap-2 text-[var(--color-text-primary)] font-[var(--font-bold)] text-[var(--text-base)]">
-          <Filter className="h-5 w-5 text-[var(--color-primary)]" />
-          <span>الفلاتر</span>
+    <div className="flex flex-col gap-5 p-4" dir={isRTL ? 'rtl' : 'ltr'}>
+      {/* Header */}
+      <div className="flex items-center justify-between gap-3 border-b border-border pb-3">
+        <div className="flex items-center gap-2 text-base font-bold text-text-primary">
+          <Filter aria-hidden="true" className="h-5 w-5 text-primary" />
+          <h2>{t('title')}</h2>
         </div>
+
         <button
           type="button"
           onClick={handleResetAll}
-          className="flex items-center gap-1 text-[var(--text-xs)] font-[var(--font-medium)] text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-error)]"
+          className="inline-flex items-center gap-1 rounded-control text-xs font-medium text-text-muted transition-colors hover:text-error focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         >
-          <RotateCcw className="h-3.5 w-3.5" />
-          <span>إعادة ضبط</span>
+          <RotateCcw aria-hidden="true" className="h-3.5 w-3.5" />
+          <span>{t('reset')}</span>
         </button>
       </div>
 
-      {/* 1. Search Box */}
-      <div className="border-b border-[var(--color-border)] pb-[var(--spacing-4)]">
-        <button
-          type="button"
-          onClick={() => toggleSection('search')}
-          className="flex w-full items-center justify-between py-1 text-[var(--text-sm)] font-[var(--font-semibold)] text-[var(--color-text-primary)]"
-        >
-          <span>البحث</span>
-          {openSections.search ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-        </button>
+      {/* Search */}
+      <section className="border-b border-border pb-4">
+        {renderSectionToggle('search', t('search.title'))}
 
         {openSections.search && (
-          <form onSubmit={handleSearchSubmit} className="mt-[var(--spacing-3)] relative">
-            <input
-              ref={searchInputRef}
-              type="text"
-              value={localSearch}
-              onChange={(e) => setLocalSearch(e.target.value)}
-              placeholder="ابحث عن منتج..."
-              className="w-full rounded-[var(--radius-md)] border border-[var(--input-border)] bg-[var(--input-bg)] py-2 pr-3 pl-9 text-[var(--text-sm)] text-[var(--color-text-primary)] transition-colors focus:border-[var(--input-focus)] focus:outline-none"
-            />
-            <button
-              type="submit"
-              className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-primary)]"
-            >
-              <Search className="h-4 w-4" />
-            </button>
-          </form>
-        )}
-      </div>
+          <div id="product-filter-search">
+            <form onSubmit={handleSearchSubmit} className="relative mt-3">
+              <input
+                ref={searchInputRef}
+                type="search"
+                value={localSearch}
+                onChange={(event) => setLocalSearch(event.target.value)}
+                onFocus={() => {
+                  isSearchFocusedRef.current = true;
+                }}
+                onBlur={() => {
+                  isSearchFocusedRef.current = false;
+                  setLocalSearch(filtersRef.current.search ?? '');
+                }}
+                placeholder={t('search.placeholder')}
+                aria-label={t('search.label')}
+                className={`${inputClass} ${
+                  isRTL ? 'pl-10 text-right' : 'pr-10 text-left'
+                }`}
+              />
 
-      {/* 2. Categories */}
+              <button
+                type="submit"
+                aria-label={t('search.submit')}
+                className={`absolute top-1/2 -translate-y-1/2 rounded-control p-1 text-text-muted transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                  isRTL ? 'left-2' : 'right-2'
+                }`}
+              >
+                <Search aria-hidden="true" className="h-4 w-4" />
+              </button>
+            </form>
+          </div>
+        )}
+      </section>
+
+      {/* Categories */}
       {categories.length > 0 && (
-        <div className="border-b border-[var(--color-border)] pb-[var(--spacing-4)]">
-          <button
-            type="button"
-            onClick={() => toggleSection('category')}
-            className="flex w-full items-center justify-between py-1 text-[var(--text-sm)] font-[var(--font-semibold)] text-[var(--color-text-primary)]"
-          >
-            <span>الأقسام</span>
-            {openSections.category ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-          </button>
+        <section className="border-b border-border pb-4">
+          {renderSectionToggle('category', t('categories.title'))}
 
           {openSections.category && (
-            <div className="mt-[var(--spacing-3)] flex flex-col gap-1.5 max-h-48 overflow-y-auto custom-scrollbar">
-              {categories.map((cat) => {
-                const isSelected = String(filters.category_id) === String(cat.id);
+            <div
+              id="product-filter-category"
+              className="mt-3 flex max-h-48 flex-col gap-1.5 overflow-y-auto"
+            >
+              {categories.map((category) => {
+                const isSelected =
+                  String(filters.category_id ?? '') === String(category.id);
+
                 return (
                   <button
-                    key={cat.id}
+                    key={category.id}
                     type="button"
-                    onClick={() => handleCategorySelect(cat.id)}
-                    className={`flex items-center justify-between rounded-[var(--radius-sm)] px-2.5 py-1.5 text-[var(--text-sm)] transition-colors text-right ${
+                    onClick={() => handleCategorySelect(category.id)}
+                    aria-pressed={isSelected}
+                    className={`flex w-full items-center justify-between rounded-control px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                       isSelected
-                        ? 'bg-[var(--violet-50)] dark:bg-[var(--violet-900)]/30 text-[var(--color-primary)] font-[var(--font-semibold)]'
-                        : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-surface)]'
+                        ? 'bg-primary/10 font-semibold text-primary'
+                        : 'text-text-secondary hover:bg-surface-hover'
                     }`}
                   >
-                    <span>{cat.name}</span>
+                    <span>{category.name}</span>
+                    {isSelected && (
+                      <span
+                        aria-hidden="true"
+                        className="h-1.5 w-1.5 rounded-full bg-primary"
+                      />
+                    )}
                   </button>
                 );
               })}
             </div>
           )}
-        </div>
+        </section>
       )}
 
-      {/* 3. Price Filter */}
-      <div className="border-b border-[var(--color-border)] pb-[var(--spacing-4)]">
-        <button
-          type="button"
-          onClick={() => toggleSection('price')}
-          className="flex w-full items-center justify-between py-1 text-[var(--text-sm)] font-[var(--font-semibold)] text-[var(--color-text-primary)]"
-        >
-          <span>السعر (ج.م)</span>
-          {openSections.price ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-        </button>
+      {/* Price */}
+      <section className="border-b border-border pb-4">
+        {renderSectionToggle('price', t('price.title'))}
 
         {openSections.price && (
-          <div className="mt-[var(--spacing-3)] space-y-3">
-            <div className="flex items-center gap-2">
-              <input
-                type="number"
-                placeholder="من"
-                value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
-                className="w-full rounded-[var(--radius-md)] border border-[var(--input-border)] bg-[var(--input-bg)] px-2.5 py-1.5 text-[var(--text-sm)] text-[var(--color-text-primary)] focus:border-[var(--input-focus)] focus:outline-none"
-              />
-              <span className="text-[var(--color-text-muted)]">-</span>
-              <input
-                type="number"
-                placeholder="إلى"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-                className="w-full rounded-[var(--radius-md)] border border-[var(--input-border)] bg-[var(--input-bg)] px-2.5 py-1.5 text-[var(--text-sm)] text-[var(--color-text-primary)] focus:border-[var(--input-focus)] focus:outline-none"
-              />
+          <div id="product-filter-price" className="mt-3 space-y-3">
+            <div className="flex items-start gap-2">
+              <div className="min-w-0 flex-1">
+                <label
+                  htmlFor="product-filter-min-price"
+                  className="mb-1 block text-xs text-text-muted"
+                >
+                  {t('price.min')}
+                </label>
+                <input
+                  id="product-filter-min-price"
+                  type="number"
+                  min="0"
+                  step="any"
+                  inputMode="decimal"
+                  placeholder={t('price.minPlaceholder')}
+                  value={minPrice}
+                  onChange={(event) =>
+                    setPriceInputs((previous) => ({
+                      ...previous,
+                      minPrice: event.target.value,
+                    }))
+                  }
+                  className={inputClass}
+                />
+              </div>
+
+              <span aria-hidden="true" className="mt-8 text-text-muted">
+                –
+              </span>
+
+              <div className="min-w-0 flex-1">
+                <label
+                  htmlFor="product-filter-max-price"
+                  className="mb-1 block text-xs text-text-muted"
+                >
+                  {t('price.max')}
+                </label>
+                <input
+                  id="product-filter-max-price"
+                  type="number"
+                  min="0"
+                  step="any"
+                  inputMode="decimal"
+                  placeholder={t('price.maxPlaceholder')}
+                  value={maxPrice}
+                  onChange={(event) =>
+                    setPriceInputs((previous) => ({
+                      ...previous,
+                      maxPrice: event.target.value,
+                    }))
+                  }
+                  className={inputClass}
+                />
+              </div>
             </div>
+
+            {minPrice.trim() !== '' &&
+              maxPrice.trim() !== '' &&
+              Number(minPrice) > Number(maxPrice) && (
+                <p role="alert" className="text-xs text-error">
+                  {t('price.invalidRange')}
+                </p>
+              )}
+
             <button
               type="button"
               onClick={handlePriceApply}
-              className="w-full rounded-[var(--radius-md)] bg-[var(--color-surface-secondary)] py-1.5 text-[var(--text-xs)] font-[var(--font-medium)] text-[var(--color-text-primary)] transition-colors hover:bg-[var(--color-primary)] hover:text-white"
+              className="w-full rounded-control bg-surface-secondary px-3 py-2 text-sm font-medium text-text-primary transition-colors hover:bg-primary hover:text-text-inverse focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             >
-              تطبيق السعر
+              {t('price.apply')}
             </button>
           </div>
         )}
-      </div>
+      </section>
 
-      {/* 4. Brands */}
+      {/* Brands */}
       {brands.length > 0 && (
-        <div className="pb-[var(--spacing-4)]">
-          <button
-            type="button"
-            onClick={() => toggleSection('brand')}
-            className="flex w-full items-center justify-between py-1 text-[var(--text-sm)] font-[var(--font-semibold)] text-[var(--color-text-primary)]"
-          >
-            <span>العلامات التجارية</span>
-            {openSections.brand ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-          </button>
+        <section className="pb-4">
+          {renderSectionToggle('brand', t('brands.title'))}
 
           {openSections.brand && (
-            <div className="mt-[var(--spacing-3)] flex flex-col gap-1.5 max-h-48 overflow-y-auto custom-scrollbar">
+            <div
+              id="product-filter-brand"
+              className="mt-3 flex max-h-48 flex-col gap-1 overflow-y-auto"
+            >
               {brands.map((brand) => {
-                const brandName = brand.name;
-                const isSelected = String(filters.brand) === String(brand.id) || String(filters.brand_id) === String(brand.id);
+                const selectedBrand = filters.brand_id ?? filters.brand;
+                const isSelected =
+                  String(selectedBrand ?? '') === String(brand.id);
+
                 return (
                   <label
                     key={brand.id}
-                    className="flex items-center gap-2.5 cursor-pointer py-1 px-1 rounded hover:bg-[var(--color-surface)] text-[var(--text-sm)] text-[var(--color-text-secondary)]"
+                    className="flex cursor-pointer items-center gap-2.5 rounded-control px-2 py-2 text-sm text-text-secondary transition-colors hover:bg-surface-hover"
                   >
                     <input
                       type="checkbox"
                       checked={isSelected}
                       onChange={() => handleBrandSelect(brand.id)}
-                      className="h-4 w-4 rounded border-[var(--color-border)] text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
+                      className="h-4 w-4 rounded border-border accent-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                     />
-                    <span>{brandName}</span>
+                    <span>{brand.name}</span>
                   </label>
                 );
               })}
             </div>
           )}
-        </div>
+        </section>
       )}
     </div>
   );
 
   return (
     <>
-      <aside className="hidden lg:block w-[var(--sidebar-width)] shrink-0">
-        <div className="sticky top-[calc(var(--header-height)+var(--spacing-4))] rounded-[var(--radius-lg)] border border-[var(--sidebar-border)] bg-[var(--sidebar-bg)] p-[var(--spacing-4)] shadow-[var(--shadow-sm)]">
-          {FilterContent}
-        </div>
-      </aside>
+      <button
+        type="button"
+        onClick={() => setIsOpen(true)}
+        aria-expanded={isOpen}
+        aria-controls="product-filters-sidebar"
+        className="inline-flex items-center gap-2 rounded-control bg-surface-secondary px-3 py-2 text-sm font-medium text-text-primary transition-colors hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      >
+        <Filter aria-hidden="true" className="h-4 w-4 text-primary" />
+        <span>{t('filtersButton', 'الفلاتر')}</span>
+      </button>
 
-      {isMobileOpen && (
-        <div className="fixed inset-0 z-[var(--z-modal)] lg:hidden">
-          <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity"
-            onClick={onCloseMobile}
+      {isOpen && (
+        <div
+          dir={isRTL ? 'rtl' : 'ltr'}
+          className="fixed inset-0 z-[var(--z-sidebar)]"
+        >
+          {/* الخلفية المعتمة */}
+          <button
+            type="button"
+            aria-label={t('close')}
+            onClick={() => setIsOpen(false)}
+            className="absolute inset-0 h-full w-full cursor-default bg-black/50 backdrop-blur-xs"
           />
-          <div className="fixed inset-y-0 right-0 z-[var(--z-modal)] w-full max-w-xs bg-[var(--color-background)] shadow-[var(--shadow-xl)] flex flex-col justify-between overflow-y-auto">
-            <div className="p-2 flex justify-end">
+
+          <aside
+            role="dialog"
+            aria-modal="true"
+            aria-label={t('title')}
+            id="product-filters-sidebar"
+            className={`absolute top-[var(--header-height)] bottom-0 flex w-full max-w-xs flex-col overflow-y-auto bg-surface shadow-xl h-[calc(100vh-var(--header-height))] ${
+              isRTL ? 'right-0' : 'left-0'
+            }`}
+          >
+            <div className="flex items-center justify-end border-b border-border p-3">
               <button
                 type="button"
-                onClick={onCloseMobile}
-                className="p-2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+                onClick={() => setIsOpen(false)}
+                aria-label={t('close')}
+                className="rounded-control p-2 text-text-muted transition-colors hover:bg-surface-hover hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
-                <X className="h-6 w-6" />
+                <X aria-hidden="true" className="h-5 w-5" />
               </button>
             </div>
-            <div className="flex-1">{FilterContent}</div>
-          </div>
+
+            {FilterContent}
+          </aside>
         </div>
       )}
     </>

@@ -9,6 +9,7 @@ import { useCart } from "@/pages/Cart/hook/useCart";
 import { RadioGroup, type RadioOption } from "@/shared/components/RadioGroup";
 import { shippingService } from "@/services/shippingService";
 import { useShippingCalculation } from "../hooks/useShippingCalculation";
+import { useLang } from "@/shared/context/LanguageContext";
 
 interface PaymentFormProps {
   onNext: () => void;
@@ -17,6 +18,7 @@ interface PaymentFormProps {
 
 export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
   const { t } = useTranslation("checkout");
+  const { isRTL, lang } = useLang();
   const { register, watch, setValue, formState: { errors } } = useFormContext();
   const { gateways, loading, error: gatewayError } = usePaymentGateways(watch("country_id"));
 
@@ -90,12 +92,10 @@ export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
         })
         .catch(() => null)
         .finally(() => {
-          // إيقاف مؤشر التحميل بغض النظر عن نجاح أو فشل الطلب
           setCalculatingShipping(false);
         });
     }
   };
-
 
   const getGatewayIcon = (slug: string) => {
     switch (slug?.toLowerCase()) {
@@ -113,7 +113,7 @@ export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
 
   const radioOptions: RadioOption[] = gateways.map((g) => {
     const labelText = g.name;
-    const descText = g.description || t("payment.methods.defaultDesc", "Secure payment method.");
+    const descText = g.description || t("payment.methods.defaultDesc", { defaultValue: lang === "ar" ? "طريقة دفع آمنة ومشفرة." : "Secure payment method." });
 
     return {
       value: g.id,
@@ -125,25 +125,35 @@ export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
   });
 
   return (
-    <section className="rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">{t("payment.title", "Payment Method")}</h2>
-        <div className="flex items-center gap-1.5 text-xs text-[var(--color-text-secondary)]">
-          <ShieldCheck size={16} className="text-[var(--color-primary)]" />
-          <span>{t("payment.secure", "Secure Checkout")}</span>
+    <section 
+      dir={isRTL ? "rtl" : "ltr"}
+      className="rounded-panel border border-border bg-surface p-6 space-y-6 shadow-xs"
+    >
+      <div className="flex items-center justify-between border-b border-border pb-4">
+        <h2 
+          className="text-xl font-bold text-text-primary"
+          style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+        >
+          {t("payment.title", { defaultValue: lang === "ar" ? "طريقة الدفع" : "Payment Method" })}
+        </h2>
+        <div className="flex items-center gap-1.5 text-xs text-text-secondary">
+          <ShieldCheck size={16} className="text-primary" />
+          <span style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}>
+            {t("payment.secure", { defaultValue: lang === "ar" ? "دفع آمن ومحمي" : "Secure Checkout" })}
+          </span>
         </div>
       </div>
 
       {loading ? (
         <div className="space-y-4 py-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-20 w-full animate-pulse rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)]" />
+            <div key={i} className="h-20 w-full animate-pulse rounded-card bg-surface-secondary border border-border" />
           ))}
         </div>
       ) : (
         <div className="space-y-4">
           {gatewayError && (
-            <p className="text-xs text-[var(--color-error)] px-1">
+            <p className="text-xs text-red-600 dark:text-red-400 px-1 font-medium">
               {gatewayError}
             </p>
           )}
@@ -159,31 +169,34 @@ export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
       )}
 
       {errors.payment_gateway_id && (
-        <p className="text-xs text-[var(--color-error)] font-medium px-1">
+        <p className="text-xs text-red-600 dark:text-red-400 font-medium px-1">
           {String(errors.payment_gateway_id.message)}
         </p>
       )}
 
       <div>
-        <label className="block text-sm font-medium mb-1">
-          {t("payment.notes", "Order Notes (Optional)")}
+        <label 
+          className="block text-sm font-semibold text-text-primary mb-1.5"
+          style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+        >
+          {t("payment.notes", { defaultValue: lang === "ar" ? "ملاحظات الطلب (اختياري)" : "Order Notes (Optional)" })}
         </label>
         <textarea
           {...register("notes")}
           rows={3}
-          className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--color-primary)]"
-          placeholder={t("payment.notesPlaceholder", "Notes regarding your order...")}
+          className="w-full rounded-card border border-border bg-surface-secondary px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors resize-none"
+          placeholder={t("payment.notesPlaceholder", { defaultValue: lang === "ar" ? "ملاحظات بخصوص طلبك، مثال: توصيل في وقت محدد..." : "Notes regarding your order..." })}
         />
         {errors.notes && (
-          <p className="mt-1 text-xs text-[var(--color-error)] font-medium">
+          <p className="mt-1 text-xs text-red-600 dark:text-red-400 font-medium">
             {String(errors.notes.message)}
           </p>
         )}
       </div>
 
-      <div className="flex items-center justify-between pt-4">
+      <div className="flex items-center justify-between pt-4 border-t border-border">
         <Button type="button" variant="secondary" onClick={onBack}>
-          {t("buttons.back", "Back")}
+          {t("buttons.back", { defaultValue: lang === "ar" ? "السابق" : "Back" })}
         </Button>
 
         <Button
@@ -191,7 +204,7 @@ export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
           onClick={onNext}
           disabled={!selectedGatewayId || loading}
         >
-          {t("buttons.next", "Review Order")}
+          {t("buttons.next", { defaultValue: lang === "ar" ? "مراجعة الطلب" : "Review Order" })}
         </Button>
       </div>
     </section>

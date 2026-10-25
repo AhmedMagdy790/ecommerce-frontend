@@ -1,17 +1,43 @@
+
+import { useCallback, useMemo } from "react";
+
 import { useLang } from "@/shared/context/LanguageContext";
 import { UI_STRINGS } from "@/locales/languages";
 
 export function useLanguage() {
-  const { lang, dir, isRTL, changeLanguage, t, translate } = useLang();
+  const {
+    lang,
+    dir,
+    isRTL,
+    changeLanguage,
+    t,
+    translate,
+    isChangingLanguage,
+  } = useLang();
 
-  const availableLanguages = Object.keys(UI_STRINGS) as Array<keyof typeof UI_STRINGS>;
+  const availableLanguages = useMemo(
+    () => Object.keys(UI_STRINGS) as Array<keyof typeof UI_STRINGS>,
+    [],
+  );
 
-  const toggleLanguage = () => {
+  const toggleLanguage = useCallback(async () => {
+    if (isChangingLanguage || availableLanguages.length < 2) {
+      return;
+    }
+
     const currentIndex = availableLanguages.indexOf(lang);
+    const nextIndex =
+      currentIndex < 0
+        ? 0
+        : (currentIndex + 1) % availableLanguages.length;
 
-    const nextIndex = (currentIndex + 1) % availableLanguages.length;
-    changeLanguage(nextIndex >= 0 ? availableLanguages[nextIndex] : "en");
-  };
+    await changeLanguage(availableLanguages[nextIndex]);
+  }, [
+    lang,
+    availableLanguages,
+    changeLanguage,
+    isChangingLanguage,
+  ]);
 
   return {
     language: lang,
@@ -24,5 +50,6 @@ export function useLanguage() {
     toggleLanguage,
     t,
     translate,
+    isChangingLanguage,
   };
 }

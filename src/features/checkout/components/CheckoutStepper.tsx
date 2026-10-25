@@ -2,6 +2,7 @@
 
 import { useTranslation } from "react-i18next";
 import { Check } from "lucide-react";
+import { useLang } from "@/shared/context/LanguageContext";
 
 interface CheckoutStepperProps {
   currentStep: number;
@@ -10,17 +11,18 @@ interface CheckoutStepperProps {
 
 export default function CheckoutStepper({ currentStep, onStepClick }: CheckoutStepperProps) {
   const { t } = useTranslation("checkout");
+  const { isRTL, lang } = useLang();
 
   const steps = [
-    { number: 1, title: t("stepper.contact", "Contact") },
-    { number: 2, title: t("stepper.address", "Address") },
-    { number: 3, title: t("stepper.shipping", "Shipping") },
-    { number: 4, title: t("stepper.payment", "Payment") },
-    { number: 5, title: t("stepper.review", "Review") },
+    { number: 1, title: t("stepper.contact", { defaultValue: lang === "ar" ? "الاتصال" : "Contact" }) },
+    { number: 2, title: t("stepper.address", { defaultValue: lang === "ar" ? "العنوان" : "Address" }) },
+    { number: 3, title: t("stepper.shipping", { defaultValue: lang === "ar" ? "الشحن" : "Shipping" }) },
+    { number: 4, title: t("stepper.payment", { defaultValue: lang === "ar" ? "الدفع" : "Payment" }) },
+    { number: 5, title: t("stepper.review", { defaultValue: lang === "ar" ? "المراجعة" : "Review" }) },
   ];
 
   return (
-    <nav aria-label="Checkout Progress" className="py-4">
+    <nav dir={isRTL ? "rtl" : "ltr"} aria-label="Checkout Progress" className="py-6 px-4">
       <ol className="flex items-center justify-between w-full max-w-3xl mx-auto">
         {steps.map((step, index) => {
           const isCompleted = currentStep > step.number;
@@ -42,15 +44,16 @@ export default function CheckoutStepper({ currentStep, onStepClick }: CheckoutSt
                     h-10
                     rounded-full
                     text-sm
-                    font-semibold
+                    font-bold
                     transition-all
-                    duration-200
+                    duration-[var(--duration-fast)]
+                    ease-[var(--ease-default)]
                     ${
                       isCompleted
-                        ? "bg-[var(--color-primary)] text-white cursor-pointer hover:opacity-90"
+                        ? "bg-primary text-text-inverse cursor-pointer hover:opacity-90 shadow-sm scale-105"
                         : isCurrent
-                        ? "border-2 border-[var(--color-primary)] bg-[var(--color-background)] text-[var(--color-primary)] shadow-sm"
-                        : "border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-secondary)] cursor-not-allowed"
+                        ? "border-2 border-primary bg-surface text-primary shadow-md scale-110"
+                        : "border border-border bg-surface-secondary text-text-muted cursor-not-allowed"
                     }
                   `}
                 >
@@ -62,17 +65,17 @@ export default function CheckoutStepper({ currentStep, onStepClick }: CheckoutSt
                     absolute
                     top-12
                     text-xs
-                    font-medium
                     whitespace-nowrap
                     transition-colors
                     ${
                       isCurrent
-                        ? "text-[var(--color-primary)] font-semibold"
+                        ? "text-primary font-bold"
                         : isCompleted
-                        ? "text-[var(--color-text)]"
-                        : "text-[var(--color-text-secondary)]"
+                        ? "text-text-primary font-semibold"
+                        : "text-text-secondary font-medium"
                     }
                   `}
+                  style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
                 >
                   {step.title}
                 </span>
@@ -83,13 +86,13 @@ export default function CheckoutStepper({ currentStep, onStepClick }: CheckoutSt
                   className={`
                     flex-1
                     h-0.5
-                    mx-4
+                    mx-3
                     transition-colors
                     duration-200
                     ${
                       currentStep > step.number
-                        ? "bg-[var(--color-primary)]"
-                        : "bg-[var(--color-border)]"
+                        ? "bg-primary"
+                        : "bg-border"
                     }
                   `}
                 />

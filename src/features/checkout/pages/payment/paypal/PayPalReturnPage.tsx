@@ -1,16 +1,24 @@
+// src/pages/Order/PayPalReturnPage.tsx
+
 import { storeApi } from "@/api/client";
 import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { Container } from "@/shared/components/layout/Container";
+import { useLang } from "@/shared/context/LanguageContext";
+import { Loader2, Check, X } from "lucide-react";
 
 type PaymentStatus = "processing" | "success" | "error";
 
 export const PayPalReturnPage: React.FC = () => {
+  const { t } = useTranslation("order");
+  const { isRTL, lang } = useLang();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const [status, setStatus] = useState<PaymentStatus>("processing");
   const [message, setMessage] = useState(
-    "جاري تأكيد عملية الدفع، يرجى الانتظار...",
+    lang === "ar" ? "جاري تأكيد عملية الدفع، يرجى الانتظار..." : "Confirming payment, please wait..."
   );
 
   const requestStarted = useRef(false);
@@ -20,7 +28,7 @@ export const PayPalReturnPage: React.FC = () => {
   const displayStatus: PaymentStatus = hasValidToken ? status : "error";
   const displayMessage = hasValidToken
     ? message
-    : "بيانات العودة من PayPal غير صالحة أو مفقودة.";
+    : (lang === "ar" ? "بيانات العودة من PayPal غير صالحة أو مفقودة." : "PayPal return data is invalid or missing.");
 
   useEffect(() => {
     const paypalToken = token?.trim();
@@ -43,7 +51,7 @@ export const PayPalReturnPage: React.FC = () => {
         setMessage(
           response?.data?.data?.message ??
             response?.data?.message ??
-            "تم تأكيد الدفع بنجاح.",
+            (lang === "ar" ? "تم تأكيد الدفع بنجاح." : "Payment confirmed successfully.")
         );
 
         const orderId = response?.data?.data?.order_id;
@@ -69,7 +77,7 @@ export const PayPalReturnPage: React.FC = () => {
               ).response?.data?.message
             : undefined;
 
-        setMessage(apiMessage ?? "فشل تأكيد عملية الدفع مع PayPal.");
+        setMessage(apiMessage ?? (lang === "ar" ? "فشل تأكيد عملية الدفع مع PayPal." : "Failed to confirm payment with PayPal."));
       }
     };
 
@@ -78,63 +86,72 @@ export const PayPalReturnPage: React.FC = () => {
     return () => {
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [token, navigate]);
+  }, [token, navigate, lang]);
 
   return (
-    <div className="flex min-h-[80vh] flex-col items-center justify-center bg-[var(--color-background)] p-4">
-      <div className="w-full max-w-md space-y-5 rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-8 text-center shadow-[var(--shadow-xl)] animate-in fade-in zoom-in-95 duration-200">
-        {displayStatus === "processing" && (
-          <div
-            role="status"
-            aria-label="جاري معالجة الدفع"
-            className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-[var(--color-primary)] border-t-transparent"
-          />
-        )}
+    <main 
+      dir={isRTL ? "rtl" : "ltr"}
+      className="flex min-h-[85vh] items-center justify-center bg-background py-12 transition-colors duration-[var(--duration-normal)]"
+    >
+      <Container size="sm">
+        <div className="w-full rounded-panel border border-border bg-surface p-8 text-center shadow-xs space-y-5">
+          
+          {displayStatus === "processing" && (
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          )}
 
-        {displayStatus === "success" && (
-          <div
-            aria-hidden="true"
-            className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-3xl text-emerald-600 shadow-inner"
-          >
-            ✓
-          </div>
-        )}
-
-        {displayStatus === "error" && (
-          <div
-            aria-hidden="true"
-            className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-rose-100 text-3xl text-rose-600 shadow-inner"
-          >
-            ✕
-          </div>
-        )}
-
-        <h2 className="text-xl font-bold text-[var(--color-text-primary)]">
-          {displayStatus === "processing" && "جاري معالجة الدفع"}
-          {displayStatus === "success" && "تم تأكيد الدفع بنجاح"}
-          {displayStatus === "error" && "عذرًا، حدث خطأ"}
-        </h2>
-
-        <p
-          role="status"
-          aria-live="polite"
-          className="text-xs leading-relaxed text-[var(--color-text-secondary)]"
-        >
-          {displayMessage}
-        </p>
-
-        {displayStatus !== "processing" && (
-          <div className="pt-3">
-            <button
-              type="button"
-              onClick={() => navigate("/orders", { replace: true })}
-              className="w-full rounded-[var(--radius-xl)] bg-[var(--button-bg)] px-4 py-3 text-xs font-semibold text-[var(--button-text)] shadow-[var(--shadow-md)] transition duration-[var(--duration-normal)] hover:bg-[var(--button-bg-hover)]"
+          {displayStatus === "success" && (
+            <div
+              aria-hidden="true"
+              className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 ring-8 ring-emerald-500/5"
             >
-              الانتقال إلى طلباتي
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
+              <Check size={32} strokeWidth={2.5} />
+            </div>
+          )}
+
+          {displayStatus === "error" && (
+            <div
+              aria-hidden="true"
+              className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 ring-8 ring-rose-500/5"
+            >
+              <X size={32} strokeWidth={2.5} />
+            </div>
+          )}
+
+          <h2 
+            className="text-xl font-bold text-text-primary"
+            style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+          >
+            {displayStatus === "processing" && (lang === "ar" ? "جاري معالجة الدفع" : "Processing Payment")}
+            {displayStatus === "success" && (lang === "ar" ? "تم تأكيد الدفع بنجاح" : "Payment Confirmed")}
+            {displayStatus === "error" && (lang === "ar" ? "عذرًا، حدث خطأ" : "Oops, an error occurred")}
+          </h2>
+
+          <p
+            role="status"
+            aria-live="polite"
+            className="text-xs leading-relaxed text-text-secondary"
+            style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+          >
+            {displayMessage}
+          </p>
+
+          {displayStatus !== "processing" && (
+            <div className="pt-3">
+              <button
+                type="button"
+                onClick={() => navigate("/orders", { replace: true })}
+                className="w-full rounded-card bg-primary px-4 py-3 text-xs font-bold text-white shadow-xs transition duration-[var(--duration-normal)] hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+              >
+                {t("success.viewOrders", { defaultValue: lang === "ar" ? "الانتقال إلى طلباتي" : "Go to My Orders" })}
+              </button>
+            </div>
+          )}
+        </div>
+      </Container>
+    </main>
   );
 };

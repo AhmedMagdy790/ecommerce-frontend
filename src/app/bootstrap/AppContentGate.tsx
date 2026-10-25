@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
 
 import { useAuthStore } from "@/features/auth/model/store/useAuthStore";
-import { useLang } from "@/shared/context/LanguageContext";
 import FullScreenLoader from "@/shared/components/ui/loding/FullScreenLoader";
+import { useTheme } from "@/hooks/useTheme";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface AppContentGateProps {
   children: ReactNode;
@@ -15,7 +16,9 @@ export default function AppContentGate({
     (state) => state.isInitialized,
   );
 
-  const { isChangingLanguage } = useLang();
+  const { isChangingTheme } = useTheme();
+
+  const { isChangingLanguage } = useLanguage();
 
   if (!isInitialized) {
     return (
@@ -23,10 +26,16 @@ export default function AppContentGate({
     );
   }
 
+  
+
   if (isChangingLanguage) {
     return (
       <FullScreenLoader message="جاري تغيير اللغة..." />
     );
+  }
+
+  if (isChangingTheme) {
+    return <FullScreenLoader message="جاري تغيير المظهر..." />;
   }
 
   return <>{children}</>;

@@ -1,39 +1,36 @@
-// src/shared/components/dashboard/ui/dropdown/Dropdown.tsx
-
 import type React from "react";
-import { useEffect, useRef, useLayoutEffect } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 
 interface DropdownProps {
-  /** Controls the visibility state of the dropdown */
   isOpen: boolean;
-
-  /** Margin below */
   marginBelow?: number;
-  /** Callback triggered when the dropdown should close */
   onClose: () => void;
-  /** Content rendered inside the dropdown menu */
   children: React.ReactNode;
-  /** Additional CSS classes for custom styling */
   className?: string;
-  /** Reference to the trigger element used for positioning */
   triggerRef?: React.RefObject<HTMLElement | null>;
-  /** Portal container ID (defaults to 'dropdown-portal-root') */
   portalId?: string;
 }
 
 const PORTAL_ROOT_ID = "dropdown-portal-root";
 const VIEWPORT_MARGIN = 16;
+const GAP = 8;
 
-/** Helper function to safely get or create portal container without React State */
 function getPortalContainer(portalId: string): HTMLElement {
-  let elem = document.getElementById(portalId);
-  if (!elem) {
-    elem = document.createElement("div");
-    elem.id = portalId;
-    document.body.appendChild(elem);
+  let container = document.getElementById(portalId);
+
+  if (!container) {
+    container = document.createElement("div");
+    container.id = portalId;
+    document.body.appendChild(container);
   }
-  return elem;
+
+  return container;
 }
 
 export const Dropdown: React.FC<DropdownProps> = ({
@@ -46,118 +43,248 @@ export const Dropdown: React.FC<DropdownProps> = ({
   portalId = PORTAL_ROOT_ID,
 }) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [portalContainer, setPortalContainer] =
+    useState<HTMLElement | null>(null);
 
-  // 1. Navigation Control (Close on Escape key)
+  // Create the portal only on the client.
   useEffect(() => {
     if (!isOpen) return;
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    };
+    const frame = requestAnimationFrame(() => {
+      setPortalContainer(getPortalContainer(portalId));
+    });
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+    return () => cancelAnimationFrame(frame);
+  }, [isOpen, portalId]);
 
-  // 2. Close on Outside Click
+  // Focus the first enabled menu item when the menu opens.
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || !portalContainer) return;
 
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
-      const isOutsideDropdown = dropdownRef.current && !dropdownRef.current.contains(target);
-      const isOutsideTrigger = triggerRef?.current && !triggerRef.current.contains(target);
+    const frame = requestAnimationFrame(() => {
+      const menu = dropdownRef.current;
+      const firstItem = menu?.querySelector<HTMLElement>(
+        '[role="menuitem"]:not([aria-disabled="true"]):not(:disabled)',
+      );
 
-      if (isOutsideDropdown && isOutsideTrigger) {
-        onClose();
-      }
-    };
+      firstItem?.focus();
+    });
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isOpen, onClose, triggerRef]);
+    return () => cancelAnimationFrame(frame);
+  }, [isOpen, portalContainer]);
 
-  // 3. Intelligent Dynamic Positioning (Supports RTL & Viewport Constraints)
+  // Position the dropdown and keep it within the viewport.
   useLayoutEffect(() => {
-    if (!isOpen || !triggerRef?.current || !dropdownRef.current) return;
+    if (!isOpen || !portalContainer) return;
 
     const updatePosition = () => {
       const dropdown = dropdownRef.current;
-      const trigger = triggerRef.current;
+      const trigger = triggerRef?.current;
+
       if (!dropdown || !trigger) return;
 
       const triggerRect = trigger.getBoundingClientRect();
       const dropdownRect = dropdown.getBoundingClientRect();
+
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
 
-      const isRTL =
-        document.documentElement.dir === "rtl" ||
-        getComputedStyle(document.documentElement).direction === "rtl";
+      // Center the dropdown horizontally relative to the trigger.
+      let x = triggerRect.left + (triggerRect.width - dropdownRect.width) / 2;
 
-      let x: number;
-      let y = triggerRect.bottom + marginBelow; // Margin below trigger
-
-      // Alignment check: if trigger is on the right side of the viewport
-      const isTriggerOnRightSide = triggerRect.left > viewportWidth / 2;
-
-      if (isRTL || isTriggerOnRightSide) {
-        // Right alignment with trigger
-        x = triggerRect.right - dropdownRect.width;
+      // Prefer the right side for a trigger near the left edge,
+      // and the left side for a trigger near the right edge.
+      if (triggerRect.left < viewportWidth / 2) {
+        x = Math.max(triggerRect.left, x);
       } else {
-        // Left alignment with trigger
-        x = triggerRect.left;
+        x = Math.min(
+          triggerRect.right - dropdownRect.width,
+          x,
+        );
       }
 
-      // Viewport horizontal boundary enforcement
-      if (x + dropdownRect.width > viewportWidth - VIEWPORT_MARGIN) {
-        x = viewportWidth - dropdownRect.width - VIEWPORT_MARGIN;
-      }
-      if (x < VIEWPORT_MARGIN) {
-        x = VIEWPORT_MARGIN;
-      }
+      // Keep the dropdown inside the viewport.
+      x = Math.max(
+        VIEWPORT_MARGIN,
+        Math.min(
+          x,
+          viewportWidth - dropdownRect.width - VIEWPORT_MARGIN,
+        ),
+      );
 
-      // Vertical flip if overflow occurs at the bottom
-      if (y + dropdownRect.height > viewportHeight - VIEWPORT_MARGIN) {
-        y = triggerRect.top - dropdownRect.height - 8;
-      }
-      if (y < VIEWPORT_MARGIN) {
-        y = VIEWPORT_MARGIN;
-      }
+      // Prefer below the trigger; flip above when necessary.
+      const spaceBelow =
+        viewportHeight -
+        triggerRect.bottom -
+        marginBelow -
+        VIEWPORT_MARGIN;
+
+      const spaceAbove =
+        triggerRect.top - GAP - VIEWPORT_MARGIN;
+
+      const shouldFlip =
+        dropdownRect.height > spaceBelow &&
+        spaceAbove > spaceBelow;
+
+      let y = shouldFlip
+        ? triggerRect.top - dropdownRect.height - GAP
+        : triggerRect.bottom + marginBelow;
+
+      const availableHeight = Math.max(
+        120,
+        shouldFlip ? spaceAbove : spaceBelow,
+      );
+
+      dropdown.style.maxHeight = `${Math.min(350, availableHeight)}px`;
+
+      y = Math.max(
+        VIEWPORT_MARGIN,
+        Math.min(
+          y,
+          viewportHeight - dropdownRect.height - VIEWPORT_MARGIN,
+        ),
+      );
 
       dropdown.style.position = "fixed";
       dropdown.style.left = `${x}px`;
       dropdown.style.top = `${y}px`;
-      dropdown.style.zIndex = "var(--z-dropdown, 9999)";
+      dropdown.style.zIndex = "var(--z-dropdown, 1200)";
+      dropdown.style.visibility = "visible";
     };
 
     updatePosition();
+
+    const dropdown = dropdownRef.current;
+    const trigger = triggerRef?.current;
+
+    const resizeObserver =
+      typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(updatePosition)
+        : null;
+
+    if (dropdown) resizeObserver?.observe(dropdown);
+    if (trigger) resizeObserver?.observe(trigger);
 
     window.addEventListener("resize", updatePosition);
     window.addEventListener("scroll", updatePosition, true);
 
     return () => {
+      resizeObserver?.disconnect();
       window.removeEventListener("resize", updatePosition);
       window.removeEventListener("scroll", updatePosition, true);
     };
-  }, [isOpen, triggerRef]);
+  }, [
+    isOpen,
+    portalContainer,
+    triggerRef,
+    marginBelow,
+    children,
+  ]);
 
-  if (!isOpen) return null;
+  // Close when the pointer interaction starts outside the menu and trigger.
+  useEffect(() => {
+    if (!isOpen || !portalContainer) return;
 
-  // Render Portal directly without state triggers
-  const portalContainer = getPortalContainer(portalId);
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target;
+
+      if (!(target instanceof Node)) return;
+
+      const insideMenu = dropdownRef.current?.contains(target);
+      const insideTrigger = triggerRef?.current?.contains(target);
+
+      if (!insideMenu && !insideTrigger) {
+        onClose();
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, [isOpen, portalContainer, onClose, triggerRef]);
+
+  // Keyboard interaction for an ARIA menu.
+  useEffect(() => {
+    if (!isOpen || !portalContainer) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const menu = dropdownRef.current;
+      if (!menu) return;
+
+      const items = Array.from(
+        menu.querySelectorAll<HTMLElement>(
+          '[role="menuitem"]:not([aria-disabled="true"]):not(:disabled)',
+        ),
+      ).filter((item) => item.tabIndex !== -1);
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+        triggerRef?.current?.focus();
+        return;
+      }
+
+      if (event.key === "Tab") {
+        onClose();
+        return;
+      }
+
+      if (!items.length) return;
+
+      const currentIndex = items.indexOf(
+        document.activeElement as HTMLElement,
+      );
+
+      const nextIndex = (() => {
+        switch (event.key) {
+          case "ArrowDown":
+            return currentIndex < 0
+              ? 0
+              : (currentIndex + 1) % items.length;
+
+          case "ArrowUp":
+            return currentIndex < 0
+              ? items.length - 1
+              : (currentIndex - 1 + items.length) % items.length;
+
+          case "Home":
+            return 0;
+
+          case "End":
+            return items.length - 1;
+
+          default:
+            return null;
+        }
+      })();
+
+      if (nextIndex === null) return;
+
+      event.preventDefault();
+      items[nextIndex].focus();
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, portalContainer, onClose, triggerRef]);
+
+  if (!isOpen || !portalContainer) return null;
 
   return createPortal(
     <div
       ref={dropdownRef}
       role="menu"
       aria-orientation="vertical"
-      className={`flex flex-col rounded-2xl sm:rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] shadow-2xl sm:shadow-lg dark:border-[var(--color-border)] dark:bg-[var(--color-surface)] overflow-hidden max-h-[350px] overflow-y-auto custom-scrollbar animate-in fade-in zoom-in-95 duration-100 ${className}`}
+      className={`invisible fixed flex w-max min-w-52 max-w-[calc(100vw-2rem)] flex-col overflow-y-auto overscroll-contain rounded-panel border border-border bg-background text-text-primary shadow-xl ${className}`}
+      style={{ maxHeight: 350 }}
     >
       {children}
     </div>,
-    portalContainer
+    portalContainer,
   );
 };

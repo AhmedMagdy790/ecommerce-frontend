@@ -1,5 +1,3 @@
-// src/components/layout/Logo.tsx
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { appConfig } from "@/config/app";
@@ -9,35 +7,36 @@ export default function Logo() {
   const { lang, isRTL } = useLang();
   const [hasError, setHasError] = useState(false);
 
-  // استخراج أول حرف من اسم التطبيق لاستخدامه كـ Fallback
-  const fallbackInitial = appConfig.name ? appConfig.name.charAt(0).toUpperCase() : "A";
+  const fallbackInitial = appConfig.name?.trim().charAt(0).toUpperCase() || "A";
 
   return (
-    <Link 
-      to="/" 
+    <Link
+      to="/"
       dir={isRTL ? "rtl" : "ltr"}
-      className="group inline-flex items-center gap-[var(--spacing-3)] shrink-0 transition-opacity duration-[var(--duration-fast)] hover:opacity-90"
+      aria-label={appConfig.name}
+      className="group inline-flex min-w-0 shrink-0 items-center gap-2 transition-opacity duration-200 hover:opacity-90 sm:gap-2.5"
     >
-      <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-[var(--radius-md)] bg-[var(--color-surface-secondary)] border border-[var(--color-border)] shadow-[var(--shadow-xs)] transition-transform duration-[var(--duration-normal)] group-hover:scale-105">
+      <span className="relative inline-flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-control border border-border bg-surface-secondary shadow-sm transition-transform duration-200 group-hover:scale-105 sm:size-10">
         {!hasError && appConfig.logo ? (
           <img
             src={appConfig.logo}
-            alt={appConfig.name}
+            alt=""
             onError={() => setHasError(true)}
-            className="h-7 w-7 object-contain"
+            className="size-7 object-contain"
             loading="eager"
           />
         ) : (
-          <span className="text-[var(--text-lg)] font-[var(--font-bold)] text-[var(--color-primary)]">
+          <span className="text-lg font-bold text-primary">
             {fallbackInitial}
           </span>
         )}
-      </div>
+      </span>
 
-      <span 
-        className="text-[var(--text-xl)] font-[var(--font-bold)] tracking-tight text-[var(--color-text-primary)] select-none"
+      <span
+        className="max-w-[100px] truncate text-base font-bold tracking-tight text-text-primary sm:max-w-[140px] sm:text-lg"
         style={{
-          fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)",
+          fontFamily:
+            lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)",
         }}
       >
         {appConfig.name}

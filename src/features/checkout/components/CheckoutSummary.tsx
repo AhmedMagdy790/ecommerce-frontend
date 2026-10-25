@@ -9,7 +9,7 @@ import { useSettings } from "@/hooks/useSettings";
 import { formatCurrency } from "@/shared/utils/currency";
 import { useShippingCalculation } from "../hooks/useShippingCalculation";
 import CheckoutSummarySkeleton from "./CheckoutSummarySkeleton";
-
+import { useLang } from "@/shared/context/LanguageContext";
 
 interface CheckoutSummaryProps {
   loading?: boolean;
@@ -36,6 +36,7 @@ interface CheckoutCartItem {
 
 export default function CheckoutSummary({ loading = false }: CheckoutSummaryProps) {
   const { t } = useTranslation("checkout");
+  const { isRTL, lang } = useLang();
   const { watch } = useFormContext();
 
   const shippingCost = watch("shipping_cost") || 0;
@@ -59,14 +60,22 @@ export default function CheckoutSummary({ loading = false }: CheckoutSummaryProp
   );
 
   return (
-    <section className="relative rounded-xl border border-[var(--color-border)] bg-[var(--color-background)] p-6 space-y-6 shadow-sm">
-      <div className="flex items-center gap-2 border-b border-[var(--color-border)] pb-4">
-        <ShoppingBag className="h-5 w-5 text-[var(--color-primary)]" />
-        <h2 className="text-lg font-semibold">{t("summary.title", "Order Summary")}</h2>
+    <section 
+      dir={isRTL ? "rtl" : "ltr"} 
+      className="relative rounded-panel border border-border bg-surface p-6 space-y-6 shadow-xs"
+    >
+      <div className="flex items-center gap-2 border-b border-border pb-4">
+        <ShoppingBag className="h-5 w-5 text-primary" />
+        <h2 
+          className="text-lg font-bold text-text-primary"
+          style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+        >
+          {t("summary.title", { defaultValue: lang === "ar" ? "ملخص الطلب" : "Order Summary" })}
+        </h2>
       </div>
 
       {/* Cart Items List */}
-      <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
+      <div className="space-y-3 max-h-60 overflow-y-auto pe-1">
         {isCartLoading ? (
           <CheckoutSummarySkeleton />
         ) : cartItems && cartItems.length > 0 ? (
@@ -84,83 +93,90 @@ export default function CheckoutSummary({ loading = false }: CheckoutSummaryProp
                     <img
                       src={imageUrl}
                       alt={name}
-                      className="h-12 w-12 rounded-md object-cover border border-[var(--color-border)] shrink-0"
+                      className="h-12 w-12 rounded-card object-cover border border-border shrink-0 bg-surface-secondary"
                     />
                   ) : (
-                    <div className="h-12 w-12 rounded-md bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center text-xs text-[var(--color-text-secondary)] shrink-0">
+                    <div className="h-12 w-12 rounded-card bg-surface-secondary border border-border flex items-center justify-center text-xs text-text-muted shrink-0 font-medium">
                       IMG
                     </div>
                   )}
                   <div className="min-w-0">
-                    <p className="font-medium text-[var(--color-text)] truncate">{name}</p>
-                    <p className="text-xs text-[var(--color-text-secondary)]">Qty: {quantity}</p>
+                    <p 
+                      className="font-semibold text-text-primary truncate"
+                      style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+                    >
+                      {name}
+                    </p>
+                    <p className="text-xs text-text-secondary">
+                      {t("summary.quantity", { count: quantity, defaultValue: lang === "ar" ? `الكمية: ${quantity}` : `Qty: ${quantity}` })}
+                    </p>
                   </div>
                 </div>
-                <span className="font-medium text-sm shrink-0">
+                <span className="font-bold text-sm text-text-primary shrink-0">
                   {formatCurrency(price * quantity, currencySymbol)}
                 </span>
               </div>
             );
           })
         ) : (
-          <p className="text-sm text-[var(--color-text-secondary)] text-center py-4">
-            {t("summary.emptyCart", "Your cart is empty")}
+          <p className="text-sm text-text-secondary text-center py-4">
+            {t("summary.emptyCart", { defaultValue: lang === "ar" ? "سلة التسوق فارغة" : "Your cart is empty" })}
           </p>
         )}
       </div>
 
       {/* Promo Code Input */}
-      <div className="border-t border-[var(--color-border)] pt-4">
+      <div className="border-t border-border pt-4">
         <div className="flex gap-2">
           <div className="relative flex-1">
-            <Tag size={16} className="absolute left-3 top-3 text-[var(--color-text-secondary)]" />
+            <Tag size={16} className={`absolute top-3 text-text-muted ${isRTL ? "right-3" : "left-3"}`} />
             <input
               type="text"
-              placeholder={t("summary.promoPlaceholder", "Promo code")}
-              className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] pl-9 pr-4 py-2 text-xs focus:outline-none focus:border-[var(--color-primary)]"
+              placeholder={t("summary.promoPlaceholder", { defaultValue: lang === "ar" ? "رمز الخصم" : "Promo code" })}
+              className={`w-full rounded-card border border-border bg-surface-secondary py-2 text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary ${isRTL ? "pr-9 pl-4" : "pl-9 pr-4"}`}
             />
           </div>
           <button
             type="button"
-            className="rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] px-4 py-2 text-xs font-medium text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors"
+            className="rounded-card bg-surface-secondary border border-border px-4 py-2 text-xs font-semibold text-text-primary hover:bg-border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
-            {t("summary.apply", "Apply")}
+            {t("summary.apply", { defaultValue: lang === "ar" ? "تطبيق" : "Apply" })}
           </button>
         </div>
       </div>
 
       {/* Cost Calculations */}
-      <div className="border-t border-[var(--color-border)] pt-4 space-y-2.5 text-sm">
+      <div className="border-t border-border pt-4 space-y-2.5 text-sm">
         {/* Subtotal */}
-        <div className="flex justify-between text-[var(--color-text-secondary)]">
-          <span>{t("summary.subtotal", "Subtotal")}</span>
-          <span className="font-medium text-[var(--color-text)]">
+        <div className="flex justify-between text-text-secondary">
+          <span>{t("summary.subtotal", { defaultValue: lang === "ar" ? "المجموع الفرعي" : "Subtotal" })}</span>
+          <span className="font-semibold text-text-primary">
             {formatCurrency(subtotal, currencySymbol)}
           </span>
         </div>
 
         {/* Shipping */}
-        <div className="flex justify-between text-[var(--color-text-secondary)]">
+        <div className="flex justify-between text-text-secondary">
           <span className="flex items-center gap-1.5">
             <Truck size={14} />
-            {t("summary.shipping", "Shipping")}
+            {t("summary.shipping", { defaultValue: lang === "ar" ? "الشحن" : "Shipping" })}
           </span>
-          <span className="font-medium text-[var(--color-text)] flex items-center gap-1">
+          <span className="font-semibold text-text-primary flex items-center gap-1">
             {calculatingShipping ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin text-[var(--color-primary)]" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
             ) : shipping > 0 ? (
               formatCurrency(shipping, currencySymbol)
             ) : (
-              t("summary.calculatedAtNext", "Calculated")
+              t("summary.calculatedAtNext", { defaultValue: lang === "ar" ? "يُحسب لاحقاً" : "Calculated" })
             )}
           </span>
         </div>
 
         {/* Tax */}
         {tax > 0 && (
-          <div className="flex justify-between text-[var(--color-text-secondary)]">
-            <span>{t("summary.tax", "Tax")}</span>
-            <span className="font-medium text-[var(--color-text)]">
+          <div className="flex justify-between text-text-secondary">
+            <span>{t("summary.tax", { defaultValue: lang === "ar" ? "الضريبة" : "Tax" })}</span>
+            <span className="font-semibold text-text-primary">
               {formatCurrency(tax, currencySymbol)}
             </span>
           </div>
@@ -168,9 +184,9 @@ export default function CheckoutSummary({ loading = false }: CheckoutSummaryProp
 
         {/* Discount */}
         {discount > 0 && (
-          <div className="flex justify-between text-[var(--color-success,rgb(34,197,94))]">
-            <span>{t("summary.discount", "Discount")}</span>
-            <span className="font-medium">
+          <div className="flex justify-between text-emerald-600 dark:text-emerald-400">
+            <span>{t("summary.discount", { defaultValue: lang === "ar" ? "الخصم" : "Discount" })}</span>
+            <span className="font-semibold">
               -{formatCurrency(discount, currencySymbol)}
             </span>
           </div>
@@ -178,34 +194,34 @@ export default function CheckoutSummary({ loading = false }: CheckoutSummaryProp
 
         {/* Payment Fee */}
         {paymentFee > 0 && (
-          <div className="flex justify-between text-[var(--color-text-secondary)]">
+          <div className="flex justify-between text-text-secondary">
             <span className="flex items-center gap-1.5">
               <Receipt size={14} />
-              {t("summary.paymentFee", "Payment Fee")}
+              {t("summary.paymentFee", { defaultValue: lang === "ar" ? "رسوم الدفع" : "Payment Fee" })}
             </span>
-            <span className="font-medium text-[var(--color-text)]">
+            <span className="font-semibold text-text-primary">
               {formatCurrency(paymentFee, currencySymbol)}
             </span>
           </div>
         )}
 
         {/* Total */}
-        <div className="border-t border-[var(--color-border)] pt-3 flex justify-between text-base font-semibold text-[var(--color-text)]">
-          <span>{t("summary.total", "Total")}</span>
-          <span className="text-[var(--color-primary)]">
+        <div className="border-t border-border pt-3 flex justify-between text-base font-bold text-text-primary">
+          <span>{t("summary.total", { defaultValue: lang === "ar" ? "الإجمالي الكلي" : "Total" })}</span>
+          <span className="text-primary">
             {formatCurrency(total, currencySymbol)}
           </span>
         </div>
       </div>
 
-      <div className="rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] p-3 flex items-center gap-2.5 text-xs text-[var(--color-text-secondary)]">
-        <Receipt size={16} className="text-[var(--color-primary)] shrink-0" />
-        <span>{t("summary.taxNote", "Taxes and shipping calculated at checkout steps.")}</span>
+      <div className="rounded-card bg-surface-secondary border border-border p-3 flex items-center gap-2.5 text-xs text-text-secondary">
+        <Receipt size={16} className="text-primary shrink-0" />
+        <span>{t("summary.taxNote", { defaultValue: lang === "ar" ? "يتم حساب الضرائب ورسوم الشحن عند خطوات الدفع." : "Taxes and shipping calculated at checkout steps." })}</span>
       </div>
 
       {loading && (
-        <div className="absolute inset-0 bg-background/50 backdrop-blur-xs flex items-center justify-center rounded-xl z-10">
-          <Loader2 className="h-6 w-6 animate-spin text-[var(--color-primary)]" />
+        <div className="absolute inset-0 bg-background/50 backdrop-blur-xs flex items-center justify-center rounded-panel z-10">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </div>
       )}
     </section>

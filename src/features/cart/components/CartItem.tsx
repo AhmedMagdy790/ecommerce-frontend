@@ -19,7 +19,7 @@ export default function CartItem({
   onDecrease,
   onRemove,
 }: CartItemProps) {
-  const { isRTL } = useLang();
+  const { isRTL, lang } = useLang();
   const { t } = useTranslation("cart");
 
   if (!item) return null;
@@ -29,35 +29,40 @@ export default function CartItem({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:p-6 rounded-[var(--radius-2xl)] bg-[var(--color-surface)] border border-[var(--color-border)] shadow-xs gap-4">
+    <div 
+      dir={isRTL ? "rtl" : "ltr"}
+      className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:p-6 rounded-panel bg-surface border border-border shadow-xs gap-4 transition-all hover:border-border-hover"
+    >
       
       {/* Product Details Info */}
       <div className="flex flex-col gap-1">
         <h3 
-          className="text-[var(--text-base)] font-[var(--font-bold)] text-[var(--color-text-primary)]"
+          className="text-base font-bold text-text-primary"
           style={{ fontFamily: isRTL ? "var(--font-arabic)" : "var(--font-sans)" }}
         >
           {getProductName()}
         </h3>
 
-        <div className="flex flex-wrap items-center gap-3 text-[var(--text-xs)] text-[var(--color-text-secondary)]">
-          <span>
-            {t("cart.sku")}: <strong className="text-[var(--color-text-primary)]">{item.variant?.sku}</strong>
-          </span>
+        <div className="flex flex-wrap items-center gap-3 text-xs text-text-secondary">
+          {item.variant?.sku && (
+            <span>
+              {t("sku", { defaultValue: lang === "ar" ? "رمز المنتج:" : "SKU:" })} <strong className="text-text-primary">{item.variant.sku}</strong>
+            </span>
+          )}
           {item.variant?.attributes?.color && (
             <span>
-              {t("cart.color")}: <strong className="text-[var(--color-text-primary)]">{item.variant.attributes.color}</strong>
+              {t("color", { defaultValue: lang === "ar" ? "اللون:" : "Color:" })} <strong className="text-text-primary">{item.variant.attributes.color}</strong>
             </span>
           )}
           {item.variant?.attributes?.size && (
             <span>
-              {t("cart.size")}: <strong className="text-[var(--color-text-primary)]">{item.variant.attributes.size}</strong>
+              {t("size", { defaultValue: lang === "ar" ? "المقاس:" : "Size:" })} <strong className="text-text-primary">{item.variant.attributes.size}</strong>
             </span>
           )}
         </div>
 
-        <div className="text-[var(--text-sm)] font-[var(--font-semibold)] text-[var(--color-primary)] mt-1">
-          {formatCurrency(item.variant?.price)} <span className="text-xs text-[var(--color-text-muted)] font-normal">({isRTL ? "للقطعة" : "each"})</span>
+        <div className="text-sm font-semibold text-primary mt-1">
+          {formatCurrency(item.variant?.price)} <span className="text-xs text-text-muted font-normal">({isRTL ? "للقطعة" : "each"})</span>
         </div>
       </div>
 
@@ -65,25 +70,25 @@ export default function CartItem({
       <div className="flex items-center justify-between w-full sm:w-auto gap-6">
         
         {/* Quantity Controls */}
-        <div className="flex items-center border border-[var(--color-border)] rounded-[var(--radius-xl)] bg-[var(--color-surface-secondary)] overflow-hidden">
+        <div className="flex items-center border border-border rounded-card bg-surface-secondary overflow-hidden shadow-xs">
           <button
             type="button"
             onClick={() => onDecrease?.(item.id)}
             disabled={item.quantity <= 1}
-            className="p-2 hover:bg-[var(--color-border)] transition-colors text-[var(--color-text-primary)] disabled:opacity-40 disabled:cursor-not-allowed"
+            className="p-2 hover:bg-surface transition-colors text-text-primary disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             aria-label="Decrease quantity"
           >
             <Minus size={14} />
           </button>
           
-          <span className="px-4 text-[var(--text-sm)] font-[var(--font-semibold)] text-[var(--color-text-primary)]">
+          <span className="px-4 text-sm font-semibold text-text-primary min-w-8 text-center">
             {item.quantity}
           </span>
 
           <button
             type="button"
             onClick={() => onIncrease?.(item.id)}
-            className="p-2 hover:bg-[var(--color-border)] transition-colors text-[var(--color-text-primary)]"
+            className="p-2 hover:bg-surface transition-colors text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             aria-label="Increase quantity"
           >
             <Plus size={14} />
@@ -91,8 +96,8 @@ export default function CartItem({
         </div>
 
         {/* Item Total Price */}
-        <div className="text-right min-w-[80px]">
-          <span className="text-[var(--text-base)] font-[var(--font-bold)] text-[var(--color-text-primary)]">
+        <div className="text-end min-w-[80px]">
+          <span className="text-base font-bold text-text-primary">
             {formatCurrency(item.item_total)}
           </span>
         </div>
@@ -101,7 +106,7 @@ export default function CartItem({
         <button
           type="button"
           onClick={() => onRemove?.(item.id)}
-          className="p-2 rounded-[var(--radius-xl)] text-red-500 hover:bg-red-500/10 transition-colors"
+          className="p-2 rounded-card text-red-500 hover:bg-red-500/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
           aria-label="Remove item"
         >
           <Trash2 size={18} />

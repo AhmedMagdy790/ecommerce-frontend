@@ -1,32 +1,23 @@
+// src/features/cart/model/store/cart.store.ts
+
 import { create } from "zustand";
 import type { ICartItem } from "../types/cart.types";
 import cartService from "../../services/cartService";
-
-interface AddToCartPayload {
-  product_variant_id: number | string;
-  quantity: number;
-}
 
 interface CartState {
   items: ICartItem[];
   isLoading: boolean;
   isOpen: boolean;
 
-  // Helpers / Computed
-  getTotalItems: () => number;
-  getSubtotal: () => number;
-
   // Actions
   fetchCart: () => Promise<void>;
-  addToCart: (payload: AddToCartPayload) => Promise<void>;
+  addToCart: (payload: { product_variant_id: number | string; quantity: number }) => Promise<void>;
   updateQuantity: (cartItemId: number | string, variantId: number | string, newQuantity: number) => Promise<void>;
   removeFromCart: (id: number | string) => Promise<void>;
   clearCart: () => Promise<void>;
-
-  // UI State Actions
-  toggleCart: () => void;
-  openCart: () => void;
-  closeCart: () => void;
+  
+  // Computed helpers
+  getTotalItems: () => number;
 }
 
 export const useCartStore = create<CartState>((set, get) => ({
@@ -38,102 +29,68 @@ export const useCartStore = create<CartState>((set, get) => ({
     return get().items.reduce((total, item) => total + (item.quantity || 0), 0);
   },
 
-  getSubtotal: () => {
-    return get().items.reduce((sum, item) => {
-      if (item.total_price !== undefined && item.total_price !== null) {
-        return sum + Number(item.total_price);
-      }
-      if (item.item_total !== undefined && item.item_total !== null) {
-        return sum + Number(item.item_total);
-      }
-      
-      const price = item.variant?.price ?? item.product?.price ?? 0;
-      return sum + Number(price) * (item.quantity || 1);
-    }, 0);
-  },
-
   fetchCart: async () => {
-    set({ isLoading: true });
     try {
       const items = await cartService.getCartItems();
-
-      set({ items, isLoading: false });
+      set({ items });
     } catch (error) {
-      console.error("Failed to fetch cart items", error);
-      set({ isLoading: false });
+      console.error("Failed to fetch cart", error);
     }
   },
 
-  addToCart: async (payload: AddToCartPayload) => {
+  addToCart: async (payload) => {
     set({ isLoading: true });
     try {
       await cartService.addToCart(payload);
-      await get().fetchCart();
-      set({ isOpen: true, isLoading: false });
+      // جلب السلة مباشرة بعد الإضافة لتحديث العداد في الأزرار والنافبار
+      const items = await cartService.getCartItems();
+      set({ items, isLoading: false, isOpen: true });
     } catch (error) {
-      console.error("Failed to add item to cart", error);
+      console.error("Failed to add to cart", error);
       set({ isLoading: false });
-      throw error;
     }
   },
 
-  updateQuantity: async (cartItemId: number | string, variantId: number | string, newQuantity: number) => {
-    if (newQuantity <= 0) {
-      await get().removeFromCart(cartItemId);
-      return;
-    }
-
-    const previousItems = get().items;
-
-    set({
-      items: previousItems.map((item) =>
-        item.id === cartItemId ? { ...item, quantity: newQuantity } : item
-      ),
-    });
-
+  updateQuantity: async (cartItemId, variantId, newQuantity) => {
     try {
+      // تحديث محلي فوري (Optimistic Update) لتجربة مستخدم سريعة
+      set((state) => ({
+        items: state.items.map((i) => (i.id === cartItemId ? { ...i, quantity: newQuantity } : i)),
+      }));
 
-      await cartService.addToCart({
-        product_variant_id: variantId,
-        quantity: newQuantity,
-      });
-
-      const updatedItems = await cartService.getCartItems();
-      set({ items: updatedItems });
+      await cartService.addToCart({ product_variant_id: variantId, quantity: newQuantity });
+      
+      // مزامنة نهائية مع السيرفر
+      const items = await cartService.getCartItems();
+      set({ items });
     } catch (error) {
-      console.error("Failed to update item quantity", error);
-      set({ items: previousItems }); // Rollback في حال فشل الطلب
+      console.error("Failed to update quantity", error);
+      await get().fetchCart(); // استرجاع الحالة الصحيحة في حال حدوث خطأ
     }
   },
 
-  removeFromCart: async (id: number | string) => {
-    const previousItems = get().items;
-
-    set({
-      items: previousItems.filter((item) => item.id !== id),
-    });
-
+  removeFromCart: async (id) => {
     try {
+      set((state) => ({
+        items: state.items.filter((i) => i.id !== id),
+      }));
+
       await cartService.removeFromCart(id);
+      const items = await cartService.getCartItems();
+      set({ items });
     } catch (error) {
-      console.error("Failed to remove cart item", error);
-      set({ items: previousItems });
+      console.error("Failed to remove item", error);
+      await get().fetchCart();
     }
   },
 
   clearCart: async () => {
-    const previousItems = get().items;
     set({ items: [] });
-
     try {
       await cartService.clearCart();
     } catch (error) {
       console.error("Failed to clear cart", error);
-      set({ items: previousItems });
+      await get().fetchCart();
     }
   },
-
-  toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
-  openCart: () => set({ isOpen: true }),
-  closeCart: () => set({ isOpen: false }),
 }));

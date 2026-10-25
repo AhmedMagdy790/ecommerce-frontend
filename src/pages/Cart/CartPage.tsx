@@ -10,7 +10,7 @@ import EmptyCart from "@/features/cart/components/EmptyCart";
 import { useCartCalculations } from "@/hooks/useCartCalculations";
 import { useCart } from "./hook/useCart";
 import type { ICartItem } from "@/features/cart/model/types/cart.types";
-
+import { Container } from "@/shared/components/layout/Container";
 
 export default function CartPage() {
   const { t } = useTranslation("cart");
@@ -24,19 +24,18 @@ export default function CartPage() {
     clearCart,
     isAdding,
     isRemoving,
-    isClearing
+    isClearing,
   } = useCart();
-
 
   const { subtotal, shipping, tax, total, discount } = useCartCalculations(cartItems || []);
 
-  // 3. API-driven Handlers
+  // Handlers المدعومة بالتحديث الفوري عبر الـ Hook
   const handleIncrease = async (cartItemId: number | string) => {
     const item = cartItems.find((i: ICartItem) => i.id === cartItemId);
     if (item && item.variant) {
       await addToCart({
-        product_variant_id: item.variant.id,
-        quantity: item.quantity + 1
+        product_variant_id: Number(item.variant.id),
+        quantity: item.quantity + 1,
       });
     }
   };
@@ -50,8 +49,8 @@ export default function CartPage() {
       }
 
       await addToCart({
-        product_variant_id: item.variant.id,
-        quantity: item.quantity - 1
+        product_variant_id: Number(item.variant.id),
+        quantity: item.quantity - 1,
       });
     }
   };
@@ -64,11 +63,10 @@ export default function CartPage() {
     await clearCart();
   };
 
-  // 4. Handle UI States
-  if (isLoading) {
+  if (isLoading && cartItems.length === 0) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center bg-[var(--color-background)]">
-        <Loader2 className="animate-spin text-[var(--color-primary)]" size={48} strokeWidth={2} />
+      <div className="flex min-h-[60vh] items-center justify-center bg-background">
+        <Loader2 className="animate-spin text-primary" size={48} strokeWidth={2} />
       </div>
     );
   }
@@ -80,51 +78,60 @@ export default function CartPage() {
   return (
     <main
       dir={isRTL ? "rtl" : "ltr"}
-      className="w-full min-h-[85vh] bg-[var(--color-background)] text-[var(--color-text-primary)] py-[var(--spacing-12)] px-[var(--spacing-4)] sm:px-[var(--spacing-6)] lg:px-[var(--spacing-8)] transition-colors duration-[var(--duration-normal)]"
+      className="w-full min-h-[85vh] bg-background text-text-primary py-12 transition-colors duration-[var(--duration-normal)]"
     >
-      <div className="mx-auto max-w-[var(--container-2xl)]">
+      <Container size="2xl">
 
         {/* Modern Header Section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[var(--color-border)] mb-[var(--spacing-10)] pb-[var(--spacing-6)] gap-[var(--spacing-4)]">
-          <div className="flex flex-col gap-[var(--spacing-2)]">
-            <div className="inline-flex items-center gap-[var(--spacing-2)]">
-              <span className="inline-flex items-center justify-center h-8 w-8 rounded-[var(--radius-md)] bg-[var(--color-surface-secondary)] border border-[var(--color-border)] text-[var(--color-primary)]">
+        <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-border mb-10 pb-6 gap-4">
+          <div className="flex flex-col gap-2">
+            <div className="inline-flex items-center gap-2">
+              <span className="inline-flex items-center justify-center h-8 w-8 rounded-card bg-surface-secondary border border-border text-primary">
                 <ShoppingBag size={18} strokeWidth={2.2} />
               </span>
-              <span className="text-[var(--text-xs)] font-[var(--font-semibold)] text-[var(--color-primary)] uppercase tracking-wider" style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}>
-                {lang === "ar" ? "مشترياتك الحالية" : "Your Shopping Session"}
+              <span 
+                className="text-xs font-semibold text-primary uppercase tracking-wider" 
+                style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+              >
+                {t("badge", { defaultValue: lang === "ar" ? "مشترياتك الحالية" : "Your Shopping Session" })}
               </span>
             </div>
 
-            <h1 className="text-[var(--text-3xl)] sm:text-[var(--text-4xl)] font-[var(--font-bold)] tracking-tight text-[var(--color-text-primary)]" style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}>
-              {t("title", { defaultValue: "Shopping Cart" })}
+            <h1 
+              className="text-3xl sm:text-4xl font-bold tracking-tight text-text-primary" 
+              style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+            >
+              {t("title", { defaultValue: lang === "ar" ? "سلة المشتريات" : "Shopping Cart" })}
             </h1>
 
-            <p className="text-[var(--text-sm)] text-[var(--color-text-secondary)]" style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}>
-              {t("description", { defaultValue: `You have ${cartItems.length} items in your bag.` })}
+            <p 
+              className="text-sm text-text-secondary font-medium" 
+              style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+            >
+              {t("itemsCount", { count: cartItems.length, defaultValue: lang === "ar" ? `لديك ${cartItems.length} عناصر في حقيبتك.` : `You have ${cartItems.length} items in your bag.` })}
             </p>
           </div>
 
           {/* Header Action Buttons */}
-          <div className="flex items-center gap-[var(--spacing-3)]">
-           <button
+          <div className="flex items-center gap-3">
+            <button
               onClick={handleClearCart}
-              disabled={isClearing || isLoading} // <-- استخدمنا isClearing هنا بدلاً من isRemoving
-              className="inline-flex items-center h-10 px-[var(--spacing-4)] rounded-[var(--radius-xl)] bg-[var(--color-surface-secondary)] border border-[var(--color-border)] text-[var(--color-error)] text-[var(--text-sm)] font-[var(--font-medium)] gap-[var(--spacing-2)] transition-all duration-[var(--duration-fast)] ease-[var(--ease-default)] hover:opacity-80 active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
-              style={{ fontFamily: isRTL ? "var(--font-arabic)" : "var(--font-sans)" }}
+              disabled={isClearing || isLoading}
+              className="inline-flex items-center h-10 px-4 rounded-card bg-surface-secondary border border-border text-red-600 dark:text-red-400 text-sm font-bold gap-2 transition-all duration-200 hover:opacity-80 active:scale-95 disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 shadow-xs"
+              style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
             >
               {isClearing ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} strokeWidth={2} />}
-              <span>{isRTL ? "إفراغ السلة" : "Clear Cart"}</span>
+              <span>{t("clearCart", { defaultValue: lang === "ar" ? "إفراغ السلة" : "Clear Cart" })}</span>
             </button>
           </div>
         </div>
 
         {/* Dynamic Responsive Layout Grid */}
-        <div className="grid items-start gap-[var(--spacing-8)] lg:grid-cols-[1fr_400px]">
+        <div className="grid items-start gap-8 lg:grid-cols-[1fr_400px]">
           {/* Cart Items List */}
           <section className="w-full relative">
-           {(isAdding || isRemoving || isClearing) && (
-              <div className="absolute inset-0 bg-black/5 z-10 rounded-xl transition-all" />
+            {(isAdding || isRemoving || isClearing) && (
+              <div className="absolute inset-0 bg-black/5 dark:bg-white/5 z-10 rounded-panel transition-all backdrop-blur-[1px]" />
             )}
 
             <CartList
@@ -143,13 +150,13 @@ export default function CartPage() {
               tax={tax}
               discount={discount}
               total={total}
-              currency="USD"
+              currency="EGP"
               loading={isLoading || isAdding || isRemoving}
             />
           </aside>
         </div>
 
-      </div>
+      </Container>
     </main>
   );
 }

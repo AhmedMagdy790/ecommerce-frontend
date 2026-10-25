@@ -1,43 +1,34 @@
-// src/components/layout/UserLayout.tsx
-
 import { Outlet } from "react-router-dom";
 import { useLang } from "@/shared/context/LanguageContext";
 
 import Topbar from "../shell/Topbar";
 import Navbar from "../shell/Navbar";
 import Footer from "../shell/Footer";
-import { AuthProvider } from "@/app/providers/AuthProvider";
+import { Container } from "@/shared/components/layout/Container";
 
 export default function UserLayout() {
   const { isRTL } = useLang();
 
   return (
-    <AuthProvider>
-      <div
-        dir={isRTL ? "rtl" : "ltr"}
-        className="flex min-h-screen flex-col bg-[var(--color-background)] text-[var(--color-text-primary)] transition-colors duration-[var(--duration-normal)]"
+    <div
+      dir={isRTL ? "rtl" : "ltr"}
+      className="flex min-h-screen flex-col bg-background text-text-primary transition-colors duration-200"
+    >
+      <header className="sticky top-0 z-[var(--z-header)] w-full border-b border-header-border bg-header/90 shadow-xs backdrop-blur-xl">
+        <Topbar />
+        <Navbar />
+      </header>
+
+      <main
+        id="main-content"
+        className="w-full min-w-0 flex-1 overflow-x-clip py-8"
       >
-        {/* Sticky Header with Backdrop Blur and Cinematic Polish */}
-        <header 
-          className="sticky top-0 w-full z-[var(--z-header)] bg-[var(--header-bg)]/90 backdrop-blur-xl border-b border-[var(--header-border)] shadow-[var(--shadow-xs)]"
-        >
-          <Topbar />
-          <Navbar />
-        </header>
+        <Container>
+          <Outlet />
+        </Container>
+      </main>
 
-        {/* Main Content Area */}
-        <main
-          id="main-content"
-          className="flex-1 w-full overflow-x-hidden py-[var(--spacing-8)]"
-        >
-          <div className="w-full mx-auto max-w-[var(--container-2xl)] px-[var(--spacing-4)] sm:px-[var(--spacing-6)] lg:px-[var(--spacing-8)]">
-            <Outlet />
-          </div>
-        </main>
-
-        {/* Footer */}
-        <Footer />
-      </div>
-    </AuthProvider>
+      <Footer />
+    </div>
   );
 }

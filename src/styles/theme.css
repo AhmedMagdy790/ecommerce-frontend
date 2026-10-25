@@ -1,88 +1,82 @@
-@theme {
-  /* ===========================
-     Colors
-  =========================== */
+@import "tailwindcss";
 
-  /* Violet / Purple (تم استبدال الأزرق بالأرجواني) */
-  --violet-50: #f5f3ff;
-  --violet-100: #ede9fe;
-  --violet-200: #ddd6fe;
-  --violet-300: #c4b5fd;
-  --violet-400: #a78bfa;
-  --violet-500: #8b5cf6;
-  --violet-600: #7c3aed;
-  --violet-700: #6d28d9;
-  --violet-800: #5b21b6;
-  --violet-900: #4c1d95;
+/* ==================================================
+1. LIGHT THEME — Brand Identity
+================================================== */
 
-  /* Gray */
-  --gray-50: #f8fafc;
-  --gray-100: #f1f5f9;
-  --gray-200: #e2e8f0;
-  --gray-300: #cbd5e1;
-  --gray-400: #94a3b8;
-  --gray-500: #64748b;
-  --gray-600: #475569;
-  --gray-700: #334155;
-  --gray-800: #1e293b;
-  --gray-900: #0f172a;
+:root {
+  color-scheme: light;
 
-  /* Status Colors */
-  --green-500: #22c55e;
-  --amber-500: #f59e0b;
-  --red-500: #ef4444;
+  /* Container */
+  --container-max: 1440px;
+  --container-padding-x-sm: 1rem;
+  --container-padding-x-md: 1.5rem;
+  --container-padding-x-lg: 2rem;
 
-  /* Brand */
-  --color-primary: var(--violet-600);
-  --color-primary-hover: var(--violet-700);
-  --color-primary-active: var(--violet-800);
-  --color-primary-rgb: 124 58 237;
+  /* Brand: Violet */
+  --brand-primary: #6d28d9;
+  --brand-primary-hover: #5b21b6;
+  --brand-primary-active: #4c1d95;
+  --brand-primary-soft: #f5f3ff;
+  --brand-primary-rgb: 109 40 217;
 
-  /* Background & Surface */
-  --color-background: #ffffff;
-  --color-surface: #f8fafc;
-  --color-surface-secondary: #f1f5f9;
+  /* Backgrounds */
+  --background: #ffffff;
+  --surface: #f8fafc;
+  --surface-secondary: #f1f5f9;
+  --surface-hover: #f1f5f9;
 
   /* Text */
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #475569;
-  --color-text-muted: #94a3b8;
-  --color-text-inverse: #ffffff;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --text-inverse: #ffffff;
 
-  /* Border */
-  --color-border: #e2e8f0;
-  --color-border-hover: #cbd5e1;
+  /* Borders */
+  --border: #e2e8f0;
+  --border-hover: #cbd5e1;
 
-  /* Status Mapping */
-  --color-success: var(--green-500);
-  --color-warning: var(--amber-500);
-  --color-error: var(--red-500);
-  --color-error-rgb: 239 68 68;
+  /* Status */
+  --success: #15803d;
+  --success-bg: #f0fdf4;
+  --warning: #92400e;
+  --warning-bg: #fffbeb;
+  --error: #b91c1c;
+  --error-bg: #fef2f2;
+  --info: #1d4ed8;
+  --info-bg: #eff6ff;
 
-  /* Component Tokens */
-  --button-bg: var(--color-primary);
-  --button-bg-hover: var(--color-primary-hover);
+  /* Components */
+  --button-bg: var(--brand-primary);
+  --button-bg-hover: var(--brand-primary-hover);
   --button-text: #ffffff;
 
-  --card-bg: var(--color-background);
-  --card-border: var(--color-border);
+  --card-bg: var(--background);
+  --card-border: var(--border);
 
-  --input-bg: transparent;
-  --input-border: var(--color-border);
-  --input-focus: var(--color-primary);
+  --input-bg: var(--background);
+  --input-border: var(--border);
+  --input-focus: var(--brand-primary);
 
-  --sidebar-bg: var(--color-background);
-  --sidebar-border: var(--color-border);
+  --header-bg: var(--background);
+  --header-border: var(--border);
 
-  --header-bg: var(--color-background);
-  --header-border: var(--color-border);
+  --sidebar-bg: var(--background);
+  --sidebar-border: var(--border);
 
-  --dropdown-bg: var(--color-background);
-  --dropdown-border: var(--color-border);
+  --dropdown-bg: var(--background);
+  --dropdown-border: var(--border);
 
-  /* ===========================
-     Radius
-  =========================== */
+  --overlay: rgb(15 23 42 / 0.5);
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgb(15 23 42 / 0.05);
+  --shadow-sm: 0 1px 3px rgb(15 23 42 / 0.08);
+  --shadow-md: 0 4px 8px rgb(15 23 42 / 0.10);
+  --shadow-lg: 0 10px 25px rgb(15 23 42 / 0.12);
+  --shadow-xl: 0 20px 40px rgb(15 23 42 / 0.16);
+
+  /* Radius */
   --radius-xs: 2px;
   --radius-sm: 4px;
   --radius-md: 8px;
@@ -91,152 +85,328 @@
   --radius-2xl: 24px;
   --radius-full: 9999px;
 
-  /* ===========================
-     Shadows
-  =========================== */
-  --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.05);
-  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.08);
-  --shadow-md: 0 4px 6px rgb(0 0 0 / 0.10);
-  --shadow-lg: 0 10px 15px rgb(0 0 0 / 0.12);
-  --shadow-xl: 0 20px 25px rgb(0 0 0 / 0.15);
-
-  /* ===========================
-     Spacing
-  =========================== */
-  --spacing-1: 0.25rem;
-  --spacing-2: 0.5rem;
-  --spacing-3: 0.75rem;
-  --spacing-4: 1rem;
-  --spacing-5: 1.25rem;
-  --spacing-6: 1.5rem;
-  --spacing-8: 2rem;
-  --spacing-10: 2.5rem;
-  --spacing-12: 3rem;
-  --spacing-16: 4rem;
-  --spacing-20: 5rem;
-  --spacing-24: 6rem;
-
-  /* ===========================
-     Typography
-  =========================== */
-  --font-sans: "Inter", sans-serif;
-  --font-arabic: "Cairo", sans-serif;
-
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.25rem;
-  --text-2xl: 1.5rem;
-  --text-3xl: 1.875rem;
-  --text-4xl: 2.25rem;
-
-  --font-light: 300;
-  --font-normal: 400;
-  --font-medium: 500;
-  --font-semibold: 600;
-  --font-bold: 700;
-
-  /* ===========================
-     Animation
-  =========================== */
-  --duration-fast: 150ms;
-  --duration-normal: 250ms;
-  --duration-slow: 350ms;
-
-  --ease-default: cubic-bezier(.4, 0, .2, 1);
-
-  /* ===========================
-     Layout
-  =========================== */
-  --container-sm: 640px;
-  --container-md: 768px;
-  --container-lg: 1024px;
-  --container-xl: 1280px;
-  --container-2xl: 1536px;
-
-  --header-height: 72px;
+  /* Layout */
+  --header-height: 102px;
   --topbar-height: 40px;
-
   --sidebar-width: 280px;
   --sidebar-collapsed-width: 80px;
-  
-  /* ===========================
-     Z-Index Layers System
-  =========================== */
+
+  /* Z-index */
   --z-negative: -1;
   --z-normal: 1;
   --z-sticky: 200;
-  --z-fixed: 300;
-  --z-tooltip: 400;
-  --z-dropdown: 1500;
-  --z-popover: 600;
-  --z-header: 700;
+  --z-header: 900;
   --z-sidebar: 800;
   --z-modal-backdrop: 900;
   --z-modal: 1000;
   --z-toast: 1100;
+  --z-dropdown: 1200;
+  --z-popover: 1300;
+  --z-tooltip: 1400;
+
+  /* Motion */
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 350ms;
+  --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* ==================================================
+   2. DARK THEME
+================================================== */
+
 [data-theme="dark"] {
-  /* ===========================
-     Brand Overrides (Violet)
-  =========================== */
-  --color-primary: var(--violet-500);
-  --color-primary-hover: var(--violet-400);
-  --color-primary-active: var(--violet-300);
-  --color-primary-rgb: 139 92 246;
+  color-scheme: dark;
 
-  /* ===========================
-     Background & Surface
-  =========================== */
-  --color-background: #0f172a;
-  --color-surface: #1e293b;
-  --color-surface-secondary: #334155;
+  /* Brand */
+  --brand-primary: #a78bfa;
+  --brand-primary-hover: #c4b5fd;
+  --brand-primary-active: #ddd6fe;
+  --brand-primary-soft: #2e1065;
+  --brand-primary-rgb: 167 139 250;
 
-  /* ===========================
-     Text
-  =========================== */
-  --color-text-primary: #f8fafc;
-  --color-text-secondary: #cbd5e1;
-  --color-text-muted: #64748b;
-  --color-text-inverse: #0f172a;
+  /* Backgrounds */
+  --background: #0f172a;
+  --surface: #1e293b;
+  --surface-secondary: #273449;
+  --surface-hover: #334155;
 
-  /* ===========================
-     Border
-  =========================== */
-  --color-border: #334155;
-  --color-border-hover: #475569;
+  /* Text */
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-inverse: #0f172a;
 
-  /* ===========================
-     Component Tokens Override
-  =========================== */
-  --button-bg: var(--color-primary);
-  --button-bg-hover: var(--color-primary-hover);
-  --button-text: #0f172a;
+  /* Borders */
+  --border: #334155;
+  --border-hover: #475569;
 
-  --card-bg: var(--color-surface);
-  --card-border: var(--color-border);
+  /* Status */
+  --success: #4ade80;
+  --success-bg: #052e16;
+  --warning: #fbbf24;
+  --warning-bg: #451a03;
+  --error: #f87171;
+  --error-bg: #450a0a;
+  --info: #60a5fa;
+  --info-bg: #172554;
 
-  --input-bg: var(--color-surface);
-  --input-border: var(--color-border);
-  --input-focus: var(--color-primary);
+  /* Components */
+  --button-bg: var(--brand-primary);
+  --button-bg-hover: var(--brand-primary-hover);
+  --button-text: #1e1b2e;
 
-  --sidebar-bg: var(--color-surface);
-  --sidebar-border: var(--color-border);
+  --card-bg: var(--surface);
+  --card-border: var(--border);
 
-  --header-bg: var(--color-surface);
-  --header-border: var(--color-border);
+  --input-bg: var(--surface);
+  --input-border: var(--border);
+  --input-focus: var(--brand-primary);
 
-  --dropdown-bg: var(--color-surface);
-  --dropdown-border: var(--color-border);
+  --header-bg: var(--surface);
+  --header-border: var(--border);
 
-  /* ===========================
-     Shadows Override for Dark Mode
-  =========================== */
-  --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.3);
-  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.4);
-  --shadow-md: 0 4px 6px rgb(0 0 0 / 0.5);
-  --shadow-lg: 0 10px 15px rgb(0 0 0 / 0.6);
-  --shadow-xl: 0 20px 25px rgb(0 0 0 / 0.7);
+  --sidebar-bg: var(--surface);
+  --sidebar-border: var(--border);
+
+  --dropdown-bg: var(--surface);
+  --dropdown-border: var(--border);
+
+  --overlay: rgb(0 0 0 / 0.65);
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.2);
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.25);
+  --shadow-md: 0 4px 8px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 10px 25px rgb(0 0 0 / 0.4);
+  --shadow-xl: 0 20px 40px rgb(0 0 0 / 0.5);
+}
+
+/* ==================================================
+   3. TAILWIND CSS v4 THEME MAPPING
+================================================== */
+
+@theme inline {
+  /* Colors */
+  --color-primary: var(--brand-primary);
+  --color-primary-hover: var(--brand-primary-hover);
+  --color-primary-active: var(--brand-primary-active);
+  --color-primary-soft: var(--brand-primary-soft);
+
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-secondary: var(--surface-secondary);
+  --color-surface-hover: var(--surface-hover);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-inverse: var(--text-inverse);
+
+  --color-border: var(--border);
+  --color-border-hover: var(--border-hover);
+
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-warning: var(--warning);
+  --color-warning-bg: var(--warning-bg);
+  --color-error: var(--error);
+  --color-error-bg: var(--error-bg);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+
+  --color-button-bg: var(--button-bg);
+  --color-button-bg-hover: var(--button-bg-hover);
+  --color-button-text: var(--button-text);
+
+  --color-card: var(--card-bg);
+  --color-card-border: var(--card-border);
+
+  --color-input: var(--input-bg);
+  --color-input-border: var(--input-border);
+  --color-input-focus: var(--input-focus);
+
+  --color-header: var(--header-bg);
+  --color-header-border: var(--header-border);
+
+  --color-sidebar: var(--sidebar-bg);
+  --color-sidebar-border: var(--sidebar-border);
+
+  --color-dropdown: var(--dropdown-bg);
+  --color-dropdown-border: var(--dropdown-border);
+
+  /* Fonts */
+  --font-sans: "Inter", sans-serif;
+  --font-arabic: "Cairo", sans-serif;
+
+  /* Radius */
+  --radius-control: var(--radius-md);
+  --radius-card: var(--radius-lg);
+  --radius-panel: var(--radius-xl);
+
+  /* Shadows */
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-card: var(--shadow-md);
+
+  /* Animations */
+  --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --animate-fade-in: fade-in 250ms ease-out;
+}
+
+/* ==================================================
+   4. BASE STYLES
+================================================== */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    min-height: 100%;
+    background: var(--background);
+    color: var(--text-primary);
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-height: 100vh;
+    margin: 0;
+    background: var(--background);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition:
+      background-color var(--duration-normal) var(--ease-default),
+      color var(--duration-normal) var(--ease-default);
+  }
+
+  .container {
+    width: 100%;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: var(--container-padding-x-sm);
+  }
+
+  @media (min-width: 768px) {
+    .container {
+      padding-inline: var(--container-padding-x-md);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      padding-inline: var(--container-padding-x-lg);
+    }
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  input,
+  textarea,
+  select {
+    color: var(--text-primary);
+  }
+
+  ::selection {
+    background: var(--brand-primary-soft);
+    color: var(--text-primary);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--brand-primary);
+    outline-offset: 2px;
+  }
+}
+
+/* ==================================================
+   5. ARABIC / RTL
+================================================== */
+
+html[lang="ar"] body,
+html[dir="rtl"] body {
+  font-family: var(--font-arabic);
+}
+
+[dir="rtl"] {
+  text-align: start;
+}
+
+/* ==================================================
+   6. REUSABLE COMPONENT CLASSES
+================================================== */
+
+@layer components {
+  .app-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+  }
+
+  .app-input {
+    width: 100%;
+    background: var(--input-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius-md);
+    transition:
+      border-color var(--duration-fast) var(--ease-default),
+      box-shadow var(--duration-fast) var(--ease-default);
+  }
+
+  .app-input:focus {
+    border-color: var(--input-focus);
+    outline: none;
+    box-shadow: 0 0 0 3px
+      rgb(var(--brand-primary-rgb) / 0.15);
+  }
+
+  .app-button-primary {
+    background: var(--button-bg);
+    color: var(--button-text);
+    border-radius: var(--radius-md);
+    transition:
+      background-color var(--duration-fast) var(--ease-default),
+      transform var(--duration-fast) var(--ease-default);
+  }
+
+  .app-button-primary:hover:not(:disabled) {
+    background: var(--button-bg-hover);
+  }
+
+  .app-button-primary:active:not(:disabled) {
+    transform: scale(0.98);
+  }
 }

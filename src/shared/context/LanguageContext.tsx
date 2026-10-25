@@ -1,7 +1,23 @@
-import React, { createContext, useState, useContext, useEffect, useMemo, useCallback } from "react";
-import { UI_STRINGS, type TranslationSchema } from "@/locales/languages";
+
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  useMemo,
+  useCallback,
+  useRef,
+} from "react";
+
+import {
+  UI_STRINGS,
+  type TranslationSchema,
+} from "@/locales/languages";
 import { langKeys } from "@/shared/utils/langHelpers";
-import { type Language, type Paths } from "./typeLanguageContext";
+import {
+  type Language,
+  type Paths,
+} from "./typeLanguageContext";
 
 type TranslationPaths = Paths<TranslationSchema>;
 
@@ -15,83 +31,133 @@ export interface LanguageContextType {
   changeLanguage: (newLang: Language) => Promise<void>;
 }
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+const LanguageContext =
+  createContext<LanguageContextType | undefined>(undefined);
 
 const getNestedValue = (obj: any, path: string): string => {
-  return path.split(".").reduce((prev, curr) => (prev ? prev[curr] : undefined), obj);
+  return path
+    .split(".")
+    .reduce((prev, curr) => (prev ? prev[curr] : undefined), obj);
 };
 
 const getInitialLanguage = (): Language => {
   const savedLang = localStorage.getItem("app_lang") as Language;
+
   if (savedLang && langKeys.includes(savedLang)) {
     return savedLang;
   }
+
   if (langKeys.includes("en" as Language)) return "en" as Language;
+
   return (langKeys[0] as Language) || "ar";
 };
 
-export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
+export const LanguageProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [lang, setLang] = useState<Language>(getInitialLanguage);
   const [isChangingLanguage, setIsChangingLanguage] = useState(false);
-  
+
+  // يمنع بدء أكثر من عملية تغيير لغة في نفس الوقت.
+  const isChangingRef = useRef(false);
 
   const langObj = UI_STRINGS[lang];
   const rawDir = langObj?._config?.dir;
-  const dir: "ltr" | "rtl" = (typeof rawDir === "string" ? rawDir : "ltr") as "ltr" | "rtl";
-  const isRTL: boolean = dir === 'rtl';
+
+  const dir: "ltr" | "rtl" =
+    rawDir === "rtl" ? "rtl" : "ltr";
+
+  const isRTL = dir === "rtl";
 
   useEffect(() => {
     document.documentElement.dir = dir;
     document.documentElement.lang = lang;
-    document.body.classList.toggle('is-rtl', dir === 'rtl');
-  }, [lang, dir]);
+    document.body.classList.toggle("is-rtl", isRTL);
+  }, [lang, dir, isRTL]);
 
-  // دالة التغيير المحدثة
-  
   const changeLanguage = useCallback(
     async (newLang: Language): Promise<void> => {
-      if (!langKeys.includes(newLang) || newLang === lang) {
+      if (
+        !langKeys.includes(newLang) ||
+        newLang === lang ||
+        isChangingRef.current
+      ) {
         return;
       }
 
+      isChangingRef.current = true;
       setIsChangingLanguage(true);
 
       try {
-        // Save the new language for Axios headers.
-        localStorage.setItem("app_lang", newLang);
+        // السماح للمتصفح بعرض شاشة التحميل أولًا.
+        await new Promise<void>((resolve) => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => resolve());
+          });
+        });
 
-        // Update document language and direction.
         const nextDir =
-          UI_STRINGS[newLang]?._config?.dir === "rtl" ? "rtl" : "ltr";
+          UI_STRINGS[newLang]?._config?.dir === "rtl"
+            ? "rtl"
+            : "ltr";
+
+        localStorage.setItem("app_lang", newLang);
 
         document.documentElement.dir = nextDir;
         document.documentElement.lang = newLang;
-        document.body.classList.toggle("is-rtl", nextDir === "rtl");
+        document.body.classList.toggle(
+          "is-rtl",
+          nextDir === "rtl",
+        );
 
-        // Update React state.
         setLang(newLang);
 
-
+        // إتاحة وقت لتحديث واجهة اللغة الجديدة.
+        await new Promise<void>((resolve) => {
+          window.setTimeout(resolve, 200);
+        });
       } finally {
         setIsChangingLanguage(false);
+        isChangingRef.current = false;
       }
     },
     [lang],
   );
 
+  const t = useCallback(
+    (path: TranslationPaths): string => {
+      const value = getNestedValue(UI_STRINGS[lang], path as string);
 
-  const t = useCallback((path: TranslationPaths): string => {
-    const value = getNestedValue(UI_STRINGS[lang], path as string);
-    if (!value && process.env.NODE_ENV === 'development') {
-      console.warn(`Translation missing for key: ${path} in ${lang}`);
-    }
-    return value || getNestedValue(UI_STRINGS['en'], path as string) || path;
-  }, [lang]);
+      if (!value && process.env.NODE_ENV === "development") {
+        console.warn(
+          `Translation missing for key: ${path} in ${lang}`,
+        );
+      }
 
-  const translate = useCallback((value?: Record<string, string | undefined>): string => {
-    if (!value) return "";
-    return value[lang] || value["en"] || Object.values(value)[0] || "";
-  }, [lang]);
+      return (
+        value ||
+        getNestedValue(UI_STRINGS.en, path as string) ||
+        path
+      );
+    },
+    [lang],
+  );
+
+  const translate = useCallback(
+    (value?: Record<string, string | undefined>): string => {
+      if (!value) return "";
+
+      return (
+        value[lang] ||
+        value.en ||
+        Object.values(value)[0] ||
+        ""
+      );
+    },
+    [lang],
+  );
 
   const value = useMemo(
     () => ({
@@ -103,14 +169,32 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
       isRTL,
       isChangingLanguage,
     }),
-    [lang, dir, t, translate, changeLanguage, isRTL, isChangingLanguage],
+    [
+      lang,
+      dir,
+      t,
+      translate,
+      changeLanguage,
+      isRTL,
+      isChangingLanguage,
+    ],
   );
 
-  return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
+  return (
+    <LanguageContext.Provider value={value}>
+      {children}
+    </LanguageContext.Provider>
+  );
 };
 
 export const useLang = () => {
   const context = useContext(LanguageContext);
-  if (!context) throw new Error("useLang must be used within LanguageProvider");
+
+  if (!context) {
+    throw new Error(
+      "useLang must be used within LanguageProvider",
+    );
+  }
+
   return context;
 };

@@ -14,7 +14,7 @@ export function SliderHero({ section }: SliderHeroProps) {
   const { lang, isRTL, t } = useLang();
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // 1. القراءة الآمنة للشرائح من data
+  // القراءة الآمنة للشرائح من data
   const items = Array.isArray(section.data) && section.data.length > 0 
     ? section.data 
     : (Array.isArray(section.items) ? section.items : []);
@@ -33,7 +33,7 @@ export function SliderHero({ section }: SliderHeroProps) {
 
   const currentItem = items[currentIndex];
 
-  // 2. معالجة النصوص سواء كانت String أو Object
+  // معالجة النصوص سواء كانت String أو Object
   const rawTitle = typeof currentItem.title === "object" ? (currentItem.title?.[lang] ?? currentItem.title?.en) : currentItem.title;
   const rawSubtitle = typeof currentItem.subtitle === "object" ? (currentItem.subtitle?.[lang] ?? currentItem.subtitle?.en) : currentItem.subtitle;
 
@@ -45,7 +45,7 @@ export function SliderHero({ section }: SliderHeroProps) {
   return (
     <section
       dir={isRTL ? "rtl" : "ltr"}
-      className="relative w-full h-[85vh] min-h-[600px] max-h-[850px] overflow-hidden rounded-[var(--radius-3xl)] border border-[var(--color-border)] shadow-[var(--shadow-2xl)] my-[var(--spacing-8)] group"
+      className="relative w-full h-[85vh] min-h-[600px] max-h-[850px] overflow-hidden rounded-panel border border-border shadow-2xl my-8 group"
     >
       {/* Background Image with Dynamic Gradient Based on Direction */}
       {image && (
@@ -69,36 +69,36 @@ export function SliderHero({ section }: SliderHeroProps) {
       )}
 
       {/* Content Container */}
-      <div className="relative z-10 w-full h-full flex flex-col justify-end p-[var(--spacing-8)] sm:p-[var(--spacing-12)] lg:p-[var(--spacing-16)] max-w-4xl">
+      <div className="relative z-10 w-full h-full flex flex-col justify-end p-8 sm:p-12 lg:p-16 max-w-4xl">
         
         {/* Floating Tag */}
-        <div className="inline-flex items-center gap-[var(--spacing-2)] w-fit px-[var(--spacing-4)] py-[var(--spacing-1.5)] rounded-[var(--radius-full)] bg-white/10 backdrop-blur-md border border-white/20 shadow-lg mb-[var(--spacing-6)]">
-          <span className="w-2.5 h-2.5 rounded-full animate-ping bg-[var(--color-primary,#3b82f6)]" />
-          <span className="text-[var(--text-xs)] font-[var(--font-semibold)] text-white tracking-wide uppercase">
+        <div className="inline-flex items-center gap-2 w-fit px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-lg mb-6">
+          <span className="w-2.5 h-2.5 rounded-full animate-ping bg-primary" />
+          <span className="text-xs font-semibold text-white tracking-wide uppercase">
             {t?.("hero.featuredCollection") ?? (lang === "ar" ? "✨ تشكيلة مميزة" : "✨ Featured Collection")}
           </span>
         </div>
 
         {/* Title & Subtitle */}
-        <div className="flex flex-col gap-[var(--spacing-4)] mb-[var(--spacing-8)]">
+        <div className="flex flex-col gap-4 mb-8">
           {title && (
-            <h1 className="text-[var(--text-4xl)] sm:text-[var(--text-6xl)] font-[var(--font-bold)] text-white tracking-tight leading-[1.1] drop-shadow-md">
+            <h1 className="text-4xl sm:text-6xl font-bold text-white tracking-tight leading-[1.1] drop-shadow-md">
               {title}
             </h1>
           )}
 
           {subtitle && (
-            <p className="text-[var(--text-base)] sm:text-[var(--text-xl)] font-[var(--font-normal)] text-gray-200 leading-relaxed max-w-[640px] drop-shadow">
+            <p className="text-base sm:text-xl font-normal text-gray-200 leading-relaxed max-w-[640px] drop-shadow">
               {subtitle}
             </p>
           )}
         </div>
 
         {/* Action Button & Navigation Dots */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-[var(--spacing-6)]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <Link
             to={link}
-            className="inline-flex items-center justify-center gap-[var(--spacing-3)] rounded-[var(--radius-xl)] bg-[var(--color-primary,#3b82f6)] px-[var(--spacing-8)] py-[var(--spacing-4)] text-[var(--text-base)] font-[var(--font-semibold)] text-white shadow-xl transition-all duration-[var(--duration-normal)] ease-[var(--ease-default)] hover:opacity-90 hover:scale-105 active:scale-100 w-fit group/btn"
+            className="inline-flex items-center justify-center gap-3 rounded-card bg-primary px-8 py-4 text-base font-semibold text-white shadow-xl transition-all duration-[var(--duration-normal)] ease-[var(--ease-default)] hover:opacity-90 hover:scale-105 active:scale-100 w-fit group/btn focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             <span>{t?.("hero.exploreNow") ?? (lang === "ar" ? "استعرض الآن" : "Explore Now")}</span>
             <svg 
@@ -115,7 +115,7 @@ export function SliderHero({ section }: SliderHeroProps) {
 
           {/* Dots Indicators */}
           {items.length > 1 && (
-            <div className="flex items-center gap-[var(--spacing-2)] bg-black/30 backdrop-blur-md px-[var(--spacing-4)] py-[var(--spacing-2)] rounded-[var(--radius-full)] border border-white/10 w-fit">
+            <div className="flex items-center gap-2 bg-black/30 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 w-fit">
               {items.map((_: unknown, idx: number) => (
                 <button
                   key={idx}
@@ -123,7 +123,7 @@ export function SliderHero({ section }: SliderHeroProps) {
                   onClick={() => setCurrentIndex(idx)}
                   className={`h-2.5 rounded-full transition-all duration-300 ${
                     currentIndex === idx 
-                      ? "w-8 bg-[var(--color-primary,#3b82f6)]" 
+                      ? "w-8 bg-primary" 
                       : "w-2.5 bg-white/50 hover:bg-white"
                   }`}
                   aria-label={`Go to slide ${idx + 1}`}

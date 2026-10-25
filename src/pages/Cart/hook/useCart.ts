@@ -18,6 +18,7 @@ export function useCart() {
   } = useQuery<ICartItem[]>({
     queryKey: CART_QUERY_KEY,
     queryFn: () => cartService.getCartItems(),
+    staleTime: 1000 * 60 * 5, // منع إعادة الجلب المتكرر غير الضروري
   });
 
   // Calculate total count of items taking quantity into account
@@ -26,28 +27,90 @@ export function useCart() {
     0
   );
 
-  // Add item mutation
+  // Add item mutation with Optimistic Update
   const addToCartMutation = useMutation({
-    mutationFn: (data: { product_variant_id: number; quantity: number }) =>
+    mutationFn: (data: { product_variant_id: number | string; quantity: number }) =>
       cartService.addToCart(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
+    
+    // التحديث الفوري قبل أن يرد السيرفر
+    onMutate: async (newItem) => {
+      await queryClient.cancelQueries({ queryKey: CART_QUERY_KEY });
+      const previousCart = queryClient.getQueryData<ICartItem[]>(CART_QUERY_KEY);
+
+      // تحديث مؤقت في الكاش المحلي لكي يظهر المنتج فوراً
+      queryClient.setQueryData<ICartItem[]>(CART_QUERY_KEY, (old = []) => {
+        const existingIndex = old.findIndex(
+          (item) => item.variant?.id === newItem.product_variant_id || item.id === newItem.product_variant_id
+        );
+
+        if (existingIndex > -1) {
+          // تحديث الكمية إذا كان المنتج موجوداً
+          const updated = [...old];
+          updated[existingIndex] = {
+            ...updated[existingIndex],
+            quantity: newItem.quantity,
+          };
+          return updated;
+        }
+
+        // إبقاء القديم لحين جلب البيانات الحقيقية من السيرفر
+        return old;
+      });
+
+      return { previousCart };
+    },
+    onError: (_err, _newItem, context) => {
+      if (context?.previousCart) {
+        queryClient.setQueryData(CART_QUERY_KEY, context.previousCart);
+      }
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
     },
   });
 
-  // Remove item mutation
+  // Remove item mutation with Optimistic Update
   const removeFromCartMutation = useMutation({
     mutationFn: (id: string | number) => cartService.removeFromCart(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: CART_QUERY_KEY });
+      const previousCart = queryClient.getQueryData<ICartItem[]>(CART_QUERY_KEY);
+
+      // حذف العنصر محلياً وفوراً من الواجهة
+      queryClient.setQueryData<ICartItem[]>(CART_QUERY_KEY, (old = []) =>
+        old.filter((item) => item.id !== id)
+      );
+
+      return { previousCart };
+    },
+    onError: (_err, _id, context) => {
+      if (context?.previousCart) {
+        queryClient.setQueryData(CART_QUERY_KEY, context.previousCart);
+      }
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
     },
   });
 
   // Clear cart mutation
   const clearCartMutation = useMutation({
     mutationFn: () => cartService.clearCart(),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: CART_QUERY_KEY });
+      const previousCart = queryClient.getQueryData<ICartItem[]>(CART_QUERY_KEY);
+
+      queryClient.setQueryData<ICartItem[]>(CART_QUERY_KEY, []);
+
+      return { previousCart };
+    },
+    onError: (_err, _, context) => {
+      if (context?.previousCart) {
+        queryClient.setQueryData(CART_QUERY_KEY, context.previousCart);
+      }
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
     },
   });
 
@@ -58,15 +121,12 @@ export function useCart() {
     isError,
     error,
     
-    // Add to cart
     addToCart: addToCartMutation.mutateAsync,
     isAdding: addToCartMutation.isPending,
     
-    // Remove single item
     removeFromCart: removeFromCartMutation.mutateAsync,
     isRemoving: removeFromCartMutation.isPending,
     
-    // Clear entire cart (تمت إضافتها هنا)
     clearCart: clearCartMutation.mutateAsync,
     isClearing: clearCartMutation.isPending,
   };

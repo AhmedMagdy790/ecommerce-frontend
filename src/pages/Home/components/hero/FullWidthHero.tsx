@@ -12,7 +12,7 @@ interface FullWidthHeroProps {
 export function FullWidthHero({ section }: FullWidthHeroProps) {
   const { lang, isRTL, t } = useLang();
 
-  // 1. استخراج العنصر الأول من data بآمان
+  // 1. استخراج العنصر الأول من data بأمان
   const rawData = section?.data;
   const item = Array.isArray(rawData) ? rawData[0] : rawData;
 
@@ -30,7 +30,7 @@ export function FullWidthHero({ section }: FullWidthHeroProps) {
   return (
     <section
       dir={isRTL ? "rtl" : "ltr"}
-      className="relative w-full h-[75vh] min-h-[500px] max-h-[800px] overflow-hidden bg-[var(--color-surface)] my-[var(--spacing-8)] group rounded-[var(--radius-3xl)] border border-[var(--color-border)] shadow-[var(--shadow-xl)]"
+      className="relative w-full h-[75vh] min-h-[500px] max-h-[800px] overflow-hidden bg-surface my-8 group rounded-panel border border-border shadow-xl"
     >
       {/* Background Image with Dynamic Gradient Based on Direction */}
       {image && (
@@ -53,36 +53,36 @@ export function FullWidthHero({ section }: FullWidthHeroProps) {
       )}
 
       {/* Content Container */}
-      <div className="relative z-10 w-full h-full flex flex-col justify-center items-start p-[var(--spacing-8)] sm:p-[var(--spacing-16)] lg:p-[var(--spacing-20)] max-w-7xl mx-auto">
+      <div className="relative z-10 w-full h-full flex flex-col justify-center items-start p-8 sm:p-16 lg:p-20 max-w-7xl mx-auto">
         
         {/* Floating Tag */}
-        <div className="inline-flex items-center gap-[var(--spacing-2)] w-fit px-[var(--spacing-4)] py-[var(--spacing-1.5)] rounded-[var(--radius-full)] bg-white/10 backdrop-blur-md border border-white/20 shadow-lg mb-[var(--spacing-6)]">
-          <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-primary,#3b82f6)] animate-pulse" />
-          <span className="text-[var(--text-xs)] font-[var(--font-semibold)] text-white tracking-wide uppercase">
+        <div className="inline-flex items-center gap-2 w-fit px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-lg mb-6">
+          <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
+          <span className="text-xs font-semibold text-white tracking-wide uppercase">
             {t?.("hero.badge") ?? (lang === "ar" ? "🔥 عرض خاص لفترة محدودة" : "🔥 Limited Time Offer")}
           </span>
         </div>
 
         {/* Title & Subtitle */}
-        <div className="flex flex-col gap-[var(--spacing-4)] mb-[var(--spacing-8)] max-w-2xl">
+        <div className="flex flex-col gap-4 mb-8 max-w-2xl">
           {title && (
-            <h1 className="text-[var(--text-4xl)] sm:text-[var(--text-6xl)] font-[var(--font-bold)] text-white tracking-tight leading-[1.1] drop-shadow-md">
+            <h1 className="text-4xl sm:text-6xl font-bold text-white tracking-tight leading-[1.1] drop-shadow-md">
               {title}
             </h1>
           )}
 
           {subtitle && (
-            <p className="text-[var(--text-base)] sm:text-[var(--text-xl)] font-[var(--font-normal)] text-gray-200 leading-relaxed drop-shadow">
+            <p className="text-base sm:text-xl font-normal text-gray-200 leading-relaxed drop-shadow">
               {subtitle}
             </p>
           )}
         </div>
 
         {/* Action Button */}
-        <div className="flex items-center gap-[var(--spacing-4)]">
+        <div className="flex items-center gap-4">
           <Link
             to={link}
-            className="inline-flex items-center justify-center gap-[var(--spacing-3)] rounded-[var(--radius-xl)] bg-[var(--color-primary,#3b82f6)] px-[var(--spacing-8)] py-[var(--spacing-4)] text-[var(--text-base)] font-[var(--font-semibold)] text-white shadow-xl transition-all duration-[var(--duration-normal)] ease-[var(--ease-default)] hover:opacity-90 hover:scale-105 active:scale-100 group/btn"
+            className="inline-flex items-center justify-center gap-3 rounded-card bg-primary px-8 py-4 text-base font-semibold text-white shadow-xl transition-all duration-[var(--duration-normal)] ease-[var(--ease-default)] hover:opacity-90 hover:scale-105 active:scale-100 group/btn focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             <span>{t?.("hero.shopNow") ?? (lang === "ar" ? "تسوق الآن" : "Shop Now")}</span>
             <svg 

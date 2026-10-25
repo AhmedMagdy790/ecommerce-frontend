@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Filter, SlidersHorizontal, ChevronRight, ChevronLeft } from 'lucide-react';
 
@@ -18,7 +18,6 @@ import { ProductGrid } from '@/features/products/components/ProductGrid';
 
 export const AllProductsPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   // 1. تحويل الـ URL SearchParams إلى كائن Filters
   const filtersFromUrl = useMemo<IProductFilters>(() => {
@@ -109,7 +108,6 @@ export const AllProductsPage: React.FC = () => {
         <div className="mb-[var(--spacing-6)] flex items-center justify-between rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--card-bg)] p-[var(--spacing-3)] shadow-[var(--shadow-xs)]">
           <button
             type="button"
-            onClick={() => setIsMobileFilterOpen(true)}
             className="flex items-center gap-2 rounded-[var(--radius-md)] bg-[var(--color-surface)] px-3 py-1.5 text-[var(--text-sm)] font-[var(--font-medium)] text-[var(--color-text-primary)] lg:hidden"
           >
             <Filter className="h-4 w-4 text-[var(--color-primary)]" />
@@ -153,8 +151,6 @@ export const AllProductsPage: React.FC = () => {
             onReset={handleResetFilters}
             categories={categories}
             brands={brands}
-            isMobileOpen={isMobileFilterOpen}
-            onCloseMobile={() => setIsMobileFilterOpen(false)}
           />
 
           {/* Products Grid Area */}

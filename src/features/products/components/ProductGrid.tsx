@@ -1,14 +1,19 @@
-import React from 'react';
-import { PackageSearch } from 'lucide-react';
-import { ProductCard } from './ProductCard';
-import type { Product } from '@/features/product/model/types/product.types';
-import type { ProductVariant } from '@/features/product-variants/model/types/productVariant.types';
+import React from "react";
+import { PackageSearch } from "lucide-react";
+import { useTranslation } from "react-i18next";
+
+import { ProductCard } from "./ProductCard";
+import type { Product } from "@/features/product/model/types/product.types";
+import type { ProductVariant } from "@/features/product-variants/model/types/productVariant.types";
 
 interface ProductGridProps {
   products?: Product<string>[];
   isLoading?: boolean;
   skeletonCount?: number;
-  onAddToCart?: (product: Product<string>, variant?: ProductVariant<string>) => void;
+  onAddToCart?: (
+    product: Product<string>,
+    variant?: ProductVariant<string>,
+  ) => void;
   onQuickView?: (product: Product<string>) => void;
   onToggleWishlist?: (product: Product<string>) => void;
   wishlistIds?: (number | string)[];
@@ -24,31 +29,43 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   onQuickView,
   onToggleWishlist,
   wishlistIds = [],
-  emptyTitle = 'لا توجد منتجات',
-  emptyDescription = 'لم نجد أي منتجات تطابق خيارات الفلترة الحالية.',
+  emptyTitle,
+  emptyDescription,
 }) => {
-  // 1. Loading Skeleton State
+  const { t } = useTranslation("productGrid");
+
+  const gridClass =
+    "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4";
+
+  // Loading skeleton
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 gap-[var(--spacing-4)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {Array.from({ length: skeletonCount }).map((_, index) => (
+      <div
+        className={gridClass}
+        aria-busy="true"
+        aria-label={t("loading", "Loading products")}
+      >
+        {Array.from({
+          length: Math.max(0, Math.floor(skeletonCount)),
+        }).map((_, index) => (
           <div
             key={index}
-            className="flex flex-col overflow-hidden rounded-[var(--radius-lg)] border border-[var(--card-border)] bg-[var(--card-bg)] animate-pulse"
+            className="flex animate-pulse flex-col overflow-hidden rounded-panel border border-border bg-surface"
+            aria-hidden="true"
           >
-            {/* Image Skeleton */}
-            <div className="aspect-square w-full bg-[var(--color-surface-secondary)]" />
+            {/* Image skeleton */}
+            <div className="aspect-square w-full bg-surface-secondary" />
 
-            {/* Content Skeleton */}
-            <div className="flex flex-1 flex-col justify-between p-[var(--spacing-4)] space-y-3">
-              <div className="space-y-2">
-                <div className="h-3 w-1/3 rounded bg-[var(--color-surface-secondary)]" />
-                <div className="h-4 w-3/4 rounded bg-[var(--color-surface-secondary)]" />
+            {/* Content skeleton */}
+            <div className="flex flex-1 flex-col justify-between gap-4 p-4">
+              <div className="space-y-3">
+                <div className="h-3 w-1/3 rounded-control bg-surface-secondary" />
+                <div className="h-4 w-3/4 rounded-control bg-surface-secondary" />
               </div>
 
-              <div className="flex items-center justify-between pt-[var(--spacing-2)] border-t border-[var(--color-border)]">
-                <div className="h-5 w-1/2 rounded bg-[var(--color-surface-secondary)]" />
-                <div className="h-8 w-16 rounded bg-[var(--color-surface-secondary)]" />
+              <div className="flex items-center justify-between border-t border-border pt-3">
+                <div className="h-5 w-1/2 rounded-control bg-surface-secondary" />
+                <div className="h-8 w-20 rounded-control bg-surface-secondary" />
               </div>
             </div>
           </div>
@@ -57,28 +74,39 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
     );
   }
 
-  // 2. Empty State
-  if (!products || products.length === 0) {
+  // Empty state
+  if (products.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-[var(--radius-xl)] border border-dashed border-[var(--color-border)] bg-[var(--card-bg)] p-[var(--spacing-12)] text-center">
-        <div className="mb-[var(--spacing-4)] flex h-16 w-16 items-center justify-center rounded-[var(--radius-full)] bg-[var(--color-surface)] text-[var(--color-text-muted)]">
-          <PackageSearch className="h-8 w-8" />
+      <section
+        className="flex flex-col items-center justify-center rounded-panel border border-dashed border-border bg-surface px-6 py-12 text-center sm:py-16"
+        role="status"
+      >
+        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-surface-secondary text-text-muted">
+          <PackageSearch className="h-8 w-8" aria-hidden="true" />
         </div>
-        <h3 className="text-[var(--text-lg)] font-[var(--font-bold)] text-[var(--color-text-primary)]">
-          {emptyTitle}
+
+        <h3 className="text-lg font-bold text-text-primary">
+          {emptyTitle ?? t("empty.title", "No products found")}
         </h3>
-        <p className="mt-[var(--spacing-2)] max-w-sm text-[var(--text-sm)] text-[var(--color-text-muted)]">
-          {emptyDescription}
+
+        <p className="mt-2 max-w-sm text-sm leading-relaxed text-text-secondary">
+          {emptyDescription ??
+            t(
+              "empty.description",
+              "We couldn't find any products matching your current filters.",
+            )}
         </p>
-      </div>
+      </section>
     );
   }
 
-  // 3. Render Product Grid
+  // Product grid
   return (
-    <div className="grid grid-cols-1 gap-[var(--spacing-4)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className={gridClass}>
       {products.map((product) => {
-        const isWishlisted = wishlistIds.includes(product.id);
+        const isWishlisted = wishlistIds.some(
+          (id) => String(id) === String(product.id),
+        );
 
         return (
           <ProductCard

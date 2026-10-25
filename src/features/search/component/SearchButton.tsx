@@ -1,122 +1,174 @@
-// src/components/layout/Search/SearchButton.tsx
-
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { FormEvent } from "react";
+import { createPortal } from "react-dom";
 import { Search, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useLang } from "@/shared/context/LanguageContext";
 
 interface SearchButtonProps {
-  onClick?: () => void;
+  "aria-label"?: string;
 }
 
-export default function SearchButton({ onClick }: SearchButtonProps) {
+export default function SearchButton({
+  "aria-label": ariaLabel,
+}: SearchButtonProps) {
   const { t } = useTranslation("common");
   const { lang, isRTL } = useLang();
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [query, setQuery] = useState("");
+
   const inputRef = useRef<HTMLInputElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+
+  const closeSearch = () => setIsOpen(false);
 
   useEffect(() => {
-    if (isExpanded && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isExpanded]);
+    if (!isOpen) return;
 
-  // الإغلاق عند الضغط على Escape أو الضغط خارج الإطار
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") setIsExpanded(false);
-    }
-    function handleClickOutside(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsExpanded(false);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const frame = requestAnimationFrame(() => {
+      inputRef.current?.focus();
+    });
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeSearch();
       }
-    }
+    };
 
-    if (isExpanded) {
-      document.addEventListener("keydown", handleKeyDown);
-      document.addEventListener("mousedown", handleClickOutside);
-    }
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
+      cancelAnimationFrame(frame);
       document.removeEventListener("keydown", handleKeyDown);
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.body.style.overflow = previousOverflow;
     };
-  }, [isExpanded]);
+  }, [isOpen]);
 
-  const handleToggle = () => {
-    const nextState = !isExpanded;
-    setIsExpanded(nextState);
-    if (onClick && nextState) {
-      onClick();
-    }
-  };
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      window.location.href = `/products?search=${encodeURIComponent(searchQuery.trim())}`;
-      setIsExpanded(false);
+    const searchTerm = query.trim();
+
+    if (!searchTerm) {
+      inputRef.current?.focus();
+      return;
     }
+
+    closeSearch();
+    navigate(`/products?search=${encodeURIComponent(searchTerm)}`);
   };
 
   return (
-    <div ref={containerRef} dir={isRTL ? "rtl" : "ltr"}>
-      {/* 1. Full Width Search Overlay Bar */}
-      {isExpanded && (
-        <div className="absolute inset-0 z-50 flex items-center px-[var(--spacing-4)] bg-[var(--color-surface)] border-b border-[var(--color-border)] shadow-[var(--shadow-sm)] animate-in fade-in slide-in-from-top-2 duration-200">
-          <form
-            onSubmit={handleSearchSubmit}
-            className="mx-auto flex w-full max-w-[var(--container-xl)] items-center gap-[var(--spacing-3)]"
-          >
-            <Search size={20} className="text-[var(--color-text-muted)] shrink-0" />
-
-            <input
-              ref={inputRef}
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={lang === "ar" ? "ابحث عن منتجات، أقسام، أو ماركات..." : "Search products, categories, or brands..."}
-              className="w-full bg-transparent border-none outline-none text-[var(--text-base)] text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:ring-0"
-              style={{
-                fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)",
-              }}
-            />
-
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery("")}
-                className="p-1 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors"
-                aria-label="Clear query"
-              >
-                <X size={16} />
-              </button>
-            )}
-
-            {/* Close Overlay Button */}
-            <button
-              type="button"
-              onClick={() => setIsExpanded(false)}
-              className="inline-flex h-9 items-center justify-center rounded-[var(--radius-lg)] px-[var(--spacing-3)] text-[var(--text-sm)] font-[var(--font-medium)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
-            >
-              {lang === "ar" ? "إلغاء" : "Cancel"}
-            </button>
-          </form>
-        </div>
-      )}
-
-      {/* 2. Trigger Button (الموجود في Navbar) */}
+    <>
       <button
         type="button"
-        onClick={handleToggle}
-        aria-label={t("buttons.search", "Search")}
-        title={t("buttons.search", "Search")}
-        className="inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-xl)] bg-[var(--color-surface-secondary)] border border-[var(--color-border)] text-[var(--color-text-primary)] transition-all duration-[var(--duration-fast)] hover:scale-105 active:scale-95 hover:border-[var(--color-border-hover)]"
+        onClick={() => setIsOpen(true)}
+        aria-label={ariaLabel ?? t("buttons.search", "Search")}
+        aria-haspopup="dialog"
+        aria-expanded={isOpen}
+        className="inline-flex size-10 shrink-0 items-center justify-center rounded-control border border-border bg-surface-secondary text-text-primary transition-colors hover:border-border-hover hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
       >
-        <Search size={18} strokeWidth={2.2} />
+        <Search size={19} aria-hidden="true" />
       </button>
-    </div>
+
+      {isOpen &&
+        createPortal(
+          <div
+            dir={isRTL ? "rtl" : "ltr"}
+            className="fixed inset-0 z-[var(--z-modal,1300)] flex items-start justify-center overflow-y-auto bg-black/40 px-3 pt-[12vh] backdrop-blur-sm sm:px-6"
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) {
+                closeSearch();
+              }
+            }}
+          >
+            <section
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="site-search-title"
+              className="w-full max-w-2xl overflow-hidden rounded-panel border border-border bg-background text-text-primary shadow-xl"
+            >
+              <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3 sm:px-5">
+                <h2
+                  id="site-search-title"
+                  className="text-base font-semibold"
+                >
+                  {lang === "ar" ? "البحث في المتجر" : "Search the store"}
+                </h2>
+
+                <button
+                  type="button"
+                  onClick={closeSearch}
+                  aria-label={lang === "ar" ? "إغلاق البحث" : "Close search"}
+                  className="inline-flex size-9 shrink-0 items-center justify-center rounded-control text-text-secondary transition-colors hover:bg-surface-hover hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                >
+                  <X size={19} aria-hidden="true" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmit} role="search" className="p-4 sm:p-5">
+                <label htmlFor="site-search-input" className="sr-only">
+                  {lang === "ar" ? "ابحث عن المنتجات" : "Search products"}
+                </label>
+
+                <div className="flex min-w-0 items-center gap-2 rounded-control border border-border bg-surface-secondary p-2 focus-within:border-primary">
+                  <Search
+                    size={20}
+                    className="ms-1 shrink-0 text-text-muted"
+                    aria-hidden="true"
+                  />
+
+                  <input
+                    ref={inputRef}
+                    id="site-search-input"
+                    type="search"
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                    placeholder={
+                      lang === "ar"
+                        ? "ابحث عن منتج..."
+                        : "Search for a product..."
+                    }
+                    className="min-w-0 flex-1 bg-transparent px-1 py-2 text-sm text-text-primary outline-none placeholder:text-text-muted"
+                    style={{
+                      fontFamily:
+                        lang === "ar"
+                          ? "var(--font-arabic)"
+                          : "var(--font-sans)",
+                    }}
+                  />
+
+                  {query && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setQuery("");
+                        inputRef.current?.focus();
+                      }}
+                      aria-label={lang === "ar" ? "مسح البحث" : "Clear search"}
+                      className="inline-flex size-8 shrink-0 items-center justify-center rounded-control text-text-muted hover:bg-surface-hover hover:text-text-primary"
+                    >
+                      <X size={16} aria-hidden="true" />
+                    </button>
+                  )}
+
+                  <button
+                    type="submit"
+                    className="shrink-0 rounded-control bg-primary px-3 py-2 text-sm font-medium text-text-inverse transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:px-5"
+                  >
+                    {lang === "ar" ? "بحث" : "Search"}
+                  </button>
+                </div>
+              </form>
+            </section>
+          </div>,
+          document.body,
+        )}
+    </>
   );
 }

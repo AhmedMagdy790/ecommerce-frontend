@@ -1,6 +1,8 @@
 // src/pages/Home/components/sections/ServicesHeroSection.tsx
+
 import type { Section } from "@/features/cms/section/model/types/section.types";
 import { useLang } from "@/shared/context/LanguageContext";
+import { Container } from "@/shared/components/layout/Container";
 
 interface ServicesHeroSectionProps {
   section: Section<string> & {
@@ -32,51 +34,47 @@ export default function ServicesHeroSection({ section }: ServicesHeroSectionProp
   const floatSubtitle = item.float_subtitle || item.badge_subtitle || "";
 
   return (
-    <section className="relative py-[var(--spacing-24)] px-[var(--spacing-6)] bg-[var(--color-background)] overflow-hidden" dir={isRTL ? "rtl" : "ltr"}>
+    <section className="relative py-24 bg-background overflow-hidden" dir={isRTL ? "rtl" : "ltr"}>
       
       {/* خلفية ضوئية جمالية متوافقة مع الثيم */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[600px] h-[350px] bg-[var(--color-primary)]/10 blur-[140px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[600px] h-[350px] bg-primary/10 blur-[140px] rounded-full pointer-events-none" />
 
-      <div className="relative z-10 mx-auto max-w-[var(--container-xl)] grid grid-cols-1 lg:grid-cols-12 gap-[var(--spacing-12)] items-center">
+      <Container className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
         
         {/* جهة النصوص والمحتوى */}
-        <div className="lg:col-span-7 space-y-[var(--spacing-6)] text-center lg:text-start">
+        <div className="lg:col-span-7 space-y-6 text-center lg:text-start">
           
           {/* شارة تصنيف القسم */}
           {badgeText && (
-            <div className="inline-flex items-center gap-[var(--spacing-2)] px-[var(--spacing-4)] py-[var(--spacing-1.5)] rounded-[var(--radius-full)] bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 text-[var(--color-primary)] font-[var(--font-semibold)] text-[var(--text-xs)] tracking-wider uppercase">
-              <span className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary font-semibold text-xs tracking-wider uppercase">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
               <span>{badgeText}</span>
             </div>
           )}
 
           {/* العنوان الرئيسي */}
           {title && (
-            <h1 className="text-[var(--text-3xl)] sm:text-[var(--text-5xl)] lg:text-[var(--text-6xl)] font-[var(--font-bold)] tracking-tight text-[var(--color-text-primary)] leading-[1.15]">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-text-primary leading-[1.15]">
               {title}
             </h1>
           )}
 
           {/* الوصف */}
           {subtitle && (
-            <p className="mx-auto lg:mx-0 max-w-2xl text-[var(--text-base)] sm:text-[var(--text-lg)] text-[var(--color-text-secondary)] font-[var(--font-medium)] leading-relaxed">
+            <p className="mx-auto lg:mx-0 max-w-2xl text-base sm:text-lg text-text-secondary font-medium leading-relaxed">
               {subtitle}
             </p>
           )}
 
           {/* زر التفاعل (CTA) */}
           {link && (
-            <div className="pt-[var(--spacing-2)] flex justify-center lg:justify-start">
+            <div className="pt-2 flex justify-center lg:justify-start">
               <a
                 href={link}
-                style={{
-                  backgroundColor: "var(--button-bg)",
-                  color: "var(--button-text)",
-                }}
-                className="group inline-flex items-center gap-[var(--spacing-3)] rounded-[var(--radius-2xl)] px-[var(--spacing-8)] py-[var(--spacing-4)] text-[var(--text-base)] font-[var(--font-bold)] shadow-[var(--shadow-lg)] transition-all duration-[var(--duration-normal)] hover:bg-[var(--button-bg-hover)] hover:scale-105 active:scale-95"
+                className="group inline-flex items-center gap-3 rounded-card bg-primary text-text-inverse px-8 py-4 text-base font-bold shadow-lg transition-all duration-[var(--duration-normal)] hover:bg-primary-hover hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 {buttonText && <span>{buttonText}</span>}
-                <span className={`flex items-center justify-center transition-transform duration-300 group-hover:translate-x-1 ${isRTL ? "rotate-180 group-hover:-translate-x-1" : ""}`}>
+                <span className={`flex items-center justify-center transition-transform duration-300 ${isRTL ? "rotate-180 group-hover:-translate-x-1" : "group-hover:translate-x-1"}`}>
                   &rarr;
                 </span>
               </a>
@@ -90,10 +88,10 @@ export default function ServicesHeroSection({ section }: ServicesHeroSectionProp
           <div className="relative mx-auto max-w-md lg:max-w-none">
             
             {image && (
-              <div className="aspect-[4/3] overflow-hidden rounded-[var(--radius-3xl)] shadow-[var(--shadow-xl)] border border-[var(--color-border)] group bg-[var(--color-surface)]">
+              <div className="aspect-[4/3] overflow-hidden rounded-panel shadow-xl border border-border group bg-surface">
                 <img
                   src={image}
-                  alt={title || ""}
+                  alt={title || "Services Hero"}
                   className="h-full w-full object-cover object-center transition-transform duration-700 ease-[var(--ease-default)] group-hover:scale-105"
                   loading="lazy"
                 />
@@ -102,18 +100,18 @@ export default function ServicesHeroSection({ section }: ServicesHeroSectionProp
 
             {/* بطاقة عائمة ديناميكية */}
             {(floatTitle || floatSubtitle) && (
-              <div className={`absolute -bottom-5 ${isRTL ? "-left-4" : "-right-4"} hidden sm:flex items-center gap-3 p-[var(--spacing-4)] bg-[var(--card-bg)] rounded-[var(--radius-2xl)] shadow-[var(--shadow-lg)] border border-[var(--card-border)] backdrop-blur-md`}>
-                <div className="w-10 h-10 rounded-full bg-[var(--color-primary)]/10 flex items-center justify-center text-[var(--color-primary)] font-bold">
+              <div className={`absolute -bottom-5 ${isRTL ? "-left-4" : "-right-4"} hidden sm:flex items-center gap-3 p-4 bg-surface rounded-card shadow-lg border border-border backdrop-blur-md`}>
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
                   ✓
                 </div>
                 <div className="flex flex-col">
                   {floatTitle && (
-                    <span className="text-sm font-bold text-[var(--color-text-primary)]">
+                    <span className="text-sm font-bold text-text-primary">
                       {floatTitle}
                     </span>
                   )}
                   {floatSubtitle && (
-                    <span className="text-xs text-[var(--color-text-secondary)]">
+                    <span className="text-xs text-text-secondary">
                       {floatSubtitle}
                     </span>
                   )}
@@ -124,7 +122,7 @@ export default function ServicesHeroSection({ section }: ServicesHeroSectionProp
           </div>
         </div>
 
-      </div>
+      </Container>
     </section>
   );
 }

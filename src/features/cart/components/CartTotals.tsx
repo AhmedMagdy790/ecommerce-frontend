@@ -1,4 +1,7 @@
+// src/pages/Cart/components/CartTotals.tsx
+
 import { useTranslation } from "react-i18next";
+import { useLang } from "@/shared/context/LanguageContext";
 
 interface CartTotalsProps {
   subtotal: number;
@@ -18,6 +21,7 @@ export default function CartTotals({
   currency,
 }: CartTotalsProps) {
   const { t, i18n } = useTranslation("cart");
+  const { isRTL, lang } = useLang();
 
   const formatPrice = (value: number) =>
     new Intl.NumberFormat(i18n.language, {
@@ -26,37 +30,37 @@ export default function CartTotals({
     }).format(value);
 
   return (
-    <div className="space-y-4">
+    <div dir={isRTL ? "rtl" : "ltr"} className="space-y-4">
       <Row
-        label={t("subtotal")}
+        label={t("subtotal", { defaultValue: lang === "ar" ? "المجموع الفرعي" : "Subtotal" })}
         value={formatPrice(subtotal)}
       />
 
       <Row
-        label={t("shipping")}
+        label={t("shipping", { defaultValue: lang === "ar" ? "الشحن" : "Shipping" })}
         value={formatPrice(shipping)}
       />
 
       <Row
-        label={t("tax")}
+        label={t("tax", { defaultValue: lang === "ar" ? "الضريبة" : "Tax" })}
         value={formatPrice(tax)}
       />
 
       {discount > 0 && (
         <Row
-          label={t("discount")}
+          label={t("discount", { defaultValue: lang === "ar" ? "الخصم" : "Discount" })}
           value={`-${formatPrice(discount)}`}
-          valueClassName="text-[var(--color-success)]"
+          valueClassName="text-emerald-600 dark:text-emerald-400 font-semibold"
         />
       )}
 
-      <hr className="border-[var(--color-border)]" />
+      <hr className="border-border" />
 
       <Row
-        label={t("total")}
+        label={t("total", { defaultValue: lang === "ar" ? "الإجمالي الكلي" : "Total" })}
         value={formatPrice(total)}
-        labelClassName="text-lg font-bold"
-        valueClassName="text-lg font-bold"
+        labelClassName="text-lg font-bold text-text-primary"
+        valueClassName="text-lg font-bold text-primary"
       />
     </div>
   );
@@ -78,13 +82,13 @@ function Row({
   return (
     <div className="flex items-center justify-between">
       <span
-        className={`text-[var(--color-text-secondary)] ${labelClassName ?? ""}`}
+        className={`text-text-secondary ${labelClassName ?? ""}`}
       >
         {label}
       </span>
 
       <span
-        className={`font-medium ${valueClassName ?? ""}`}
+        className={`font-medium text-text-primary ${valueClassName ?? ""}`}
       >
         {value}
       </span>

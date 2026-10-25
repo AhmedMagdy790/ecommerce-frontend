@@ -2,6 +2,7 @@
 
 import { useTranslation } from "react-i18next";
 import { useLang } from "@/shared/context/LanguageContext";
+import { Container } from "@/shared/components/layout/Container";
 
 interface DetailItem {
   title: string | { ar?: string; en?: string };
@@ -40,56 +41,58 @@ export default function ProductDescription({
   return (
     <section 
       dir={isRTL ? "rtl" : "ltr"}
-      className="mt-[var(--spacing-16)] border-t border-[var(--color-border)] pt-[var(--spacing-10)]"
+      className="mt-16 border-t border-border pt-10 bg-background"
     >
-      {/* Section Title */}
-      <h2 
-        className="mb-[var(--spacing-6)] text-[var(--text-2xl)] font-[var(--font-bold)] tracking-tight text-[var(--color-text-primary)]"
-        style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
-      >
-        {t("description.title", { defaultValue: lang === "ar" ? "تفاصيل ووصف المنتج" : "Product Description & Details" })}
-      </h2>
-
-      {/* Description Paragraph */}
-      {description && (
-        <p 
-          className="max-w-4xl text-[var(--text-base)] leading-relaxed text-[var(--color-text-secondary)]"
+      <Container>
+        {/* Section Title */}
+        <h2 
+          className="mb-6 text-2xl font-bold tracking-tight text-text-primary"
           style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
         >
-          {description}
-        </p>
-      )}
+          {t("description.title", { defaultValue: lang === "ar" ? "تفاصيل ووصف المنتج" : "Product Description & Details" })}
+        </h2>
 
-      {/* Technical/Specifications Details Grid */}
-      {details.length > 0 && (
-        <div className="mt-[var(--spacing-8)] grid gap-[var(--spacing-4)] md:grid-cols-2">
-          {details.map((item, index) => {
-            const detailTitle = getLocalizedText(item.title);
-            const detailValue = getLocalizedText(item.value);
+        {/* Description Paragraph */}
+        {description && (
+          <p 
+            className="max-w-4xl text-base leading-relaxed text-text-secondary"
+            style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+          >
+            {description}
+          </p>
+        )}
 
-            return (
-              <div
-                key={index}
-                className="flex items-center justify-between rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-[var(--spacing-4)] shadow-xs transition-colors hover:bg-[var(--color-surface-secondary)]"
-              >
-                <span 
-                  className="text-[var(--text-sm)] font-[var(--font-semibold)] text-[var(--color-text-primary)]"
-                  style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+        {/* Technical/Specifications Details Grid */}
+        {details.length > 0 && (
+          <div className="mt-8 grid gap-4 md:grid-cols-2">
+            {details.map((item, index) => {
+              const detailTitle = getLocalizedText(item.title);
+              const detailValue = getLocalizedText(item.value);
+
+              return (
+                <div
+                  key={index}
+                  className="flex items-center justify-between rounded-card border border-border bg-surface p-4 shadow-xs transition-colors hover:bg-surface-secondary"
                 >
-                  {detailTitle}
-                </span>
+                  <span 
+                    className="text-sm font-semibold text-text-primary"
+                    style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+                  >
+                    {detailTitle}
+                  </span>
 
-                <span 
-                  className="text-[var(--text-sm)] font-[var(--font-medium)] text-[var(--color-text-secondary)]"
-                  style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
-                >
-                  {detailValue}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      )}
+                  <span 
+                    className="text-sm font-medium text-text-secondary"
+                    style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
+                  >
+                    {detailValue}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </Container>
     </section>
   );
 }

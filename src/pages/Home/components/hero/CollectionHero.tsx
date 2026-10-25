@@ -9,7 +9,7 @@ interface CollectionHeroProps {
 }
 
 export function CollectionHero({ section }: CollectionHeroProps) {
-  // 1. القراءة الصحيحة لبيانات القسم من section.data
+  // القراءة الصحيحة لبيانات القسم من section.data
   const rawData = section?.data;
   const item = Array.isArray(rawData) ? rawData[0] : rawData;
 
@@ -34,7 +34,7 @@ export function CollectionHero({ section }: CollectionHeroProps) {
   const link = normalizeNullable(item.link) ?? "/products";
 
   return (
-    <section className="relative w-full h-[85vh] min-h-[600px] max-h-[850px] overflow-hidden rounded-[var(--radius-3xl)] border border-[var(--color-border)] shadow-[var(--shadow-2xl)] group">
+    <section className="relative w-full h-[85vh] min-h-[600px] max-h-[850px] overflow-hidden rounded-[var(--radius-2xl)] border border-border shadow-xl group">
       {/* Background Image with Cinematic Filter */}
       {image && (
         <div className="absolute inset-0 w-full h-full overflow-hidden">
@@ -51,9 +51,9 @@ export function CollectionHero({ section }: CollectionHeroProps) {
 
       {/* Floating Badge */}
       {(floatTitle || floatSubtitle) && (
-        <div className="absolute top-8 left-8 sm:top-12 sm:left-12 z-20 bg-white/10 backdrop-blur-md border border-white/20 rounded-[var(--radius-xl)] px-6 py-3 text-white shadow-lg">
+        <div className="absolute top-8 left-8 sm:top-12 sm:left-12 z-20 bg-white/10 backdrop-blur-md border border-white/20 rounded-panel px-6 py-3 text-white shadow-lg">
           {floatTitle && (
-            <span className="block text-xs uppercase tracking-wider font-semibold text-[var(--color-primary-light,#93c5fd)]">
+            <span className="block text-xs uppercase tracking-wider font-semibold text-primary">
               {floatTitle}
             </span>
           )}
@@ -62,17 +62,17 @@ export function CollectionHero({ section }: CollectionHeroProps) {
       )}
 
       {/* Content Container */}
-      <div className="relative z-10 w-full h-full flex flex-col justify-end p-[var(--spacing-8)] sm:p-[var(--spacing-12)] lg:p-[var(--spacing-16)] max-w-4xl">
+      <div className="relative z-10 w-full h-full flex flex-col justify-end p-8 sm:p-12 lg:p-16 max-w-4xl">
         {/* Title, Subtitle & Description */}
-        <div className="flex flex-col gap-[var(--spacing-4)] mb-[var(--spacing-8)]">
+        <div className="flex flex-col gap-4 mb-8">
           {title && (
-            <h1 className="text-[var(--text-4xl)] sm:text-[var(--text-6xl)] font-[var(--font-bold)] text-white tracking-tight leading-[1.1] drop-shadow-md">
+            <h1 className="text-4xl sm:text-6xl font-bold text-white tracking-tight leading-[1.1] drop-shadow-md">
               {title}
             </h1>
           )}
 
           {subtitle && (
-            <p className="text-[var(--text-base)] sm:text-[var(--text-xl)] font-[var(--font-normal)] text-gray-200 leading-relaxed max-w-[640px] drop-shadow">
+            <p className="text-base sm:text-xl font-normal text-gray-200 leading-relaxed max-w-[640px] drop-shadow">
               {subtitle}
             </p>
           )}
@@ -88,7 +88,7 @@ export function CollectionHero({ section }: CollectionHeroProps) {
         {(statNumber || statText) && (
           <div className="flex items-center gap-4 mb-6 text-white">
             {statNumber && (
-              <span className="text-3xl font-extrabold text-[var(--color-primary,#3b82f6)]">
+              <span className="text-3xl font-extrabold text-primary">
                 {statNumber}
               </span>
             )}
@@ -97,11 +97,11 @@ export function CollectionHero({ section }: CollectionHeroProps) {
         )}
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap items-center gap-[var(--spacing-4)]">
+        <div className="flex flex-wrap items-center gap-4">
           {buttonText && (
             <Link
               to={link}
-              className="inline-flex items-center justify-center gap-[var(--spacing-3)] rounded-[var(--radius-xl)] bg-[var(--color-primary)] px-[var(--spacing-8)] py-[var(--spacing-4)] text-[var(--text-base)] font-[var(--font-semibold)] text-white shadow-xl transition-all duration-[var(--duration-normal)] ease-[var(--ease-default)] hover:opacity-90 hover:scale-105 active:scale-100 group/btn"
+              className="inline-flex items-center justify-center gap-3 rounded-card bg-primary px-8 py-4 text-base font-semibold text-white shadow-xl transition-all duration-[var(--duration-normal)] ease-[var(--ease-default)] hover:opacity-90 hover:scale-105 active:scale-100 group/btn focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             >
               <span>{buttonText}</span>
               <svg
@@ -123,7 +123,7 @@ export function CollectionHero({ section }: CollectionHeroProps) {
           {actionText && (
             <Link
               to={link}
-              className="inline-flex items-center justify-center rounded-[var(--radius-xl)] bg-white/10 backdrop-blur-md border border-white/20 px-6 py-4 text-base font-semibold text-white shadow-lg transition-all hover:bg-white/20 hover:scale-105"
+              className="inline-flex items-center justify-center rounded-card bg-white/10 backdrop-blur-md border border-white/20 px-6 py-4 text-base font-semibold text-white shadow-lg transition-all hover:bg-white/20 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
               {actionText}
             </Link>

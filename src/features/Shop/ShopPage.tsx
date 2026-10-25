@@ -1,7 +1,5 @@
-// src/pages/ShopPage.tsx
-
 import React, { useState } from 'react';
-import { Filter, ChevronRight, ChevronLeft } from 'lucide-react';
+import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { ProductFilters } from '@/features/products/components/ProductFilters';
@@ -11,13 +9,20 @@ import { FeaturedSection } from '@/features/products/components/FeaturedSection'
 import { DebouncedSearchInput } from '@/shared/components/DebouncedSearchInput';
 import { useUrlState } from '@/shared/hooks/useUrlState';
 
-import type { Product, ProductFilters as IProductFilters } from '@/features/product/model/types/product.types';
+import type {
+  Product,
+  ProductFilters as IProductFilters,
+} from '@/features/product/model/types/product.types';
 import type { ProductVariant } from '@/features/product-variants/model/types/productVariant.types';
 import type { Brand } from '@/features/brand/types/brand.types';
-import { useCartStore } from '../cart/model/store/cart.store';
+
 import { useProducts } from '../products/hooks/useProducts';
 import { useCategories } from '../category/api/useCategories';
 import { useLang } from '@/shared/context/LanguageContext';
+import { Breadcrumbs } from '@/shared/components/layout/Breadcrumbs';
+import { Container } from '@/shared/components/layout/Container';
+import { PageHeader } from '@/shared/components/layout/PageHeader';
+import { useCart } from '@/pages/Cart/hook/useCart';
 
 const DEFAULT_FILTERS: IProductFilters = {
   category_id: undefined,
@@ -32,23 +37,23 @@ const DEFAULT_FILTERS: IProductFilters = {
 };
 
 export const ShopPage: React.FC = () => {
-  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
-  const [quickViewProduct, setQuickViewProduct] = useState<Product<string> | null>(null);
+  const [quickViewProduct, setQuickViewProduct] =
+    useState<Product<string> | null>(null);
 
   const { t } = useTranslation('shop');
   const { isRTL } = useLang();
-  const addToCart = useCartStore((state) => state.addToCart);
 
-  // 1. إدارة الـ URL State
-  const [filters, setFilters] = useUrlState<IProductFilters>(DEFAULT_FILTERS);
+  const { addToCart } = useCart()
 
-  // 2. جلب البيانات بناءً على الفلاتر من الـ URL
+  const [filters, setFilters] =
+    useUrlState<IProductFilters>(DEFAULT_FILTERS);
+
   const { data, isLoading } = useProducts(filters);
   const { data: categories = [] } = useCategories();
 
-  const products = data?.items || [];
-  const totalPages = data?.pagination?.last_page || 1;
-  const totalProducts = data?.pagination?.total || 0;
+  const products = data?.items ?? [];
+  const totalPages = data?.pagination?.last_page ?? 1;
+  const totalProducts = data?.pagination?.total ?? 0;
 
   const featuredProducts: Product<string>[] = [];
   const brands: Brand<string>[] = [];
@@ -56,23 +61,32 @@ export const ShopPage: React.FC = () => {
   const handleAddToCart = async (
     _product: Product<string>,
     variant?: ProductVariant<string>,
-    quantity = 1
+    quantity = 1,
   ) => {
-    const targetVariantId = variant?.id;
-    if (!targetVariantId) return;
+    if (!variant?.id) return;
 
     try {
-      await addToCart({ product_variant_id: targetVariantId, quantity });
+      await addToCart({
+        product_variant_id: variant.id,
+        quantity,
+      });
     } catch (error) {
-      console.error(t('errors.addToCart', 'حدث خطأ أثناء إضافة المنتج للسلة:'), error);
+      console.error(
+        t('errors.addToCart', 'حدث خطأ أثناء إضافة المنتج للسلة'),
+        error,
+      );
     }
+  };
+
+  const handleResetFilters = () => {
+    setFilters({ ...DEFAULT_FILTERS });
   };
 
   const PrevIcon = isRTL ? ChevronRight : ChevronLeft;
   const NextIcon = isRTL ? ChevronLeft : ChevronRight;
 
   return (
-    <div className="min-h-screen bg-[var(--color-background)] pb-[var(--spacing-12)]">
+    <main className="min-h-screen bg-surface pb-12">
       {featuredProducts.length > 0 && (
         <FeaturedSection
           products={featuredProducts}
@@ -82,42 +96,49 @@ export const ShopPage: React.FC = () => {
         />
       )}
 
-      <div className="container mx-auto px-[var(--spacing-4)] pt-[var(--spacing-6)]">
-        <div className="mb-[var(--spacing-6)] flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-[var(--text-2xl)] font-[var(--font-bold)] text-[var(--color-text-primary)] lg:text-[var(--text-3xl)]">
-              {t('title', 'متجر المنتجات')}
-            </h1>
-            <p className="mt-1 text-[var(--text-sm)] text-[var(--color-text-muted)]">
-              {t(
-                'subtitle',
-                'تصفح تشكيلتنا الشاملة واستخدم الفلاتر للحصول على المنتج المناسب لك'
-              )}
-            </p>
-          </div>
+      {/* Container الرئيسي مع متغير العرض المتوافق مع الهيكل العام */}
+      <Container className="pt-6">
+        <Breadcrumbs
+          items={[{ label: t('title', 'متجر المنتجات') }]}
+          className="mb-4"
+        />
+                
+        <PageHeader
+          title={t("title", "متجر المنتجات")}
+          description={t(
+            "subtitle",
+            "تصفح تشكيلتنا الشاملة واستخدم الفلاتر للحصول على المنتج المناسب لك",
+          )}
+          actions={
+            <DebouncedSearchInput
+              value={filters.search ?? ""}
+              onChange={(searchValue) => {
+                setFilters({
+                  search: searchValue,
+                  page: 1,
+                });
+              }}
+              placeholder={t("searchPlaceholder", "ابحث عن منتج...")}
+              className="w-full sm:w-72"
+            />
+          }
+        />
 
-          {/* مكون البحث المزدوج والمنظم */}
-          <DebouncedSearchInput
-            value={filters.search}
-            onChange={(searchValue) => setFilters({ search: searchValue })}
-            placeholder={t('searchPlaceholder', 'ابحث عن منتج...')}
-            className="w-full max-w-xs"
+
+        {/* Filter toolbar and Sidebar integration */}
+        <div className="mb-6 flex items-center justify-between gap-3 rounded-panel border border-border bg-surface p-3 shadow-sm">
+          {/* ProductFilters مدمج هنا ليظهر زر الفلاتر في الشريط العلوي */}
+          <ProductFilters
+            filters={filters}
+            onChange={(newFilters) => setFilters(newFilters)}
+            onReset={handleResetFilters}
+            categories={categories}
+            brands={brands}
           />
-        </div>
 
-        <div className="mb-[var(--spacing-6)] flex items-center justify-between rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--card-bg)] p-[var(--spacing-3)] shadow-[var(--shadow-xs)]">
-          <button
-            type="button"
-            onClick={() => setIsMobileFilterOpen(true)}
-            className="flex items-center gap-2 rounded-[var(--radius-md)] bg-[var(--color-surface)] px-3 py-1.5 text-[var(--text-sm)] font-[var(--font-medium)] text-[var(--color-text-primary)] lg:hidden"
-          >
-            <Filter className="h-4 w-4 text-[var(--color-primary)]" />
-            <span>{t('filtersButton', 'الفلاتر')}</span>
-          </button>
-
-          <div className="hidden lg:block text-[var(--text-xs)] text-[var(--color-text-muted)]">
+          <div className="text-xs text-text-muted">
             {t('showingProducts', 'المنتجات المعروضة:')}{' '}
-            <span className="font-[var(--font-semibold)] text-[var(--color-text-primary)]">
+            <span className="font-semibold text-text-primary">
               {t('productsCount', '{{count}} من أصل {{total}}', {
                 count: products.length,
                 total: totalProducts,
@@ -126,71 +147,86 @@ export const ShopPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-start gap-[var(--spacing-6)]">
-          <ProductFilters
-            filters={filters}
-            onChange={(newFilters) => setFilters(newFilters)}
-            onReset={() => setFilters(DEFAULT_FILTERS)}
-            categories={categories}
-            brands={brands}
-            isMobileOpen={isMobileFilterOpen}
-            onCloseMobile={() => setIsMobileFilterOpen(false)}
+        {/* Products section */}
+        <section
+          aria-label={t('productsSection', 'المنتجات')}
+          className="min-w-0 flex-1"
+        >
+          <ProductGrid
+            products={products}
+            isLoading={isLoading}
+            onAddToCart={handleAddToCart}
+            onQuickView={setQuickViewProduct}
+            onToggleWishlist={() => {}}
           />
 
-          <div className="flex-1">
-            <ProductGrid
-              products={products}
-              isLoading={isLoading}
-              onAddToCart={handleAddToCart}
-              onQuickView={setQuickViewProduct}
-              onToggleWishlist={() => {}}
-            />
+          {!isLoading && totalPages > 1 && (
+            <nav
+              aria-label={t('pagination.label', 'التنقل بين صفحات المنتجات')}
+              className="mt-8 flex flex-wrap items-center justify-center gap-2"
+            >
+              <button
+                type="button"
+                disabled={(filters.page ?? 1) <= 1}
+                onClick={() =>
+                  setFilters(
+                    { page: (filters.page ?? 1) - 1 },
+                    { resetPage: false },
+                  )
+                }
+                aria-label={t('pagination.previous', 'الصفحة السابقة')}
+                className="flex h-9 w-9 items-center justify-center rounded-control border border-border bg-surface text-text-primary transition-colors hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <PrevIcon aria-hidden="true" className="h-4 w-4" />
+              </button>
 
-            {!isLoading && totalPages > 1 && (
-              <div className="mt-[var(--spacing-8)] flex items-center justify-center gap-2">
-                <button
-                  type="button"
-                  disabled={(filters.page ?? 1) <= 1}
-                  onClick={() =>
-                    setFilters({ page: (filters.page ?? 1) - 1 }, { resetPage: false })
-                  }
-                  aria-label={t('pagination.previous', 'الصفحة السابقة')}
-                  className="flex h-9 w-9 items-center justify-center rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--card-bg)] text-[var(--color-text-primary)] transition-colors hover:bg-[var(--color-surface)] disabled:opacity-40"
-                >
-                  <PrevIcon className="h-4 w-4" />
-                </button>
+              {Array.from(
+                { length: totalPages },
+                (_, index) => index + 1,
+              ).map((page) => {
+                const isCurrentPage = (filters.page ?? 1) === page;
 
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                return (
                   <button
                     key={page}
                     type="button"
-                    onClick={() => setFilters({ page }, { resetPage: false })}
-                    className={`flex h-9 w-9 items-center justify-center rounded-[var(--radius-md)] text-[var(--text-sm)] font-[var(--font-medium)] transition-colors ${
-                      filters.page === page
-                        ? 'bg-[var(--color-primary)] text-white'
-                        : 'border border-[var(--color-border)] bg-[var(--card-bg)] text-[var(--color-text-primary)] hover:bg-[var(--color-surface)]'
+                    onClick={() =>
+                      setFilters({ page }, { resetPage: false })
+                    }
+                    aria-label={t('pagination.goToPage', {
+                      page,
+                      defaultValue: `الانتقال إلى الصفحة ${page}`,
+                    })}
+                    aria-current={isCurrentPage ? 'page' : undefined}
+                    className={`flex h-9 w-9 items-center justify-center rounded-control text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                      isCurrentPage
+                        ? 'bg-primary text-text-inverse'
+                        : 'border border-border bg-surface text-text-primary hover:bg-surface-hover'
                     }`}
                   >
                     {page}
                   </button>
-                ))}
+                );
+              })}
 
-                <button
-                  type="button"
-                  disabled={(filters.page ?? 1) >= totalPages}
-                  onClick={() =>
-                    setFilters({ page: (filters.page ?? 1) + 1 }, { resetPage: false })
-                  }
-                  aria-label={t('pagination.next', 'الصفحة التالية')}
-                  className="flex h-9 w-9 items-center justify-center rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--card-bg)] text-[var(--color-text-primary)] transition-colors hover:bg-[var(--color-surface)] disabled:opacity-40"
-                >
-                  <NextIcon className="h-4 w-4" />
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
+              <button
+                type="button"
+                disabled={(filters.page ?? 1) >= totalPages}
+                onClick={() =>
+                  setFilters(
+                    { page: (filters.page ?? 1) + 1 },
+                    { resetPage: false },
+                  )
+                }
+                aria-label={t('pagination.next', 'الصفحة التالية')}
+                className="flex h-9 w-9 items-center justify-center rounded-control border border-border bg-surface text-text-primary transition-colors hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <NextIcon aria-hidden="true" className="h-4 w-4" />
+              </button>
+            </nav>
+          )}
+        </section>
+      </Container>
 
       <QuickViewModal
         product={quickViewProduct}
@@ -199,7 +235,7 @@ export const ShopPage: React.FC = () => {
         onAddToCart={handleAddToCart}
         onToggleWishlist={() => {}}
       />
-    </div>
+    </main>
   );
 };
 
