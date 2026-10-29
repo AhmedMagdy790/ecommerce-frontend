@@ -1,32 +1,28 @@
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { profileApi } from "@/api/client";
-import { handleApiError } from "@/api/error";
-import toast from "react-hot-toast";
-import type { PasswordFormValues } from "../schemas/password.schema";
+import type { UpdatePasswordDto } from "@/features/users/model/types/user.dto";
 
 export function useUpdatePassword() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const {
+    mutateAsync,
+    isPending,
+    isError,
+    error,
+    isSuccess,
+    reset,
+  } = useMutation<unknown, Error, UpdatePasswordDto>({
+    mutationFn: (data) => profileApi.updatePassword(data),
+  });
 
-  const updatePassword = async (data: PasswordFormValues, onSuccessCallback?: () => void) => {
-    try {
-      setIsSubmitting(true);
-      const response = await profileApi.updatePassword(data);
-      
-      toast.success(response?.message || "Password updated successfully");
-      
-
-      if (onSuccessCallback) {
-        onSuccessCallback();
-      }
-    } catch (error) {
-      handleApiError(error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const updatePassword = (data: UpdatePasswordDto) =>
+    mutateAsync(data);
 
   return {
     updatePassword,
-    isSubmitting,
+    isUpdatingPassword: isPending,
+    isError,
+    error,
+    isSuccess,
+    reset,
   };
 }
