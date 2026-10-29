@@ -9,6 +9,8 @@ const updateStatusCount = (
   status: User["status"],
   action: "increment" | "decrement"
 ) => {
+  if (status === undefined) return;
+
   ManagerStatsStore.getState()[action](status);
 };
 
