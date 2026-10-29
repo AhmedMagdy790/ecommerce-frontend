@@ -1,23 +1,15 @@
 // src/pages/ProductDetails/components/RelatedProducts.tsx
 
 import { useTranslation } from "react-i18next";
-import { ArrowRight, ArrowLeft, ShoppingBag } from "lucide-react";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 import { useLang } from "@/shared/context/LanguageContext";
 import { Container } from "@/shared/components/layout/Container";
-
-interface Product {
-  id: string | number;
-  name: string | { ar?: string; en?: string };
-  image: string;
-  price: number | string;
-  oldPrice?: number | string;
-  link?: string;
-}
+import type { RelatedProduct } from "../../adapters/productDetailsAdapter";
 
 interface RelatedProductsProps {
   data?: {
     title?: string | { ar?: string; en?: string };
-    products?: Product[];
+    products?: RelatedProduct[];
   };
 }
 
@@ -76,56 +68,46 @@ export default function RelatedProducts({
         {/* Products Grid */}
         <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
           {products.map((product) => {
-            const productName = getLocalizedText(product.name);
+              const productName = getLocalizedText(product.name);
 
-            return (
-              <a
-                key={product.id}
-                href={product.link || `/products/${product.id}`}
-                className="group relative flex flex-col overflow-hidden rounded-panel border border-border bg-surface shadow-xs transition-all duration-[var(--duration-normal)] ease-[var(--ease-default)] hover:-translate-y-1.5 hover:shadow-xl hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-              >
-                {/* Image Container */}
-                <div className="relative aspect-square w-full overflow-hidden bg-surface-secondary">
-                  <img
-                    src={product.image || "https://images.unsplash.com/photo-1523275335684-37898b6baf30"}
-                    alt={productName || "Product Image"}
-                    className="h-full w-full object-cover object-center transition-transform duration-700 ease-[var(--ease-default)] group-hover:scale-110"
-                    loading="lazy"
-                  />
+              const image =
+                product.thumbnail ||
+                product.featured_image ||
+                "/images/placeholders/product.webp";
 
-                  {/* Quick Add Overlay Button on Hover */}
-                  <div className="absolute inset-x-3 bottom-3 opacity-0 translate-y-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
-                    <span className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-card bg-surface/90 backdrop-blur-md text-text-primary text-xs font-semibold shadow-md border border-border hover:bg-primary hover:text-white transition-colors">
-                      <ShoppingBag size={14} />
-                      <span>{lang === "ar" ? "عرض التفاصيل" : "Quick View"}</span>
-                    </span>
+              const price = product.starting_at ?? product.price ?? null;
+
+              return (
+                <a
+                  key={product.id}
+                  href={`/products/${product.slug}`}
+                  className="group relative flex flex-col overflow-hidden rounded-panel border border-border bg-surface shadow-xs transition-all duration-[var(--duration-normal)] ease-[var(--ease-default)] hover:-translate-y-1.5 hover:shadow-xl hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                >
+                  <div className="relative aspect-square w-full overflow-hidden bg-surface-secondary">
+                    <img
+                      src={image}
+                      alt={productName || t("relatedProducts.productImage")}
+                      className="h-full w-full object-cover object-center transition-transform duration-700 ease-[var(--ease-default)] group-hover:scale-110"
+                      loading="lazy"
+                    />
                   </div>
-                </div>
 
-                {/* Product Info */}
-                <div className="flex flex-col flex-1 p-4 sm:p-5 justify-between">
-                  <h3 
-                    className="font-semibold text-sm sm:text-base text-text-primary line-clamp-2 mb-3 group-hover:text-primary transition-colors"
-                    style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
-                  >
-                    {productName}
-                  </h3>
+                  <div className="flex flex-1 flex-col justify-between p-4 sm:p-5">
+                    <h3 className="mb-3 line-clamp-2 text-sm font-semibold text-text-primary transition-colors group-hover:text-primary sm:text-base">
+                      {productName}
+                    </h3>
 
-                  <div className="flex items-baseline gap-2 flex-wrap">
-                    <span className="text-base sm:text-lg font-bold text-primary">
-                      ${product.price}
-                    </span>
-
-                    {product.oldPrice && (
-                      <span className="text-xs sm:text-sm text-text-muted line-through">
-                        ${product.oldPrice}
-                      </span>
-                    )}
+                    <div className="flex flex-wrap items-baseline gap-2">
+                      {price !== null && (
+                        <span className="text-base font-bold text-primary sm:text-lg">
+                          {price}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </a>
-            );
-          })}
+                </a>
+              );
+            })}
         </div>
       </Container>
     </section>
