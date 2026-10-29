@@ -1,10 +1,10 @@
 // src/features/order/types/index.ts
 
-import type { User } from "@/features/auth/types/auth.types";
 import type { City } from "@/features/city/model/types/city.types";
 import type { Coupon } from "@/features/coupon/types/coupon.types";
 import type { GatewayPaymentStatus, PaymentAttempt } from "@/features/payment/model/types/payment.types";
 import type { ShippingCourier } from "@/features/shipping/model/types/shipping.types";
+import type { User } from "@/features/users/model/types/user.types";
 import type { TranslatedText } from "@/shared/types/types";
 
 export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'completed' | 'cancelled' | 'returned';
