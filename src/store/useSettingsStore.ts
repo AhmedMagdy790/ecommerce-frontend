@@ -29,7 +29,7 @@ export const useSettingsStore = create<ISettingsState>((set, get) => ({
 
     settingsRequest = (async () => {
       try {
-        const response = await storeApi.getAllSettings();
+        const response = await storeApi.getAllSettings<{ data: { settings: SettingsData}}>();
         const settingsData = response?.data?.settings;
 
         if (settingsData != null) {
