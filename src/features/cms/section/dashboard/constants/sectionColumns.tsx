@@ -4,14 +4,15 @@ import type { Section } from "../../model/types/section.types";
 import type { Column } from "@/shared/components/DataTable/types";
 import { Link } from "react-router-dom";
 import { ListOrdered, Pencil, Trash2 } from "lucide-react";
+import type { TranslatedText } from "@/shared/types/types";
 
 interface GetSectionColumnsProps {
   t: TFunction;
   lang: string;
   togglingId?: number | null;
   onStatusChange?: (id: number, currentStatus: boolean) => void;
-  onEdit?: (row: Section) => void;
-  onDelete?: (row: Section) => void;
+  onEdit?: (row: Section<TranslatedText>) => void;
+  onDelete?: (row: Section<TranslatedText>) => void;
 }
 
 export const getSectionColumns = ({
@@ -21,7 +22,7 @@ export const getSectionColumns = ({
   onStatusChange,
   onEdit,
   onDelete,
-}: GetSectionColumnsProps): Column<Section>[] => [
+}: GetSectionColumnsProps): Column<Section<TranslatedText>>[] => [
   {
     header: t("section.name", "Section Name"),
     accessor: (row) => {
