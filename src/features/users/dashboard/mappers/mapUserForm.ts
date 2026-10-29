@@ -2,11 +2,11 @@
 
 import { defaultUserValues } from "../../constants/userFormDefault";
 import type { UserFormData } from "../../model/schema/userSchema";
-import type { InitialUserData } from "../../model/types/user.from.typs";
+import type { User } from "../../model/types/user.types";
 
 
 export function mapUserToForm(
-  user?: InitialUserData | null
+  user?: User | null
 ): UserFormData {
   if (!user) {
     return defaultUserValues;
@@ -20,8 +20,7 @@ export function mapUserToForm(
     status: user.status ?? "active",
     avatar: user.avatar ?? null,
     roles: user.roles ? user.roles.map((role) => role.id) : [],
-    // لا يتم ملء كلمة المرور في حقل التعديل لأسباب أمنية
     password: "",
-    password_confirmation: "",
+    password_confirmed: "",
   };
 }
