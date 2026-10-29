@@ -40,7 +40,7 @@ export const sectionAdapter = {
     return {
       page_id: formData.page_id,
       name: formData.name,
-      key: formData.key.toUpperCase(),
+      key: formData.key,
       type: formData.type,
       sort_order: formData.sort_order ?? 0,
       is_active: formData.is_active ?? true,
@@ -53,7 +53,7 @@ export const sectionAdapter = {
     return {
       page_id: formData.page_id,
       name: formData.name,
-      key: formData.key.toUpperCase(),
+      key: formData.key,
       type: formData.type,
       sort_order: formData.sort_order,
       is_active: formData.is_active,
