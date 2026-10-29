@@ -1,17 +1,20 @@
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { User, Settings, LogOut, UserRound } from "lucide-react";
+import { User, Settings, LogOut, UserRound, LayoutDashboard } from "lucide-react";
 
 import { useAuth } from "@/hooks/useAuth";
 import { ROUTES } from "@/constants/navigation";
 import { useLang } from "@/shared/context/LanguageContext";
 import { Dropdown } from "@/shared/components/dashboard/ui/dropdown/Dropdown";
 import { DropdownItem } from "@/shared/components/dashboard/ui/dropdown/DropdownItem";
+import { useAuthPermissions } from "@/features/auth/hooks/useAuthPermissions";
 
 export default function ProfileButton() {
   const [isOpen, setIsOpen] = useState(false);
   const [failedAvatar, setFailedAvatar] = useState<string | null>(null);
+
+  const { canAccessDashboard } = useAuthPermissions();
 
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -133,7 +136,7 @@ export default function ProfileButton() {
             <DropdownItem
               onClick={() => {
                 closeDropdown();
-                navigate(ROUTES.PROFILE);
+                navigate(ROUTES.SETTINGS);
               }}
             >
               <span
@@ -148,6 +151,28 @@ export default function ProfileButton() {
               </span>
             </DropdownItem>
           </li>
+
+          {canAccessDashboard &&
+            <li>
+              <DropdownItem
+                onClick={() => {
+                  closeDropdown();
+                  navigate(ROUTES.DASHBOARD);
+                }}
+              >
+                <span
+                  aria-hidden="true"
+                  className="flex size-7 items-center justify-center rounded-control bg-primary/10 text-secondry"
+                >
+                  <LayoutDashboard size={16} />
+                </span>
+
+                <span className="font-medium">
+                  {t("navigation.dashboard", "Dashboard")}
+                </span>
+              </DropdownItem>
+            </li>
+          }
 
           <li>
             <DropdownItem
@@ -181,7 +206,7 @@ export default function ProfileButton() {
             >
               <span
                 aria-hidden="true"
-                className="flex size-7 items-center justify-center rounded-control bg-error-bg text-error"
+                className="flex size-7 items-center justify-center rounded-control bg-error-bg/80 text-error/90"
               >
                 <LogOut size={16} />
               </span>
