@@ -2,6 +2,7 @@ import { useEffect, useCallback, useState } from "react";
 import { useSectionStore } from "@/features/cms/section/model/store/useSectionStore";
 import type { Section } from "@/features/cms/section/model/types/section.types";
 import { usePageStore } from "../../model/store/usePageStore";
+import type { TranslatedText } from "@/shared/types/types";
 
 export function usePageBuilder(pageId: number | undefined) {
   const { 
@@ -27,7 +28,7 @@ export function usePageBuilder(pageId: number | undefined) {
   
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingSection, setEditingSection] = useState<Section | null>(null);
+  const [editingSection, setEditingSection] = useState<Section<TranslatedText> | null>(null);
 
   // جلب البيانات الأساسية عند تحميل الصفحة لأول مرة فقط
   const loadBuilderData = useCallback(async () => {
@@ -47,8 +48,8 @@ export function usePageBuilder(pageId: number | undefined) {
     setIsModalOpen(true);
   };
 
-  const openEditModal = (section: Section) => {
-    console.log("section", section)
+  const openEditModal = (section: Section<TranslatedText>) => {
+
     setEditingSection(section);
     setIsModalOpen(true);
   };
