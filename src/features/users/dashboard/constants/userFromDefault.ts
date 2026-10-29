@@ -8,5 +8,5 @@ export const userFromDefault: UserFormData = {
     roles: [],
     phone: "",
     password: "",
-    password_confirmation: "",
+    password_confirmed: "",
 };
