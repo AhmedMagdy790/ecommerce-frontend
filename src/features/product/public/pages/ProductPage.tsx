@@ -67,7 +67,7 @@ export default function ProductPage() {
 
         {/* Main Product Layout (Gallery & Information) */}
         <section className="grid gap-10 lg:grid-cols-2 items-start">
-          <ProductGallery data={productData.gallery} />
+          <ProductGallery gallery={productData.gallery ?? []} />
           <ProductInfo data={productData} />
         </section>
 
