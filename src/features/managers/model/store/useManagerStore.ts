@@ -4,9 +4,8 @@ import { createFeatureStore } from "@/shared/store/createFeatureStore";
 import type { SuccessApiResponse } from "@/shared/types/api.types";
 import type { Role } from "@/features/roles/model/types/permission.types";
 import type { EntityId } from "@/shared/types/entity";
-import type { UpdateUserRolesDto } from "../types/manager.dto";
+import type { CreateMangerDto, UpdateMangerDto, UpdateUserRolesDto } from "../types/manager.dto";
 import type { User, UserStatus } from "@/features/users/model/types/user.types";
-import type { CreateUserDto, UpdateUserDto } from "@/features/users/model/types/user.dto";
 import type { UserListResponse } from "@/features/users/model/types/user.api";
 import managerService from "../../api/managers.service";
 import { getErrorMessage } from "@/shared/utils/handleServerError";
@@ -43,8 +42,8 @@ export interface ManagerCustomState {
 
 export const useManagerStore = createFeatureStore<
   User,
-  CreateUserDto,
-  UpdateUserDto,
+  CreateMangerDto,
+  UpdateMangerDto,
   ManagerFilters,
   UserListResponse,
   SuccessApiResponse<{ user: User }>,
@@ -133,30 +132,44 @@ export const useManagerStore = createFeatureStore<
     },
 
     changeStatus: async (id: EntityId, status: UserStatus) => {
-      set({ togglingStatusId: id, statusError: null });
+      const previousItem = get().items.find((item) => item.id === id);
 
-      // الاحتفاظ بالحالة القديمة للتراجع عنها في حال فشل الطلب
-      const previousItems = get().items;
+      if (!previousItem || previousItem.status === status) {
+        return Boolean(previousItem);
+      }
 
-      // تحديث الحالة فورياً في الـ State (Optimistic UI Update)
       set({
-        items: previousItems.map((item) =>
-          item.id === id ? { ...item, status } : item
+        togglingStatusId: id,
+        statusError: null,
+        items: get().items.map((item) =>
+          item.id === id ? { ...item, status } : item,
         ),
       });
 
       try {
         await managerService.toggleStatus(id, status);
 
+        ManagerStatsHooks.onStatusChanged(
+          { ...previousItem, status },
+          previousItem.status,
+        );
+
         set({ togglingStatusId: null });
         return true;
       } catch (error: unknown) {
-        // التراجع عن التغيير عند فشل السيرفر
         set({
-          items: previousItems,
-          statusError: getErrorMessage(error, "فشل تغيير حالة المشرف"),
+          items: get().items.map((item) =>
+            item.id === id
+              ? { ...item, status: previousItem.status }
+              : item,
+          ),
+          statusError: getErrorMessage(
+            error,
+            "فشل تغيير حالة المشرف",
+          ),
           togglingStatusId: null,
         });
+
         return false;
       }
     },
