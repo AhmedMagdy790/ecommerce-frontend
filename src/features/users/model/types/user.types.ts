@@ -1,22 +1,32 @@
+import type { Address } from "@/features/address/model/types/address.types";
 import type { Role } from "@/features/roles/model/types/permission.types";
 
-export type UserStatus =
-  | "active"
-  | "pending"
-  | "suspended";
+export type UserStatus = "active" | "pending" | "suspended";
+
+export interface ProfileStats {
+  total_orders?: number;
+  active_orders?: number;
+}
 
 export interface User {
   id: number | string;
   name: string;
   email: string;
   phone?: string | null;
-  roles?: Role[];
+
   avatar?: string | null;
-  last_login_at?: string | null;
-  status: UserStatus;
+  roles?: Role[];
+  permissions?: string[];
+
+  email_verified: boolean;
   email_verified_at?: string | null;
-  created_at?: string;
-  updated_at?: string;
+
+  joined_at?: string | null;
+  last_login_at?: string | null;
+  status?: UserStatus;
+  stats?: ProfileStats;
+
+  addresses?: Address[];
 }
 
 export interface UserFilters extends Record<string, unknown> {
@@ -27,7 +37,7 @@ export interface UserFilters extends Record<string, unknown> {
   per_page?: number;
 }
 
-export interface UserStats  {
+export interface UserStats {
   total: number;
   active: number;
   pending: number;
