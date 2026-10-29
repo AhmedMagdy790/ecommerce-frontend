@@ -1,11 +1,19 @@
 // src/features/profile/dashboard/pages/ProfilePage.tsx
+import { useAuthStore } from "@/features/auth/model/store/useAuthStore";
 import { HeaderDashboard } from "@/shared/components/HeaderDashboard";
-import { useProfilePage } from "../hooks/useProfilePage";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/shared/components/ui/form";
+import { useTranslation } from "react-i18next";
+import { useProfileForm } from "../hooks/useProfileForm";
 
 export default function ProfilePage() {
-  const { t, profileForm } = useProfilePage();
-  const { methods, onSubmit, isSubmitting } = profileForm;
+  const { t } = useTranslation();
+  const currentUser = useAuthStore((state) => state.user);
+
+  const {
+    methods,
+    onSubmit,
+    isSubmitting,
+  } = useProfileForm(currentUser);
 
   return (
     <div className="p-6 lg:p-8 space-y-8 max-w-3xl mx-auto">
@@ -15,8 +23,8 @@ export default function ProfilePage() {
       />
 
       <Form {...methods}>
-        <form 
-          onSubmit={onSubmit} 
+        <form
+          onSubmit={onSubmit}
           className="bg-white dark:bg-gray-800 p-6 lg:p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 space-y-6"
         >
           <div>
