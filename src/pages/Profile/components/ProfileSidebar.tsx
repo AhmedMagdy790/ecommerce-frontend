@@ -1,6 +1,7 @@
 
 import { memo, useRef } from "react";
-import { type LucideIcon } from "lucide-react";
+import type { KeyboardEvent } from "react";
+import type { LucideIcon } from "lucide-react";
 import { useLang } from "@/shared/context/LanguageContext";
 
 export interface TabItem<T extends string> {
@@ -31,51 +32,47 @@ function ProfileSidebarComponent<T extends string>({
   const focusTab = (index: number) => {
     if (tabs.length === 0) return;
 
-    const normalizedIndex =
-      (index + tabs.length) % tabs.length;
+    const normalizedIndex = (index + tabs.length) % tabs.length;
 
-    const tab = tabs[normalizedIndex];
-
-    onSelectTab(tab.id);
+    onSelectTab(tabs[normalizedIndex].id);
     tabRefs.current[normalizedIndex]?.focus();
   };
 
   const handleKeyDown = (
-    event: React.KeyboardEvent<HTMLButtonElement>,
+    event: KeyboardEvent<HTMLButtonElement>,
     index: number,
   ) => {
     switch (event.key) {
       case "ArrowRight":
         event.preventDefault();
         focusTab(index + (isRTL ? -1 : 1));
-        return;
+        break;
       case "ArrowLeft":
         event.preventDefault();
         focusTab(index + (isRTL ? 1 : -1));
-        return;
+        break;
       case "Home":
         event.preventDefault();
         focusTab(0);
-        return;
+        break;
       case "End":
         event.preventDefault();
         focusTab(tabs.length - 1);
-        return;
-      default:
-        return;
+        break;
     }
   };
 
   return (
-    <aside dir={isRTL ? "rtl" : "ltr"} className="w-full">
+    <aside dir={isRTL ? "rtl" : "ltr"} className="w-full min-w-0">
       <nav
         role="tablist"
         aria-label={t("navigationLabel")}
         aria-orientation="horizontal"
         className="
-          flex gap-2 rounded-panel border border-border
-          bg-surface p-3 shadow-xs transition-colors
-          lg:flex-col
+          flex w-full gap-2 overflow-x-auto rounded-panel
+          border border-border bg-surface p-2 shadow-xs
+          scrollbar-none
+          lg:flex-col lg:gap-1.5 lg:p-3
         "
       >
         {tabs.map((tab, index) => {
@@ -97,40 +94,52 @@ function ProfileSidebarComponent<T extends string>({
               onKeyDown={(event) => handleKeyDown(event, index)}
               type="button"
               className={[
-                "flex w-full cursor-pointer items-start gap-3.5 rounded-card border p-3.5 text-start transition-colors",
+                "relative flex min-w-0 shrink-0 items-center gap-2",
+                "rounded-control border px-3 py-2.5 text-start",
+                "transition-colors duration-200",
+                "focus-visible:outline-none focus-visible:ring-2",
+                "focus-visible:ring-primary focus-visible:ring-offset-2",
+                "sm:gap-3 sm:px-3.5",
+                "lg:w-full lg:shrink lg:items-start lg:py-3",
                 active
                   ? "border-border bg-background text-text-primary shadow-xs"
-                  : "border-transparent bg-transparent text-text-secondary hover:bg-surface-secondary",
+                  : "border-transparent text-text-secondary hover:bg-surface-secondary",
               ].join(" ")}
             >
-              <Icon
+              <span
                 className={[
-                  "mt-0.5 size-5 shrink-0 transition-colors",
-                  active ? "text-primary" : "text-text-muted",
+                  "flex size-9 shrink-0 items-center justify-center",
+                  "rounded-control transition-colors",
+                  active
+                    ? "bg-primary/10 text-primary"
+                    : "bg-surface-secondary text-text-muted",
                 ].join(" ")}
-                aria-hidden="true"
-              />
+              >
+                <Icon className="size-[18px]" aria-hidden="true" />
+              </span>
 
-              <div className="min-w-0 flex-1">
-                <h3
-                  className={[
-                    "truncate text-sm font-semibold",
-                    active
-                      ? "text-text-primary"
-                      : "text-text-secondary",
-                  ].join(" ")}
+              <span className="min-w-0 flex-1 lg:pt-0.5">
+                <span
+                  className="block truncate text-xs font-semibold sm:text-sm"
                   style={{ fontFamily }}
                 >
                   {tab.label}
-                </h3>
+                </span>
 
-                <p
-                  className="mt-0.5 line-clamp-1 text-xs font-medium text-text-muted"
+                <span
+                  className="mt-1 hidden line-clamp-2 text-xs leading-5 text-text-muted lg:block"
                   style={{ fontFamily }}
                 >
                   {tab.description}
-                </p>
-              </div>
+                </span>
+              </span>
+
+              {active && (
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-y-2 start-0 hidden w-0.5 rounded-full bg-primary lg:block"
+                />
+              )}
             </button>
           );
         })}
