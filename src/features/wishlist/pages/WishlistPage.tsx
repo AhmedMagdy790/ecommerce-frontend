@@ -1,12 +1,11 @@
 import { useWishlist } from "@/features/wishlist/hooks/useWishlist";
 
-import { useCart } from "@/pages/Cart/hook/useCart";
 import Spinner from "@/shared/components/Spinner";
 
 export default function WishlistPage() {
-  const { wishlistItems, isLoading, removeFromWishlist, moveToCart, isRemoving } = useWishlist();
-  const { addToCart } = useCart();
+  const { wishlistItems, isLoading } = useWishlist();
 
+  
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-[50vh]">
@@ -30,34 +29,34 @@ export default function WishlistPage() {
       <h1 className="text-3xl font-bold mb-6">قائمة الرغبات ({wishlistItems.length})</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {wishlistItems.map((item) => (
-          <div key={item.id} className="border rounded-lg p-4 shadow-sm flex flex-col justify-between">
-            <div>
-              <img src={item.product.image} alt={item.product.name} className="w-full h-48 object-cover rounded mb-4" />
-              <h3 className="font-semibold text-lg mb-1">{item.product.name}</h3>
-              <p className="text-primary font-bold mb-4">{item.product.price} ر.س</p>
-            </div>
+        {wishlistItems.map((item) => {
+          const product = item.product;
+          const productName = product.name;
 
-            <div className="flex gap-2">
-              {/* زر النقل للسلة */}
-              <button
-                onClick={() => moveToCart({ productId: item.product.id, cartServiceFn: addToCart })}
-                className="flex-1 bg-primary text-white py-2 px-4 rounded text-sm hover:opacity-90 transition"
-              >
-                نقل للسلة
-              </button>
+          const image =
+            product.thumbnail ||
+            product.featured_image ||
+            "/images/placeholders/product.webp";
 
-              {/* زر الحذف */}
-              <button
-                onClick={() => removeFromWishlist(item.product.id)}
-                disabled={isRemoving}
-                className="border border-red-500 text-red-500 py-2 px-3 rounded text-sm hover:bg-red-50 transition"
-              >
-                حذف
-              </button>
+          return (
+            <div key={item.id}>
+              <img
+                src={image}
+                alt={productName}
+                className="w-full h-48 object-cover rounded mb-4"
+              />
+
+              <h3 className="font-semibold text-lg mb-1">
+                {productName}
+              </h3>
+
+              <p className="text-primary font-bold mb-4">
+                {product.price ?? product.starting_at ?? "—"}
+              </p>
+
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
