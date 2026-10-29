@@ -57,26 +57,15 @@ export const useUserForm = (
 
         try {
 
-            const cleanedData = {
-                ...formData,
-                phone: formData.phone || undefined,
-                password: formData.password || undefined,
-                password_confirmation: formData.password_confirmation || undefined,
-            };
-
-            const payloadData = { ...cleanedData };
-            if (isEditMode && !payloadData.password) {
-                delete payloadData.password;
-                delete payloadData.password_confirmation;
-            }
 
             if (isEditMode && initialData?.id) {
-                const payload = userAdapter.toUpdateDto(payloadData);
+                const payload = userAdapter.toUpdateDto(formData);
                 await update(initialData.id, payload);
             } else {
-                const payload = userAdapter.toCreateDto(payloadData);
+                const payload = userAdapter.toCreateDto(formData);
                 await create(payload);
             }
+
 
             resetForm();
             closeModal?.();
