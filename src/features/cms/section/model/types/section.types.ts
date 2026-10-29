@@ -14,11 +14,25 @@ export const SectionTypes = {
   SERVICES: "services",
   TESTIMONIALS: "testimonials",
   NEWSLETTER: "newsletter",
-  WHYCHOOSEUS: "why_choose_us",
+  WHY_CHOOSE_US: "why_choose_us",
   TEXT: "text",
 } as const;
 
 export type SectionType = (typeof SectionTypes)[keyof typeof SectionTypes];
+
+export const SectionKeys = {
+  HOME_HERO: "home_hero",
+  FEATURED_PRODUCTS: "featured_products",
+  BEST_SELLERS: "best_sellers",
+  NEW_ARRIVALS: "new_arrivals",
+  ABOUT_HERO: "about_hero",
+  SERVICES_HERO: "services_hero",
+  CONTACT_BANNER: "contact_banner",
+  CONTACT_INFO: "contact_info",
+} as const;
+
+export type SectionKey =
+  (typeof SectionKeys)[keyof typeof SectionKeys];
 
 export interface SectionSettings {
   layout?: string;
@@ -34,7 +48,7 @@ export interface Section<TText = TranslatedText | string> {
   page_id: number;
 
   name: TText;
-  key: string;
+  key: SectionKey;
   type: SectionType;
 
   sort_order: number;
@@ -42,7 +56,6 @@ export interface Section<TText = TranslatedText | string> {
 
   settings: SectionSettings | null;
 
-  // الحقول الإضافية التي قد تأتي مباشرة مع القسم
   title?: TText;
   subtitle?: TText;
   description?: TText;
