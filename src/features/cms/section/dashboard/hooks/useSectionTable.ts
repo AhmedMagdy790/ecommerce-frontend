@@ -23,7 +23,7 @@ export function useSectionTable({ pageId, initialPerPage = 10 }: UseSectionTable
   const [perPage] = useState<number>(initialPerPage);
 
   const loadTableData = useCallback(async () => {
-    const params: Record<string, any> = {
+    const params: Record<string, number> = {
       page: currentPage,
       per_page: perPage,
     };
