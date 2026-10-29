@@ -1,60 +1,124 @@
 import { Link, Outlet } from "react-router-dom";
-import { useLanguage } from "@/hooks/useLanguage";
+import { useTranslation } from "react-i18next";
+import { useLang } from "@/shared/context/LanguageContext";
 import LanguageSwitcher from "@/app/shell/Navbar/LanguageSwitcher";
+import { ShieldCheck, Zap, Heart, Store } from "lucide-react";
 
 export default function AuthLayout() {
-    const { language } = useLanguage();
-    const isArabic = language === "ar";
+  const { isRTL } = useLang();
+  const { t } = useTranslation();
 
-    return (
-        <div 
-            className="relative min-h-screen bg-[var(--color-background)] font-[var(--font-sans)] text-[var(--color-text-primary)] antialiased overflow-x-hidden"
-            dir={isArabic ? "rtl" : "ltr"}
+  return (
+    <div
+      dir={isRTL ? "rtl" : "ltr"}
+      className="min-h-screen bg-background text-text-primary"
+    >
+      <header className="relative z-10 flex h-20 items-center justify-between px-5 sm:px-8 lg:px-12">
+        <Link
+          to="/"
+          aria-label={t("common.home", "Home")}
+          className="flex items-center gap-2"
         >
-            <div className="flex min-h-screen flex-col lg:flex-row">
-                
-                {/* Mobile Header Logo */}
-                <header className="lg:hidden flex items-center justify-between p-[var(--spacing-6)] border-b border-[var(--color-border)] bg-[var(--color-surface)]">
-                    <Link to="/" className="inline-block">
-                        <img src="/assets/logo.svg" alt="Logo" className="h-8 w-auto" />
-                    </Link>
-                </header>
+          <img
+            src="/assets/logo.svg"
+            alt={t("common.logo", "Logo")}
+            className="h-9 w-auto"
+          />
+        </Link>
 
-                {/* Auth Form Area */}
-                <main className="flex-1 flex items-center justify-center p-[var(--spacing-6)] sm:p-[var(--spacing-10)] lg:w-1/2 bg-[var(--color-background)]">
-                    <div className="w-full max-w-[var(--container-sm)] mx-auto">
-                        <Outlet />
-                    </div>
-                </main>
+        <LanguageSwitcher />
+      </header>
 
-                {/* Brand / Hero Area */}
-                <section className="hidden lg:flex lg:w-1/2 items-center justify-center bg-[var(--color-primary)] text-[var(--color-text-inverse)] relative overflow-hidden p-[var(--spacing-12)]">
-                    {/* Decorative Blur Background Elements */}
-                    <div className="absolute -top-32 -left-32 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
-                    <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-black/10 rounded-full blur-3xl pointer-events-none"></div>
+      <main className="mx-auto grid min-h-[calc(100vh-10rem)] w-full max-w-[1440px] grid-cols-1 items-center gap-8 px-5 py-8 sm:px-8 lg:grid-cols-2 lg:gap-16 lg:px-12 lg:py-10">
+        {/* Brand panel */}
+        <section className="relative hidden min-h-[650px] flex-col justify-between overflow-hidden rounded-[2rem] bg-primary-soft p-10 lg:flex xl:p-14">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -end-24 -top-24 h-80 w-80 rounded-full bg-primary/10 blur-3xl"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -bottom-32 -start-20 h-96 w-96 rounded-full bg-primary/15 blur-3xl"
+          />
 
-                    <div className="relative z-[var(--z-normal)] flex flex-col items-center max-w-[var(--container-sm)] text-center">
-                        <Link to="/" className="transition-transform duration-[var(--duration-normal)] ease-[var(--ease-default)] hover:scale-105">
-                            <img
-                                src="/assets/logo.svg"
-                                alt="Store Logo"
-                                className="w-[220px] h-auto drop-br-md filter brightness-0 invert"
-                            />
-                        </Link>
-                        <p className="mt-[var(--spacing-6)] text-[var(--text-lg)] font-[var(--font-medium)] opacity-90 leading-relaxed">
-                            {isArabic
-                                ? "تسوق أفضل المنتجات بسهولة وثقة معنا"
-                                : "Shop the best products easily and securely with us"
-                            }
-                        </p>
-                    </div>
-                </section>
+          <div className="relative z-10 max-w-lg">
+            <span className="mb-5 inline-flex rounded-full border border-primary/20 bg-background/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+              {t("auth.brandEyebrow", "Welcome to our store")}
+            </span>
+
+            <h1 className="text-4xl font-bold leading-tight tracking-tight xl:text-5xl">
+              {t("auth.brandTitle", "Your journey starts")}{" "}
+              <span className="text-primary">
+                {t("auth.brandHighlight", "here")}
+              </span>
+            </h1>
+
+            <p className="mt-5 max-w-md text-base leading-8 text-text-secondary">
+              {t(
+                "auth.brandDescription",
+                "Sign in to access your account and manage your shopping experience with ease."
+              )}
+            </p>
+          </div>
+
+          <div className="relative z-10 my-10 flex min-h-48 items-center justify-center">
+            <div className="relative flex h-52 w-52 items-center justify-center rounded-[2.5rem] border border-white/70 bg-background/70 shadow-xl backdrop-blur-xl xl:h-60 xl:w-60">
+              <div className="absolute inset-4 rounded-[2rem] border border-primary/10" />
+              <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-primary text-white shadow-lg shadow-primary/25">
+                <Store size={48} strokeWidth={1.5} />
+              </div>
+              <div className="absolute -end-5 top-8 rounded-2xl border border-border bg-background p-3 shadow-lg">
+                <ShieldCheck className="text-primary" size={26} />
+              </div>
+              <div className="absolute -start-5 bottom-8 rounded-2xl border border-border bg-background p-3 shadow-lg">
+                <Zap className="text-primary" size={26} />
+              </div>
             </div>
+          </div>
 
-            {/* Floating Actions */}
-            <div className="fixed bottom-[var(--spacing-6)] end-[var(--spacing-6)] z-[var(--z-fixed)] shadow-[var(--shadow-lg)] rounded-[var(--radius-full)] bg-[var(--color-surface)] border border-[var(--color-border)] backdrop-blur-md">
-                <LanguageSwitcher />
-            </div>
-        </div>
-    );
+          <div className="relative z-10 grid grid-cols-3 gap-4">
+            {[
+              {
+                icon: ShieldCheck,
+                title: t("auth.secure", "Secure"),
+                description: t("auth.secureDescription", "Your data stays protected"),
+              },
+              {
+                icon: Zap,
+                title: t("auth.fast", "Fast"),
+                description: t("auth.fastDescription", "A smooth experience"),
+              },
+              {
+                icon: Heart,
+                title: t("auth.reliable", "Reliable"),
+                description: t("auth.reliableDescription", "Here when you need us"),
+              },
+            ].map(({ icon: Icon, title, description }) => (
+              <div key={title} className="text-center">
+                <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-background text-primary shadow-sm">
+                  <Icon size={21} />
+                </div>
+                <h2 className="text-sm font-semibold">{title}</h2>
+                <p className="mt-1 text-xs leading-5 text-text-secondary">
+                  {description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Auth form */}
+        <section className="mx-auto w-full max-w-md">
+          <Outlet />
+        </section>
+      </main>
+
+      <footer className="px-5 py-5 text-center text-xs text-text-muted">
+        {t("common.copyright", {
+          year: new Date().getFullYear(),
+          defaultValue: `© ${new Date().getFullYear()} All rights reserved.`,
+        })}
+      </footer>
+    </div>
+  );
 }
