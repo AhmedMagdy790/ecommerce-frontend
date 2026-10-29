@@ -1,14 +1,16 @@
 import { create } from "zustand";
 import { authServices as authService } from "@/features/auth/api/auth.service";
 import type { AuthState as IAuthState } from "@/features/auth/types/auth.types";
-import type { User as IUser } from "@/features/auth/model/types/user.types";
 import type {
-    LoginDto as ILoginPayload,
-    RegisterDto as IRegisterPayload,
-} from "@/features/auth/model/types/user.dto";
+    ForgotPasswordDto,
+    RegisterDto,
+} from "@/features/auth/model/types/auth.dto";
 import { getTokenExpiration } from "../../hooks/useTokenExpiration";
 import { clearLastTokenActivity, saveLastTokenActivity } from "../../utils/auth.utils";
 import { broadcastAuthEvent } from "../../utils/authChannel";
+import { handleGlobalError } from "@/shared/errors/handleGlobalError";
+import type { User } from "@/features/users/model/types/user.types";
+import type { LoginCredentials } from "../types/auth.types";
 
 let refreshPromise: Promise<string> | null = null;
 
@@ -25,7 +27,7 @@ export const useAuthStore = create<IAuthState>()(
         lastTokenActivityAt: null,
         
 
-        setUser: (user: IUser) => set({ user, isAuthenticated: !!user }),
+        setUser: (user: User) => set({ user, isAuthenticated: !!user }),
         
         setAccessToken: (accessToken: string | null) => set({ accessToken }),
         
@@ -87,8 +89,10 @@ export const useAuthStore = create<IAuthState>()(
                     user,
                     isAuthenticated: true,
                 });
-            } catch (error) {
-                console.error("[AUTH INIT] Session restoration failed", error);
+            } catch (error: unknown) {
+                handleGlobalError(error, {
+                  context: "auth-init"
+                });
 
                 set({
                     user: null,
@@ -107,7 +111,7 @@ export const useAuthStore = create<IAuthState>()(
             }
         },
        
-        login: async (data: ILoginPayload) => {
+        login: async (data: LoginCredentials) => {
             set({ isLoading: true });
 
             try {
@@ -170,7 +174,7 @@ export const useAuthStore = create<IAuthState>()(
             }
         },
 
-        createAcount: async (data: IRegisterPayload) => {
+        createAcount: async (data: RegisterDto) => {
             set({ isLoading: true });
             try {
                 const response = await authService.register(data);
@@ -201,6 +205,25 @@ export const useAuthStore = create<IAuthState>()(
             }
         },
 
+        forgotPassword: async (data: ForgotPasswordDto) => {
+            set({ isLoading: true });
+            try {
+                const response = await authService.forgotPassword(data);
+
+                const {
+                    user
+                } = response.data;
+     
+                if (user) {
+                    set({ user });
+                } 
+                return;
+            } finally {
+                set({ isLoading: false });
+            }
+        },
+
+
         fetchUser: async () => {
             const response = await authService.me();
             const { user } = response.data;
@@ -216,7 +239,7 @@ export const useAuthStore = create<IAuthState>()(
                 return refreshPromise;
             }
 
-            refreshPromise = (async () => {
+            const request = (async () => {
                 const response = await authService.getAccessToken();
                 const { accessToken, expires_in } = response.data;
 
@@ -240,10 +263,14 @@ export const useAuthStore = create<IAuthState>()(
                 return accessToken;
             })();
 
+            refreshPromise = request;
+
             try {
-                return await refreshPromise;
+                return await request;
             } finally {
-                refreshPromise = null;
+                if (refreshPromise === request) {
+                    refreshPromise = null;
+                }
             }
         },
 
