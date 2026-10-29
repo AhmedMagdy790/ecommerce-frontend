@@ -1,11 +1,11 @@
 // src/features/users/adapters/user.adapter.ts
 
 import type { PaginatedApiResponse, PaginationMeta, SuccessApiResponse } from "@/shared/types/api.types";
-import type { CreateUserDto, UpdateUserDto } from "../model/types/user.dto";
 import { extractStatsSafely } from "@/shared/utils/helper";
 import type { User, UserStats } from "../model/types/user.types";
 import type { UserListResponse } from "../model/types/user.api";
 import type { UserFormData } from "../model/schema/userSchema";
+import type { CreateUserDto, UpdateUserDto } from "../model/types/user.dto";
 
 export const userAdapter = {
   fromListResponse(response: PaginatedApiResponse<User>): User[] {
@@ -54,8 +54,8 @@ export const userAdapter = {
       roles: formData.roles,
       ...(formData.avatar ? { avatar: formData.avatar } : {}),
       ...(formData.password ? { password: formData.password } : {}),
-      ...(formData.password_confirmation
-        ? { password_confirmation: formData.password_confirmation }
+      ...(formData.password_confirmed
+        ? { password_confirmed: formData.password_confirmed }
         : {}),
     };
   },
@@ -73,8 +73,8 @@ export const userAdapter = {
     if (formData.password) {
       dto.password = formData.password;
     }
-    if (formData.password_confirmation) {
-      dto.password_confirmation = formData.password_confirmation;
+    if (formData.password_confirmed) {
+      dto.password_confirmed = formData.password_confirmed;
     }
 
     return dto;
