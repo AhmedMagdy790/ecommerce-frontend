@@ -23,7 +23,7 @@ export const AdminGuard = () => {
     }
 
     if (!isAdmin(user)) {
-        return <Navigate to="/unauthorized" replace />;
+        return <Navigate to="/" replace />;
     }
 
     return <Outlet />;
