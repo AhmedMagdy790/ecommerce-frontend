@@ -1,10 +1,9 @@
 import { useState, useCallback, useMemo } from "react";
-// import { useSectionStore } from "../model/store/useSectionStore";
-// import type { Section } from "../model/types/section.types";
 import { useTranslation } from "react-i18next";
 import { useSectionStore } from "../../model/store/useSectionStore";
 import type { Section } from "../../model/types/section.types";
 import { getSectionFilters } from "../constants/sectionFilters";
+import type { TranslatedText } from "@/shared/types/types";
 
 export function useSectionPage() {
   const { t } = useTranslation("cms");
@@ -16,7 +15,7 @@ export function useSectionPage() {
   const setFilters = useSectionStore((state) => state.setFilters);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingSection, setEditingSection] = useState<Section | null>(null);
+  const [editingSection, setEditingSection] = useState<Section<TranslatedText> | null>(null);
   const [togglingId, setTogglingId] = useState<number | null>(null);
 
   const openCreateModal = useCallback(() => {
@@ -24,7 +23,7 @@ export function useSectionPage() {
     setIsModalOpen(true);
   }, []);
 
-  const openEditModal = useCallback((section: Section) => {
+  const openEditModal = useCallback((section: Section<TranslatedText>) => {
     setEditingSection(section);
     setIsModalOpen(true);
   }, []);
