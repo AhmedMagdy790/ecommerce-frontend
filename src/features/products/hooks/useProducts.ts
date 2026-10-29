@@ -2,6 +2,7 @@ import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { storeApi } from "@/api/client";
 import { useLang } from "@/shared/context/LanguageContext";
 import type { Product, ProductFilters } from "@/features/product/model/types/product.types";
+import { mapProductDetails, type ProductDetails } from "@/features/product/adapters/productDetailsAdapter";
 
 export interface PaginationMeta {
   type: string;
@@ -21,26 +22,41 @@ export interface ProductsApiResponse {
   };
 }
 
+// استجابة المنتج الواحد بناءً على نظام الـ API لديك
+export interface SingleProductApiResponse {
+  status: string;
+  message: string;
+  data: Product<string>;
+}
+
 export interface ProductsQueryResult {
   items: Product<string>[];
   pagination: PaginationMeta;
 }
 
-/**
- * Hook لجلب قائمة المنتجات متوافق تماماً مع الاستجابة الحالية من الـ API
- */
 export const useProducts = (params?: ProductFilters) => {
   const { lang } = useLang();
 
-
   return useQuery<ProductsApiResponse, Error, ProductsQueryResult>({
-    queryKey: ["products", params, lang],
+    queryKey: [
+      "products", 
+      params?.category_id, 
+      params?.brand_id, 
+      params?.brand, 
+      params?.min_price, 
+      params?.max_price, 
+      params?.search, 
+      params?.sort, 
+      params?.order, 
+      params?.page, 
+      params?.limit, 
+      lang
+    ],
     queryFn: async () => {
       return await storeApi.getProducts<ProductsApiResponse>(params);
     },
     select: (response): ProductsQueryResult => {
       const payload = response?.data;
-
 
       return {
         items: payload?.items ?? [],
@@ -54,22 +70,19 @@ export const useProducts = (params?: ProductFilters) => {
       };
     },
     placeholderData: keepPreviousData,
-    staleTime: 1000 * 60 * 5, // 5 دقائق
+    staleTime: 1000 * 60 * 5,
   });
 };
 
-/**
- * Hook لجلب تفاصيل منتج واحد باستخدام الـ slug
- */
 export const useProductBySlug = (slug: string, enabled = true) => {
   const { lang } = useLang();
 
-  return useQuery<{ data: Product<string> }, Error, Product<string>>({
+  return useQuery<SingleProductApiResponse, Error, ProductDetails>({
     queryKey: ["product", slug, lang],
     queryFn: async () => {
-      return await storeApi.getProductById<{ data: Product<string> }>(slug);
+      return await storeApi.getProductById<SingleProductApiResponse>(slug);
     },
-    select: (response) => response.data,
+    select: (response) => mapProductDetails(response.data),
     enabled: Boolean(slug) && enabled,
     staleTime: 1000 * 60 * 5,
   });
