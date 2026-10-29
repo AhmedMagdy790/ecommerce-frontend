@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { useSectionPage } from "../hooks/useSectionPage";
 import type { Section } from "../../model/types/section.types";
 import { SectionModal } from "../components/SectionModal";
+import type { TranslatedText } from "@/shared/types/types";
 
 
 export default function SectionPage() {
@@ -36,7 +37,7 @@ export default function SectionPage() {
   } = useSectionPage();
 
   const handleDeleteRow = useCallback(
-    (item: Section) => handleDelete(item.id),
+    (item: Section<TranslatedText>) => handleDelete(item.id),
     [handleDelete]
   );
 
@@ -71,7 +72,7 @@ export default function SectionPage() {
       </div>
 
       {/* DataTable Component */}
-      <DataTable<Section>
+      <DataTable<Section<TranslatedText>>
         data={currentData}
         // loading={isLoading}
         meta={pagination}
