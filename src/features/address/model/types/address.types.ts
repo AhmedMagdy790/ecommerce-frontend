@@ -1,6 +1,6 @@
-import type { User } from "@/features/auth/types/auth.types";
 import type { City } from "@/features/city/model/types/city.types";
 import type { Country } from "@/features/country/model/types/country.types";
+import type { User } from "@/features/users/model/types/user.types";
 
 export type AddressType = 'home' | 'work' | string;
 
