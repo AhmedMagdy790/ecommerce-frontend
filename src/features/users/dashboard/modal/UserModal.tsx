@@ -104,9 +104,9 @@ export default function UserModal({ isOpen, closeModal, user }: IUserModal) {
               type="password"
               label={t("user.passwordConfirmation", "Confirm Password")}
               placeholder="••••••••"
-              error={errors.password_confirmation?.message}
+              error={errors.password_confirmed?.message}
               icon={<Lock size={16} />}
-              {...register("password_confirmation")}
+              {...register("password_confirmed")}
             />
           </div>
         </div>
