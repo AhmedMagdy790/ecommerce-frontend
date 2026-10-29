@@ -1,5 +1,6 @@
 // src/features/cart/hook/useCart.ts
 
+import { useAuthStore } from "@/features/auth/model/store/useAuthStore";
 import type { ICartItem } from "@/features/cart/model/types/cart.types";
 import cartService from "@/features/cart/services/cartService";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -8,6 +9,7 @@ export const CART_QUERY_KEY = ["cart"];
 
 export function useCart() {
   const queryClient = useQueryClient();
+  const { user } = useAuthStore()
 
   // Fetch cart items
   const {
@@ -18,7 +20,8 @@ export function useCart() {
   } = useQuery<ICartItem[]>({
     queryKey: CART_QUERY_KEY,
     queryFn: () => cartService.getCartItems(),
-    staleTime: 1000 * 60 * 5, // منع إعادة الجلب المتكرر غير الضروري
+    enabled: !!user,
+    staleTime: 1000 * 60 * 5, 
   });
 
   // Calculate total count of items taking quantity into account
