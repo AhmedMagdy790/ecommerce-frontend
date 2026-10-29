@@ -4,10 +4,9 @@ import { adminApi } from "@/api/client";
 import type { SuccessApiResponse } from "@/shared/types/api.types";
 import type { User, UserFilters, UserStatus } from "../../users/model/types/user.types";
 import type { UserListResponse } from "../../users/model/types/user.api";
-import type { CreateUserDto, UpdateUserDto } from "../../users/model/types/user.dto";
 import type { Role } from "@/features/roles/model/types/permission.types";
 import type { EntityId } from "@/shared/types/entity";
-import type { UpdateUserRolesDto } from "../model/types/manager.dto";
+import type { CreateMangerDto, UpdateMangerDto, UpdateUserRolesDto } from "../model/types/manager.dto";
 
 
 export const managerService = {
@@ -19,17 +18,17 @@ export const managerService = {
     return adminApi.getManagerById<SuccessApiResponse<{ user: User }>>(id);
   },
 
-  create(payload: CreateUserDto) {
+  create(payload: CreateMangerDto) {
     return adminApi.createManager<
       SuccessApiResponse<{ user: User }>,
-      CreateUserDto
+      CreateMangerDto
     >(payload);
   },
 
-  update(id: EntityId, payload: UpdateUserDto) {
+  update(id: EntityId, payload: UpdateMangerDto) {
     return adminApi.updateManager<
       SuccessApiResponse<{ user: User }>,
-      UpdateUserDto
+      UpdateMangerDto
     >(id, payload);
   },
 
@@ -40,10 +39,10 @@ export const managerService = {
     >(id, { status: status });
   },
 
-  patch(id: EntityId, payload: UpdateUserDto) {
+  patch(id: EntityId, payload: UpdateMangerDto) {
     return adminApi.patchManager<
       SuccessApiResponse<{ user: User }>,
-      UpdateUserDto
+      UpdateMangerDto
     >(id, payload);
   },
 
