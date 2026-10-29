@@ -1,6 +1,6 @@
 // src/feature/auth/model/types/auth.api.ts
+import type { User } from "@/features/users/model/types/user.types";
 import type { SuccessApiResponse } from "@/shared/types/api.types";
-import type { User } from "./user.types";
 
 
 export interface AuthResponseData {
