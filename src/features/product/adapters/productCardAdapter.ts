@@ -1,67 +1,60 @@
-// src/features/product/adapters/productCardAdapter.ts
 
-import type { ProductVariant } from "@/features/product-variants/model/types/productVariant.types";
-import type { Product } from "../model/types/product.types";
+import type {
+  Product,
+  ProductGalleryItem,
+} from "@/features/product/model/types/product.types";
+import { getValidImage } from "@/shared/utils/helper";
 
+const PRODUCT_PLACEHOLDER = "/images/placeholders/product.webp";
+
+type ProductCardSource = Pick<
+  Product<string>,
+  | "id"
+  | "slug"
+  | "name"
+  | "price"
+  | "starting_at"
+  | "featured_image"
+  | "thumbnail"
+  | "gallery"
+>;
+
+export interface ProductCardModel {
+  id: number | string;
+  slug: string;
+  name: string;
+  image: string;
+  price: string | null;
+  link: string;
+}
+
+
+
+function getGalleryImage(
+  gallery?: ProductGalleryItem[],
+): string | undefined {
+  return gallery
+    ?.map((item) => getValidImage(item.url))
+    .find((url): url is string => Boolean(url));
+}
 
 export function mapProductCard(
-  product: Product,
-) {
-  // 1. Extract variants safely whether it's an array or an object containing a list
-  const rawVariantsSource = product.variants;
-  const variantsArray = Array.isArray(rawVariantsSource)
-    ? rawVariantsSource
-    : Array.isArray((rawVariantsSource )?.list)
-      ? (rawVariantsSource).list
-      : [];
-
-  // 2. Find the lowest variant price if available
-  const variantPrices = variantsArray
-    .map((v: ProductVariant) => Number(v.price))
-    .filter((p: number) => !isNaN(p));
-
-  const minVariantPrice = variantPrices.length > 0 ? Math.min(...variantPrices) : null;
-
-  // 3. Resolve images collection safely
-  const galleryImagesSource: string[] = Array.isArray(product.gallery)
-    ? product.gallery
-    : product.gallery?.images ?? [];
-
-  const galleryImages = [
-    product.thumbnail,
-    product.featured_image,
-    ...galleryImagesSource.map((img: string) =>
-      typeof img === "string"
-        ? img
-        : (img as unknown as { url?: string })?.url
-    ),
-  ].filter(Boolean) as string[];
-
+  product: ProductCardSource,
+): ProductCardModel {
   const image =
-    product.thumbnail ??
-    product.featured_image ??
-    galleryImages[0] ??
-    "/images/placeholders/product.webp";
+    getValidImage(product.thumbnail) ??
+    getValidImage(product.featured_image) ??
+    getGalleryImage(product.gallery) ??
+    PRODUCT_PLACEHOLDER;
 
-  // 4. Resolve correct price hierarchy
-  const price =
-    product.price ??
-    product.starting_at ??
-    minVariantPrice ??
-    0;
+  const rawPrice = product.starting_at ?? product.price;
 
   return {
     id: product.id,
     slug: product.slug,
-
     name: product.name,
-
-    image: image,
-
-    price: price,
-
-    // oldPrice: product.old_price ?? undefined,
-
+    image,
+    price: rawPrice == null ? null : String(rawPrice),
     link: `/products/${product.slug}`,
   };
 }
