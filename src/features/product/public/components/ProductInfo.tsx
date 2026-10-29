@@ -2,52 +2,88 @@
 
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Star, ShieldCheck, RotateCcw, Truck } from "lucide-react";
+import { ShieldCheck, RotateCcw, Truck } from "lucide-react";
 import AddToCart from "./AddToCart";
 import { useLang } from "@/shared/context/LanguageContext";
 import { useCart } from "@/pages/Cart/hook/useCart";
-import type { Product } from "../../model/types/product.types";
+import type { ProductDetails } from "../../adapters/productDetailsAdapter";
 
 interface ProductInfoProps {
-  data: Product<string>;
+  data: ProductDetails;
 }
 
 export default function ProductInfo({ data: product }: ProductInfoProps) {
   const { t } = useTranslation("product");
   const { lang, isRTL } = useLang();
 
-  const [selectedSize, setSelectedSize] = useState<string>(product.variants?.sizes?.[0] || "");
-  const [selectedColor, setSelectedColor] = useState<string>(product.variants?.colors?.[0] || "");
+  const variantsList = product.variants.list;
+
+
+  const availableSizes = product.variants.sizes;
+  const availableColors = product.variants.colors;
+
+  const [selectedSize, setSelectedSize] = useState(
+    availableSizes[0] ?? "",
+  );
+  const [selectedColor, setSelectedColor] = useState(
+    availableColors[0] ?? "",
+  );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+
+  const selectedVariant = variantsList.find((variant) => {
+    const attributes = variant.attributes;
+
+    return (
+      variant.status === "active" &&
+      variant.is_available &&
+      (availableSizes.length === 0 ||
+        attributes?.size === selectedSize) &&
+      (availableColors.length === 0 ||
+        attributes?.color === selectedColor)
+    );
+  });
+
+  const displayPrice =
+    selectedVariant?.price ??
+    product.starting_at ??
+    product.price ??
+    null;
+
+  const stock = selectedVariant
+    ? Math.max(0, Number(selectedVariant.inventory?.available_stock ?? 0))
+    : 0;
+
+  const isStockAvailable = stock > 0;
 
   const { addToCart } = useCart();
 
   const handleAddToCart = async (payload: { productId: string | number; quantity: number; variants?: { size?: string; color?: string } }) => {
-    if (product.variants?.sizes && product.variants.sizes.length > 0 && !selectedSize) {
+    if (availableSizes.length > 0 && !selectedSize) {
       setErrorMessage(t("errors.selectSize", { defaultValue: lang === "ar" ? "يرجى اختيار المقاس المناسب" : "Please select a size" }));
       return;
     }
-    if (product.variants?.colors && product.variants.colors.length > 0 && !selectedColor) {
+    if (availableColors.length > 0 && !selectedColor) {
       setErrorMessage(t("errors.selectColor", { defaultValue: lang === "ar" ? "يرجى اختيار اللون المناسب" : "Please select a color" }));
       return;
     }
-    
-    setErrorMessage(null);
-    
-    try {
-      await addToCart({
-        product_variant_id: Number(product.id),
-        quantity: payload.quantity,
-      });
-    } catch (error) {
-      console.error("Failed to add item to cart from product page", error);
+
+
+    if (!selectedVariant) {
+      setErrorMessage(
+        lang === "ar"
+          ? "يرجى اختيار نسخة متاحة من المنتج"
+          : "Please select an available product variant",
+      );
+      return;
     }
+
+    await addToCart({
+      product_variant_id: selectedVariant.id,
+      quantity: payload.quantity,
+    });
   };
 
-  const rating = product.rating || 5;
-  const reviewsCount = product.reviewsCount || 128;
-  const isStockAvailable = typeof product.stock === "number" ? product.stock > 0 : Boolean(product.stock);
-  const stock = typeof product.stock === "number" ? product.stock : (product.stock ? 10 : 0);
 
   return (
     <div dir={isRTL ? "rtl" : "ltr"} className="flex flex-col w-full">
@@ -70,39 +106,26 @@ export default function ProductInfo({ data: product }: ProductInfoProps) {
         {product.name}
       </h1>
 
-      {/* Rating & Reviews */}
-      <div className="flex items-center gap-3 pb-6 border-b border-border">
-        <div className="flex items-center gap-1 text-amber-500">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <Star 
-              key={index} 
-              size={16} 
-              fill={index < Math.floor(rating) ? "currentColor" : "none"} 
-              className={index < Math.floor(rating) ? "text-amber-500" : "text-gray-300 dark:text-gray-600"}
-            />
-          ))}
-        </div>
-        <span 
-          className="text-sm font-medium text-text-secondary hover:text-primary transition-colors cursor-pointer"
-          style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
-        >
-          {rating} ({reviewsCount} {t("reviews.label", { defaultValue: lang === "ar" ? "مراجعة" : "reviews" })})
-        </span>
-      </div>
 
       {/* Price Section */}
       <div className="mt-6 flex items-baseline gap-4">
-        <span className="text-3xl sm:text-4xl font-bold text-primary tracking-tight">
-          ${product.price}
-        </span>
+        {displayPrice != null && (
+          <span className="text-3xl sm:text-4xl font-bold text-primary tracking-tight">
+            ${displayPrice}
+          </span>
+        )}
+
         {product.oldPrice && (
           <span className="text-lg font-normal text-text-muted line-through">
             ${product.oldPrice}
           </span>
         )}
+
         {product.oldPrice && (
           <span className="px-2 py-0.5 rounded-control bg-red-500/10 text-red-600 dark:text-red-400 text-xs font-semibold">
-            {t("badges.sale", { defaultValue: lang === "ar" ? "تخفيض خاص" : "Sale" })}
+            {t("badges.sale", {
+              defaultValue: lang === "ar" ? "تخفيض خاص" : "Sale",
+            })}
           </span>
         )}
       </div>
@@ -118,7 +141,7 @@ export default function ProductInfo({ data: product }: ProductInfoProps) {
       )}
 
       {/* Sizes Variant Selector */}
-      {product.variants?.sizes && product.variants.sizes.length > 0 && (
+      {availableSizes.length > 0 && (
         <div className="mt-8">
           <div className="flex items-center justify-between mb-3">
             <h3 
@@ -133,7 +156,7 @@ export default function ProductInfo({ data: product }: ProductInfoProps) {
           </div>
 
           <div className="flex flex-wrap gap-3">
-            {product.variants.sizes.map((size: string) => {
+            {availableSizes.map((size) => {
               const isSelected = selectedSize === size;
               return (
                 <button
@@ -158,7 +181,7 @@ export default function ProductInfo({ data: product }: ProductInfoProps) {
       )}
 
       {/* Colors Variant Selector */}
-      {product.variants?.colors && product.variants.colors.length > 0 && (
+      {availableColors.length > 0 && (
         <div className="mt-6">
           <h3 
             className="text-sm font-semibold text-text-primary mb-3"
@@ -168,7 +191,7 @@ export default function ProductInfo({ data: product }: ProductInfoProps) {
           </h3>
 
           <div className="flex flex-wrap gap-3">
-            {product.variants.colors.map((color: string) => {
+            {availableColors.map((color) => {
               const isSelected = selectedColor === color;
               return (
                 <button
