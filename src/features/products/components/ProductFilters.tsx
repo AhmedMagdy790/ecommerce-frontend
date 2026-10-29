@@ -20,6 +20,7 @@ interface ProductFiltersProps {
   onReset: () => void;
   categories?: Category<string>[];
   brands?: Brand<string>[];
+  disabledSearch?: boolean; // خاصية لتعطيل البحث
 }
 
 type FilterSection = 'search' | 'category' | 'price' | 'brand';
@@ -30,6 +31,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
   onReset,
   categories = [],
   brands = [],
+  disabledSearch = false,
 }) => {
   const { t } = useTranslation('productFilters');
   const { isRTL } = useLang();
@@ -93,6 +95,8 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
   }, [filters.search]);
 
   useEffect(() => {
+    if (disabledSearch) return;
+
     const trimmedSearch = localSearch.trim();
 
     if (trimmedSearch === (filters.search ?? '').trim()) {
@@ -114,15 +118,18 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
     }, 500);
 
     return () => window.clearTimeout(timer);
-  }, [localSearch, filters.search]);
+  }, [localSearch, filters.search, disabledSearch]);
 
   const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const search = localSearch.trim();
+    if (disabledSearch) return;
 
-    if (search !== (filters.search ?? '').trim()) {
-      onChange({
-        ...filters,
+    const search = localSearch.trim();
+    const currentFilters = filtersRef.current;
+
+    if (search !== (currentFilters.search ?? '').trim()) {
+      onChangeRef.current({
+        ...currentFilters,
         search: search || undefined,
         page: 1,
       });
@@ -141,8 +148,10 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
       return;
     }
 
-    onChange({
-      ...filters,
+    // استخدام الـ refs لضمان جلب أحدث حالة للفلاتر وتجنب الـ Stale Closures
+    const currentFilters = filtersRef.current;
+    onChangeRef.current({
+      ...currentFilters,
       min_price: min,
       max_price: max,
       page: 1,
@@ -150,22 +159,24 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
   };
 
   const handleCategorySelect = (categoryId: number | string) => {
+    const currentFilters = filtersRef.current;
     const isSelected =
-      String(filters.category_id ?? '') === String(categoryId);
+      String(currentFilters.category_id ?? '') === String(categoryId);
 
-    onChange({
-      ...filters,
+    onChangeRef.current({
+      ...currentFilters,
       category_id: isSelected ? undefined : categoryId,
       page: 1,
     });
   };
 
   const handleBrandSelect = (brandId: number | string) => {
-    const selectedBrand = filters.brand_id ?? filters.brand;
+    const currentFilters = filtersRef.current;
+    const selectedBrand = currentFilters.brand_id ?? currentFilters.brand;
     const isSelected = String(selectedBrand ?? '') === String(brandId);
 
-    onChange({
-      ...filters,
+    onChangeRef.current({
+      ...currentFilters,
       brand_id: isSelected ? undefined : brandId,
       brand: undefined,
       page: 1,
@@ -228,44 +239,48 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
       </div>
 
       {/* Search */}
-      <section className="border-b border-border pb-4">
-        {renderSectionToggle('search', t('search.title'))}
+      {!disabledSearch && 
+        <section className="border-b border-border pb-4">
+          {renderSectionToggle('search', t('search.title'))}
 
-        {openSections.search && (
-          <div id="product-filter-search">
-            <form onSubmit={handleSearchSubmit} className="relative mt-3">
-              <input
-                ref={searchInputRef}
-                type="search"
-                value={localSearch}
-                onChange={(event) => setLocalSearch(event.target.value)}
-                onFocus={() => {
-                  isSearchFocusedRef.current = true;
-                }}
-                onBlur={() => {
-                  isSearchFocusedRef.current = false;
-                  setLocalSearch(filtersRef.current.search ?? '');
-                }}
-                placeholder={t('search.placeholder')}
-                aria-label={t('search.label')}
-                className={`${inputClass} ${
-                  isRTL ? 'pl-10 text-right' : 'pr-10 text-left'
-                }`}
-              />
+          {openSections.search && (
+            <div id="product-filter-search">
+              <form onSubmit={handleSearchSubmit} className="relative mt-3">
+                <input
+                  ref={searchInputRef}
+                  type="search"
+                  value={localSearch}
+                  disabled={disabledSearch}
+                  onChange={(event) => setLocalSearch(event.target.value)}
+                  onFocus={() => {
+                    isSearchFocusedRef.current = true;
+                  }}
+                  onBlur={() => {
+                    isSearchFocusedRef.current = false;
+                    setLocalSearch(filtersRef.current.search ?? '');
+                  }}
+                  placeholder={t('search.placeholder')}
+                  aria-label={t('search.label')}
+                  className={`${inputClass} ${
+                    disabledSearch ? 'opacity-50 cursor-not-allowed' : ''
+                  } ${isRTL ? 'pl-10 text-right' : 'pr-10 text-left'}`}
+                />
 
-              <button
-                type="submit"
-                aria-label={t('search.submit')}
-                className={`absolute top-1/2 -translate-y-1/2 rounded-control p-1 text-text-muted transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-                  isRTL ? 'left-2' : 'right-2'
-                }`}
-              >
-                <Search aria-hidden="true" className="h-4 w-4" />
-              </button>
-            </form>
-          </div>
-        )}
-      </section>
+                <button
+                  type="submit"
+                  disabled={disabledSearch}
+                  aria-label={t('search.submit')}
+                  className={`absolute top-1/2 -translate-y-1/2 rounded-control p-1 text-text-muted transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:opacity-40 disabled:cursor-not-allowed ${
+                    isRTL ? 'left-2' : 'right-2'
+                  }`}
+                >
+                  <Search aria-hidden="true" className="h-4 w-4" />
+                </button>
+              </form>
+            </div>
+          )}
+        </section>
+      }
 
       {/* Categories */}
       {categories.length > 0 && (
@@ -325,7 +340,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
                 <input
                   id="product-filter-min-price"
                   type="number"
-                  min="0"
+                  min="1"
                   step="any"
                   inputMode="decimal"
                   placeholder={t('price.minPlaceholder')}
