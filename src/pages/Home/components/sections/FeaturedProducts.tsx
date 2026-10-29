@@ -15,15 +15,12 @@ export default function FeaturedProducts({ section }: FeaturedProductsProps) {
   const { lang, isRTL } = useLang();
   const { t } = useTranslation("home");
 
-  // استخراج العناصر بأمان من section.data مباشرة
   const rawItems = Array.isArray(section?.data) ? section.data : [];
 
-  // تحويل البيانات باستخدام Adapter
   const products = mapCmsProducts(rawItems, lang);
 
   if (!products.length) return null;
 
-  // استخراج عنوان القسم بأمان
   const sectionTitle = section.name;
 
   return (
