@@ -6,6 +6,24 @@ import type {
 import axios from "axios";
 import { toast } from "react-hot-toast";
 
+
+type ErrorStateSetter = (
+  partial: { error: string | null }
+) => void;
+
+export const handleStoreError = (
+  error: unknown,
+  defaultMessage: string,
+  set: ErrorStateSetter
+): never => {
+  const message = getErrorMessage(error, defaultMessage);
+
+  set({ error: message });
+
+  throw error;
+};
+
+
 export const handleServerErrors = <T extends FieldValues>(
   error: unknown,
   setError?: UseFormSetError<T>,
@@ -44,11 +62,6 @@ export const handleServerErrors = <T extends FieldValues>(
   });
 };
 
-export const handleStoreError = (error: unknown, defaultMessage: string, set: any) => {
-    const message = error instanceof Error ? error.message : defaultMessage;
-    set({ error: message });
-    throw error;
-};
 
 export function getErrorMessage(
   error: unknown,
