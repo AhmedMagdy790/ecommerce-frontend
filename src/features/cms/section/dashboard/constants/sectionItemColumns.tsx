@@ -2,6 +2,7 @@ import { getLocalizedName } from "@/shared/utils/localizeName";
 import type { TFunction } from "i18next";
 import type { SectionItem } from "../../model/types/sectionItem.types";
 import type { Column } from "@/shared/components/DataTable/types";
+import type { TranslatedText } from "@/shared/types/types";
 
 interface GetSectionItemColumnsProps {
   t: TFunction;
@@ -11,7 +12,7 @@ interface GetSectionItemColumnsProps {
 export const getSectionItemColumns = ({
   t,
   lang,
-}: GetSectionItemColumnsProps): Column<SectionItem>[] => [
+}: GetSectionItemColumnsProps): Column<SectionItem<TranslatedText>>[] => [
   {
     header: t("sectionItem.image", "Image"),
     accessor: (row) =>
@@ -57,9 +58,7 @@ export const getSectionItemColumns = ({
     accessor: (row) =>
       row.product ? (
         <span className="text-xs font-medium text-[var(--color-text-primary)]">
-          {typeof row.product.name === "object"
-            ? getLocalizedName(row.product.name, lang)
-            : String(row.product.name)}
+          {getLocalizedName(row?.product?.name, lang)}
         </span>
       ) : (
         <span className="text-xs text-[var(--color-text-secondary)]">-</span>
