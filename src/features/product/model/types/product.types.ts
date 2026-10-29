@@ -1,17 +1,7 @@
-// src/features/product/types/product.types.ts
-import type { TranslatedText } from "@/shared/types/types";
+
 import type { Brand } from "@/features/brand/types/brand.types";
-import type { Media } from "@/shared/types/media";
 import type { Category } from "@/features/category/model/types/category.types";
 import type { ProductVariant } from "@/features/product-variants/model/types/productVariant.types";
-
-export type LocalizedString = TranslatedText;
-
-export interface ProductMedia extends Media {
-  url: string;
-}
-
-// src/features/product/types/product.types.ts (أو مكان مناسب)
 
 export const ProductStatus = {
   ACTIVE: "active",
@@ -19,7 +9,14 @@ export const ProductStatus = {
   DRAFT: "draft",
 } as const;
 
-export type ProductStatus = (typeof ProductStatus)[keyof typeof ProductStatus];
+export type ProductStatus =
+  (typeof ProductStatus)[keyof typeof ProductStatus];
+
+export interface ProductGalleryItem {
+  id: number | string;
+  url: string;
+  name: string;
+}
 
 export interface ProductStats {
   total: number;
@@ -29,57 +26,49 @@ export interface ProductStats {
   trashed: number;
 }
 
-
-export interface Product<TText = TranslatedText | string> {
-  id: number | string;
+export interface Product<TText = Record<string, string> | string> {
+  id: number;
   name: TText;
   slug: string;
   description?: TText;
-  category_id?: number | string;
-  brand_id?: number | string;
-  brand?: Brand<TText>;
   status: ProductStatus;
   is_featured: boolean;
-  category?: Category<TText>;
 
-  variants?: ProductVariant[] | any;
+  price: string | null;
+  old_price?: string | number | null;
+  starting_at: string | null;
 
-  link?: string;
+  brand?: Brand<TText> | null;
+  category?: Category<TText> | null;
+  variants?: ProductVariant<TText>[];
 
-  media?: Media[];
-  featured_image?: Media | string | null;
-  thumbnail?: string;
-  gallery?: { images: string[] };
-  
-  image?: string;
-  price?: number;
-  starting_at?: number;
-  oldPrice?: number;
-  stock?: number;
-  rating?: number;
-  reviewsCount?: number;
-  reviews?: any[];
-  relatedProducts?: any[];
+  featured_image: string | null;
+  thumbnail: string | null;
+  gallery?: ProductGalleryItem[];
 
-  created_at?: string;
-  updated_at?: string;
+  created_at?: string | null;
+  updated_at?: string | null;
 }
 
 export type ProductSummary = Product;
 
-
 export interface ProductFilters {
   search?: string;
   name?: string;
-  status?: string | null;
+  status?: ProductStatus | null;
+
   brand?: string;
+  brand_id?: number | string;
   category_id?: number | string;
+
   min_price?: number;
   max_price?: number;
+
   page?: number;
   per_page?: number;
-  sort_by?: string;
-  sort_direction?: "asc" | "desc";
+  limit?: number;
 
+  sort?: string;
+  order?: "asc" | "desc";
   [key: string]: any;
 }
