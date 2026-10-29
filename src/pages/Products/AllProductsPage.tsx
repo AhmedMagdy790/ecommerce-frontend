@@ -21,14 +21,27 @@ export const AllProductsPage: React.FC = () => {
 
   // 1. تحويل الـ URL SearchParams إلى كائن Filters
   const filtersFromUrl = useMemo<IProductFilters>(() => {
+    const rawSort = searchParams.get('sort');
+    const rawOrder = searchParams.get('order');
+
+    const sort: IProductFilters['sort'] =
+      rawSort === 'created_at' || rawSort === 'price' || rawSort === 'rating'
+        ? rawSort
+        : 'created_at';
+
+    const order: IProductFilters['order'] =
+      rawOrder === 'asc' || rawOrder === 'desc'
+        ? rawOrder
+        : 'desc';
+
     return {
       search: searchParams.get('search') || undefined,
       category_id: searchParams.get('category_id') || undefined,
       brand: searchParams.get('brand') || undefined,
       min_price: searchParams.get('min_price') ? Number(searchParams.get('min_price')) : undefined,
       max_price: searchParams.get('max_price') ? Number(searchParams.get('max_price')) : undefined,
-      sort: (searchParams.get('sort')) || 'created_at',
-      order: (searchParams.get('order')) || 'desc',
+      sort,
+      order,
       page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
       limit: searchParams.get('limit') ? Number(searchParams.get('limit')) : 12,
     };
@@ -128,7 +141,7 @@ export const AllProductsPage: React.FC = () => {
                 handleFiltersChange({
                   ...filtersFromUrl,
                   sort: sort,
-                  order: order,
+                  order: order === 'asc' ? 'asc' : 'desc',
                   page: 1,
                 });
               }}
