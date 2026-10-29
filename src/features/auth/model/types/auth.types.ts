@@ -1,5 +1,7 @@
 // src/feature/auth/model/types/auth.types.ts
-import type { User } from "./user.types";
+
+import type { User } from "@/features/users/model/types/user.types";
+
 
 /**
  * البيانات المطلوبة لتسجيل الدخول (Login Payload)
