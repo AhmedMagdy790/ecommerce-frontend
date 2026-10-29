@@ -118,11 +118,25 @@ export default function Newsletter({ section }: NewsletterProps) {
             )}
 
             {/* Form Container */}
+            
+            {/* Responsive Newsletter Form */}
             <form
               onSubmit={handleSubmit}
-              className="w-full max-w-xl flex flex-col sm:flex-row items-center gap-2 rounded-full bg-white/10 backdrop-blur-xl p-2 border border-white/20 focus-within:border-white/40 focus-within:bg-white/15 transition-all duration-[var(--duration-normal)] ease-[var(--ease-default)]"
+              className="
+                w-full max-w-xl
+                flex flex-col sm:flex-row
+                items-stretch sm:items-center
+                gap-3 sm:gap-2
+                rounded-2xl sm:rounded-full
+                bg-white/10 backdrop-blur-xl
+                p-3 sm:p-2
+                border border-white/20
+                focus-within:border-white/40
+                focus-within:bg-white/15
+                transition-all duration-[var(--duration-normal)]
+              "
             >
-              <div className="relative w-full flex-1">
+              <div className="relative w-full min-w-0 flex-1">
                 <input
                   type="email"
                   required
@@ -130,32 +144,72 @@ export default function Newsletter({ section }: NewsletterProps) {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={placeholder}
                   disabled={isSubmitting}
-                  className="w-full bg-transparent px-6 py-3 text-base text-white placeholder-white/60 outline-none border-none focus:ring-0 disabled:opacity-50"
+                  autoComplete="email"
+                  dir="ltr"
+                  className="
+                    w-full min-w-0
+                    rounded-xl sm:rounded-full
+                    bg-white/5 sm:bg-transparent
+                    px-4 sm:px-5
+                    py-3
+                    text-base text-white
+                    placeholder:text-white/60
+                    outline-none
+                    focus-visible:ring-2 focus-visible:ring-white/30
+                    disabled:opacity-50
+                  "
                 />
               </div>
 
               <button
                 type="submit"
-                disabled={isSubmitting}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-base font-semibold text-primary shadow-md transition-all duration-[var(--duration-normal)] ease-[var(--ease-default)] hover:bg-white/95 hover:scale-[1.02] active:scale-95 disabled:opacity-75 cursor-pointer whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                disabled={isSubmitting || !email.trim()}
+                className="
+                  w-full sm:w-auto shrink-0
+                  min-h-12
+                  inline-flex items-center justify-center gap-2
+                  rounded-xl sm:rounded-full
+                  bg-white px-5 py-3
+                  text-sm sm:text-base font-semibold text-primary
+                  shadow-md
+                  transition-all duration-[var(--duration-normal)]
+                  hover:bg-white/95
+                  active:scale-[0.98]
+                  disabled:cursor-not-allowed disabled:opacity-60
+                  focus-visible:outline-none
+                  focus-visible:ring-2 focus-visible:ring-white
+                  focus-visible:ring-offset-2 focus-visible:ring-offset-primary
+                "
               >
                 {isSubmitting ? (
-                  <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                  <span
+                    className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent"
+                    aria-label={lang === "ar" ? "جارٍ الإرسال" : "Submitting"}
+                  />
                 ) : (
                   <>
                     <span>{buttonText}</span>
-                    <svg 
-                      className={`w-4 h-4 transition-transform duration-[var(--duration-normal)] ${isRTL ? "rotate-180" : ""}`} 
-                      fill="none" 
-                      stroke="currentColor" 
+                    <svg
+                      className={`h-4 w-4 transition-transform ${
+                        isRTL ? "rotate-180" : ""
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
                       viewBox="0 0 24 24"
+                      aria-hidden="true"
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2.5}
+                        d="M14 5l7 7m0 0l-7 7m7-7H3"
+                      />
                     </svg>
                   </>
                 )}
               </button>
             </form>
+
 
             {/* Success Alert */}
             {submitted && (
