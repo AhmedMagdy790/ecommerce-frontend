@@ -17,18 +17,19 @@ import {
 } from "@/shared/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/shared/components/ui/tabs";
 import { useSectionModal } from "../hooks/useSectionModal";
-import { SectionTypes, type SectionType, type Section } from "../../model/types/section.types";
+import { SectionTypes, type SectionType, type Section, SectionKeys } from "../../model/types/section.types";
 import type { SectionFormInput } from "../../model/schema/sectionSchema";
 import { checkLanguageError, getTranslatedError } from "@/shared/utils/helper";
 import { LanguageOptions } from "@/shared/components/LanguageOptions";
 import { SectionSelectIdsSelector } from "./SectionSelectIdsSelector";
 import { useSectionContentOptions } from "../hooks/useSectionSelectIdsOptions";
+import type { TranslatedText } from "@/shared/types/types";
 
 interface SectionModalProps {
   isOpen: boolean;
   onClose: () => void;
   pageId: number;
-  editingSection: Section | null;
+  editingSection: Section<TranslatedText> | null;
   onSectionSaved?: () => void;
 }
 
@@ -88,8 +89,6 @@ export function SectionModal({
 
   const settings = watch("settings") ?? {};
 
-
-  console.log("editingSection", editingSection)
   return (
     <BaseModel
       isOpen={isOpen}
@@ -158,12 +157,38 @@ export function SectionModal({
               />
 
               {/* Section Key */}
-              <Input
-                label="Section Key"
-                placeholder="e.g. HOME_HERO"
-                error={errors.key?.message}
-                {...register("key")}
-              />
+              <div className="flex flex-col gap-2 w-full">
+                <Label>Section Key</Label>
+
+                <Select
+                  value={watch("key")}
+                  onValueChange={(value) =>
+                    setValue("key", value, {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select section key" />
+                  </SelectTrigger>
+
+                  <SelectContent className="z-[var(--z-dropdown)] bg-[var(--dropdown-bg)] border-[var(--dropdown-border)]">
+                    {Object.entries(SectionKeys).map(([key, value]) => (
+                      <SelectItem key={key} value={value}>
+                        {value.toUpperCase()}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {errors.key?.message && (
+                  <span className="text-xs text-[var(--color-error)] font-medium px-1">
+                    {errors.key.message}
+                  </span>
+                )}
+              </div>
+
 
               {/* Section Type */}
               <div className="flex flex-col gap-2 w-full">
