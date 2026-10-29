@@ -7,16 +7,15 @@ import {
 } from "react";
 
 import { useAuthStore } from "@/features/auth/model/store/useAuthStore";
-import type { User } from "@/features/auth/model/types/user.types";
-import type { LoginDto } from "@/features/auth/model/types/user.dto";
+import type { User } from "@/features/users/model/types/user.types";
+import type { LoginFormData } from "@/features/auth/model/schema/loginSchema";
 
-export type { User };
 
 export interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   loading: boolean;
-  login: (data: LoginDto) => Promise<void>;
+  login: (data: LoginFormData) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -37,7 +36,7 @@ export function AuthProvider({ children }: Props) {
   const storeLogout = useAuthStore((state) => state.logout);
 
   const login = useCallback(
-    async (data: LoginDto) => {
+    async (data: LoginFormData) => {
       await storeLogin(data);
     },
     [storeLogin],

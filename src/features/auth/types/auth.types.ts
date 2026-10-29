@@ -1,18 +1,6 @@
-import type { User } from "../model/types/user.types";
+import type { User } from "@/features/users/model/types/user.types";
+import type { LoginDto } from "../model/types/auth.dto";
 
-export type {
-  User,
-  Address,
-  UserFilters,
-} from "../model/types/user.types";
-
-export type {
-  LoginDto as LoginCredentials,
-  RegisterDto as RegisterPayload,
-  UpdateProfileDto,
-  UpdatePasswordDto,
-  UpdateAvatarDto,
-} from "../model/types/user.dto";
 
 export interface AuthResponse {
   user: User;
@@ -37,8 +25,9 @@ export interface AuthState {
   setInitialized(value: boolean): void;
   clearAuth(): void;
   initializeAuth(): Promise<void>;
-  login(data: import("../model/types/user.dto").LoginDto): Promise<void>;
-  createAcount(data: import("../model/types/user.dto").RegisterDto): Promise<void>;
+  login(data: LoginDto): Promise<void>;
+  createAcount(data: import("../model/types/auth.dto").RegisterDto): Promise<void>;
+  forgotPassword(data: import("../model/types/auth.dto").ForgotPasswordDto): Promise<void>;
   logout(): Promise<void>;
   fetchUser(): Promise<void>;
   updateAccessToken(): Promise<string>;

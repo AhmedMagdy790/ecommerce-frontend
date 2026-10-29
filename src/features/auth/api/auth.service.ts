@@ -7,14 +7,15 @@ import type {
   AuthResponse,
 } from "../model/types/auth.types";
 
-import type { LoginDto, RegisterDto } from "../model/types/user.dto";
-import type { User } from "../model/types/user.types";
+import type { ForgotPasswordDto, RegisterDto } from "../model/types/auth.dto";
+import type { LoginFormData } from "../model/schema/loginSchema";
+import type { User } from "@/features/users/model/types/user.types";
 
 export const authServices = {
-  login(payload: LoginDto) {
+  login(payload: LoginFormData) {
     return authApi.login<
       SuccessApiResponse<AuthResponse>,
-      LoginDto
+      LoginFormData
     >(payload);
   },
 
@@ -30,6 +31,13 @@ export const authServices = {
       SuccessApiResponse<null>
     >();
   },
+
+  forgotPassword(payload: ForgotPasswordDto) {
+    return authApi.forgotPassword<
+      SuccessApiResponse<AuthResponse>
+    >(payload);
+  },
+  
 
   me() {
     return authApi.me<

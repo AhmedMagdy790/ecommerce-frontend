@@ -283,6 +283,7 @@ export const authApi = {
   login: <T = any, D = Record<string, any>>(data: D) => request<T>(() => axiosInstance.post(API_ENDPOINTS.auth.login, data)),
   register: <T = any, D = Record<string, any>>(data: D) => request<T>(() => axiosInstance.post(API_ENDPOINTS.auth.register, data)),
   logout: <T = any>() => request<T>(() => axiosInstance.post(API_ENDPOINTS.auth.logout)),
+  forgotPassword: <T = any, D = Record<string, any>>(data: D) => request<T>(() => axiosInstance.post(API_ENDPOINTS.auth.forgotPassword, data)),
   me: <T = any>() => request<T>(() => axiosInstance.get(API_ENDPOINTS.auth.me)),
   refresh: <T = any>() => request<T>(() => axiosInstance.post(API_ENDPOINTS.auth.refresh)),
   getAccessToken: <T = any>() => request<T>(() => axiosInstance.post(API_ENDPOINTS.auth.getAccessToken)),

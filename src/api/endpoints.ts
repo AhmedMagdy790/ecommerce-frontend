@@ -1,4 +1,5 @@
 export const API_ENDPOINTS = {
+  
   auth: {
     login: "/auth/login",
     register: "/auth/register",
@@ -7,6 +8,7 @@ export const API_ENDPOINTS = {
     getAccessToken: "/auth/get-access-token",
     rotateRefresh: "/auth/rotate-refresh",
     me: "/auth/me",
+    forgotPassword: "/auth/forgot-password",
   },
 
   settings: {

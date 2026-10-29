@@ -1,7 +1,6 @@
 // src/features/auth/utils/authHelpers.ts
 
-import type { User } from "../model/types/user.types"; // استورد نوع المستخدم لديك
-
+import type { User } from "@/features/users/model/types/user.types";
 
 export const hasRole = (user: User | null, roleName: string): boolean => {
   if (!user || !Array.isArray(user.roles)) return false;
