@@ -1,59 +1,40 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { authApi, profileApi } from "@/api/client";
-import type { UserProfile } from "@/shared/types/userType";
-
-const PROFILE_QUERY_KEY = ["profile"];
-
-interface UpdateProfilePayload {
-  name: string;
-  email: string;
-  phone?: string;
-}
+import { useMutation } from "@tanstack/react-query";
+import { profileApi } from "@/api/client";
+import type { UserSingleResponse } from "@/features/users/model/types/user.api";
+import type { UpdateProfilePayload } from "@/features/users/model/types/user.dto";
+import type { User } from "@/features/users/model/types/user.types";
+import { useAuthStore } from "@/features/auth/model/store/useAuthStore";
 
 export function useProfile() {
-  const queryClient = useQueryClient();
+  const user = useAuthStore((state) => state.user);
+  const setUser = useAuthStore((state) => state.setUser);
 
-  const { 
-    data: profile, 
-    isLoading, 
-    isError, 
-    error 
-  } = useQuery<UserProfile, Error>({
-    queryKey: PROFILE_QUERY_KEY,
-    queryFn: async () => {
-      const response = await authApi.me();
+  const {
+    mutateAsync: updateProfileMutation,
+    isPending: isSaving,
+  } = useMutation<UserSingleResponse, Error, UpdateProfilePayload>({
+    mutationFn: (updatedData) =>
+      profileApi.updateProfile(updatedData),
 
-      return response.data?.user;
-    },
-    staleTime: 1000 * 60 * 5, 
-    retry: 2, 
-  });
+    onSuccess: (response) => {
+      const updatedUser = response.data.user;
 
-  const { 
-    mutateAsync: updateProfile, 
-    isPending: isSaving 
-  } = useMutation<UserProfile, Error, UpdateProfilePayload>({
-    mutationFn: async (updatedData) => {
-      return await profileApi.updateProfile<UserProfile, UpdateProfilePayload>(updatedData);
-    },
-    onSuccess: (response) => { // افترضنا أن الاستجابة تحتوي على الـ message القادمة من السيرفر
-      queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY });
-      
-      void response;
-    },
-    onError: (err: unknown) => {
-      // ✅ 2. مكان وضع رسالة الخطأ (تظهر للمستخدم عند الفشل)
-
-      throw err;
-      // const errorMessage = handleServerErrors(err);
+      setUser(updatedUser);
     },
   });
+
+  const updateProfile = async (
+    data: UpdateProfilePayload,
+  ): Promise<User> => {
+    const response = await updateProfileMutation(data);
+    return response.data.user;
+  };
 
   return {
-    profile,
-    isLoading,
-    isError,
-    error,
+    profile: user ?? undefined,
+    isLoading: false,
+    isError: false,
+    error: null,
     isSaving,
     updateProfile,
   };
