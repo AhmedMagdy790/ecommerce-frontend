@@ -3,7 +3,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ShoppingBag, Eye, Heart, Star } from "lucide-react";
+import { ShoppingBag, Eye, Heart } from "lucide-react";
 
 import type { Product } from "@/features/product/model/types/product.types";
 import type { ProductVariant } from "@/features/product-variants/model/types/productVariant.types";
@@ -31,27 +31,55 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   // تحديد الـ Locale تلقائياً بناءً على اللغة الحالية لـ i18next دون الحاجة لـ useLang
   const locale = i18n.language === "ar" ? "ar-EG" : "en-US";
 
-  const mainImage = product.image;
+  const mainImage = product.thumbnail;
 
   const primaryVariant: ProductVariant<string> | undefined =
-    Array.isArray(product.variants) ? product.variants[0] : undefined;
+  Array.isArray(product.variants)
+    ? product.variants.find(
+        (variant) =>
+          variant.status === "active" &&
+          variant.is_available === true,
+      )
+    : undefined;
 
-  const price = Number(
-    product.price ?? primaryVariant?.price ?? product.starting_at ?? 0,
-  );
+  const rawPrice =
+    primaryVariant?.price ??
+    product.starting_at ??
+    product.price;
 
-  const oldPrice = Number(product.oldPrice ?? 0);
-  const hasDiscount = oldPrice > price;
+  const price =
+    rawPrice !== null &&
+    rawPrice !== undefined &&
+    rawPrice !== ""
+      ? Number(rawPrice)
+      : null;
+
+  const rawOldPrice = product.old_price;
+
+  const oldPrice =
+    rawOldPrice !== null &&
+    rawOldPrice !== undefined &&
+    rawOldPrice !== ""
+      ? Number(rawOldPrice)
+      : null;
+
+  const hasValidPrice =
+    price !== null &&
+    Number.isFinite(price) &&
+    price >= 0;
+
+  const hasDiscount =
+    hasValidPrice &&
+    oldPrice !== null &&
+    Number.isFinite(oldPrice) &&
+    oldPrice > 0 &&
+    oldPrice > price;
 
   const discountPercentage = hasDiscount
     ? Math.round(((oldPrice - price) / oldPrice) * 100)
     : 0;
 
   const productName = product.name;
-  const categoryName =
-    product.category?.name ||
-    product.brand?.name ||
-    t("store", "Store");
 
   const formatPrice = (amount: number) =>
     new Intl.NumberFormat(locale, {
@@ -150,31 +178,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       {/* Product details */}
       <div className="flex flex-1 flex-col justify-between p-4 sm:p-5">
         <div>
-          {/* Category and rating */}
-          <div className="mb-2 flex items-center justify-between gap-2 text-xs text-text-muted font-medium">
-            <span className="min-w-0 truncate">{categoryName}</span>
 
-            {product.rating != null && Number(product.rating) > 0 && (
-              <div
-                className="flex shrink-0 items-center gap-1 font-semibold text-text-primary"
-                aria-label={t("rating", {
-                  defaultValue: "Rating: {{rating}}",
-                  rating: Number(product.rating).toFixed(1),
-                })}
-              >
-                <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
-
-                <span>{Number(product.rating).toFixed(1)}</span>
-
-                {product.reviewsCount != null &&
-                  Number(product.reviewsCount) > 0 && (
-                    <span className="text-text-muted">
-                      ({product.reviewsCount})
-                    </span>
-                  )}
-              </div>
-            )}
-          </div>
 
           {/* Product name */}
           <Link
@@ -194,9 +198,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               </span>
             )}
 
-            <span className="text-base font-bold text-primary">
-              {formatPrice(price)}
-            </span>
+            {hasValidPrice ? (
+              <span className="text-base font-bold text-primary">
+                {formatPrice(price)}
+              </span>
+            ) : (
+              <span className="text-sm text-text-muted">
+                {t("priceUnavailable", "Price unavailable")}
+              </span>
+            )}
           </div>
 
           {onAddToCart && (
