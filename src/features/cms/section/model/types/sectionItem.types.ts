@@ -18,7 +18,7 @@ export interface SectionItem<TText = TranslatedText | string> {
 
   data: Record<string, unknown> | unknown[] | null;
 
-  product?: Product | null;
+  product?: Product<TText> | null;
 
   button_text?: TText | null;
   action_text?: TText | null;
