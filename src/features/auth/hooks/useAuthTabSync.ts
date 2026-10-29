@@ -8,9 +8,6 @@ export function useAuthTabSync() {
         return subscribeAuthEvents((type) => {
             const authStore = useAuthStore.getState();
 
-            console.log("type", type)
-
-
             if (type === "LOGOUT") {
                 authStore.clearAuth();
                 return;
@@ -26,8 +23,6 @@ export function useAuthTabSync() {
                 useAuthStore.setState({
                     isInitialized: false,
                 });
-
-                console.log("LOGIN received → Start initializeAuth");
 
                 void useAuthStore.getState().initializeAuth();
             }
