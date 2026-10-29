@@ -1,24 +1,22 @@
-// src/features/managers/dashboard/components/ManagerModal.tsx
-
-import { useRef, useMemo } from "react";
-import { Controller, type Path } from "react-hook-form";
-import { User, Mail, Phone, Lock } from "lucide-react";
+import { useState, useRef, useMemo } from "react";
+import { Controller } from "react-hook-form";
+import { User, Mail, Phone, Lock, UserPlus, UserCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { useLanguageStore } from "@/features/language/store/useLanguageStore";
 import { Input } from "@/shared/components/ui/Input";
 import BaseModel from "@/shared/components/BaseModal";
 import { type IModal } from "@/shared/types/types";
 import CustomSelect from "@/shared/components/CustomSelect";
 import { ImageUploadField } from "@/shared/components/ImageUploadField";
-import { checkLanguageError, getTranslatedError } from "@/shared/utils/helper";
+import { checkLanguageError } from "@/shared/utils/helper";
 import { LanguageOptions } from "@/shared/components/LanguageOptions";
 import { ActionButtons } from "@/shared/components/ActionButtons";
 
 import type { User as UserType } from "@/features/users/model/types/user.types";
-import type { UserFormInput } from "@/features/users/model/schema/userSchema";
 import { useManagerForm } from "../hooks/useManagerForm";
 import { useRoleOptions } from "@/features/roles/hooks/useRoleOptions";
+import { useUserStore } from "@/features/users/model/store/useUserStore";
+import { UserSelectField } from "@/features/users/components/UserSelectField";
 
 interface IManagerModal extends IModal {
   user?: UserType | null;
@@ -27,41 +25,54 @@ interface IManagerModal extends IModal {
 export default function ManagerModal({ isOpen, closeModal, user }: IManagerModal) {
   const { t } = useTranslation();
 
-  const { currentLangCode, getCurrentLangName } = useLanguageStore();
-  const currentLangName = getCurrentLangName();
-
   const formRef = useRef<HTMLFormElement>(null);
 
-  // 1. جلب خيارات الأدوار الجاهزة مع حالة التحميل
+  // وضع الإنشاء: خيار بين (مستخدم موجود) أو (مستخدم جديد)
+  const [creationMode, setCreationMode] = useState<"select" | "create">("select");
+  const users = useUserStore((state) => state.items);
+
   const { roleOptions, isRolesLoading } = useRoleOptions();
+  const { methods, onSubmit, isSubmitting, submitError, isEditMode } = useManagerForm(
+    user,
+    closeModal,
+    isOpen
+  );
 
-  // 2. ربط الـ Hook الخاص بالفورم
-  const { 
-    methods, 
-    onSubmit, 
-    isSubmitting, 
-    submitError, 
-    isEditMode 
-  } = useManagerForm(user, closeModal, isOpen);
+  const { register, control, setValue, formState: { errors } } = methods;
 
-  const {
-    register,
-    control,
-    formState: { errors },
-  } = methods;
+  const handleModeChange = (mode: "select" | "create") => {
+    setCreationMode(mode);
+    setValue("mode", mode);
 
-  // تسجيل الحقول المترجمة (الاسم)
-  const registerTranslatedField = (field: "name", lang: string) => {
-    return register(`${field}.${lang}` as Path<UserFormInput>);
+
+    setValue("user_id", "");
+    setValue("name", "");
+    setValue("email", "");
+    setValue("phone", "");
   };
 
-  // خيارات حالة الحساب
-  const statusOptions = useMemo(() => [
-    { label: `🟢 ${t("status.active", "نشط")}`, value: "active" },
-    { label: `🔴 ${t("status.inactive", "غير نشط")}`, value: "inactive" },
-  ], [t]);
+  const handleSelectUser = (selectedId: string | number) => {
 
-  // فحص أخطاء الترجمة للغات
+    const foundUser = users.find(
+      (u) => String(u.id) === String(selectedId)
+    );
+    console.log("foundUser", foundUser)
+
+    if (foundUser) {
+      setValue("name", foundUser.name || "");
+      setValue("email", foundUser.email || "");
+      setValue("phone", foundUser.phone || "");
+    }
+  };
+
+  const statusOptions = useMemo(
+    () => [
+      { label: `🟢 ${t("status.active", "نشط")}`, value: "active" },
+      { label: `🔴 ${t("status.inactive", "غير نشط")}`, value: "inactive" },
+    ],
+    [t]
+  );
+
   const hasLanguageError = (lang: string) => {
     return checkLanguageError(methods.formState.errors, lang, ["name"]);
   };
@@ -83,7 +94,7 @@ export default function ManagerModal({ isOpen, closeModal, user }: IManagerModal
       title={
         isEditMode
           ? t("managers.editManager", "تعديل بيانات المشرف")
-          : t("managers.addNewManager", "إضافة مشرف جديد")
+          : t("managers.addNewManager", "إضافة مشرف")
       }
       description={t("managers.modalDescription", "أدخل بيانات المشرف والصلاحيات الموكلة له")}
       maxWidth="max-w-xl"
@@ -95,43 +106,85 @@ export default function ManagerModal({ isOpen, closeModal, user }: IManagerModal
           </div>
         )}
 
+        {!isEditMode && (
+          <div className="flex gap-2 p-1 mb-4 bg-muted/40 rounded-lg">
+            <button
+              type="button"
+              onClick={() => handleModeChange("select")}
+              className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-medium rounded-md transition-all ${
+                creationMode === "select"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <UserCheck size={14} />
+              {t("managers.selectExistingUser", "اختيار من المستخدمين")}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleModeChange("create")}
+              className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-medium rounded-md transition-all ${
+                creationMode === "create"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <UserPlus size={14} />
+              {t("managers.createNewUser", "إنشاء مستخدم جديد")}
+            </button>
+          </div>
+        )}
+
         <div className="space-y-5 py-3">
-          {/* 🌐 شريط اختيار اللغات للحقول المترجمة */}
+          {!isEditMode && creationMode === "select" && (
+            <UserSelectField
+              name="user_id"
+              control={control}
+              label={t("managers.selectUserLabel", "اختيار المستخدم")}
+              onUserSelect={handleSelectUser}
+              disabled={isSubmitting}
+            />
+          )}
+
           <LanguageOptions
             t={t}
             title={t("modal.basic.section_title", "البيانات الأساسية")}
             hasLanguageError={hasLanguageError}
           />
 
-          {/* 👤 اسم المشرف (مترجم) */}
           <Input
-            key={`name-${currentLangCode}`}
-            label={`${t("managers.managerName", "اسم المشرف")} (${currentLangName})`}
+            key={`name`}
+            label={t("managers.managerName", "اسم المشرف")}
             placeholder={t("managers.namePlaceholder", "أدخل اسم المشرف...")}
-            error={getTranslatedError(errors.name, currentLangCode)}
+            disabled={!isEditMode && creationMode === "select"}
+            error={errors?.name?.message}
             icon={<User size={16} />}
-            {...registerTranslatedField("name", currentLangCode)}
+            {...register("name")}
           />
 
-          {/* 🖼️ الصورة الشخصية (Avatar) */}
           <Controller
             name="avatar"
             control={control}
             render={({ field }) => (
-              <ImageUploadField
-                value={field.value ?? null}
-                variant="default"
-                onChange={(file) => field.onChange(file)}
-                error={errors.avatar?.message?.toString()}
-              />
+              <div
+                className={!isEditMode && creationMode === "select" ? "pointer-events-none opacity-50" : undefined}
+                aria-disabled={!isEditMode && creationMode === "select"}
+              >
+                <ImageUploadField
+                  value={field.value ?? null}
+                  variant="default"
+                  onChange={(file) => field.onChange(file)}
+                  error={errors.avatar?.message?.toString()}
+                />
+              </div>
             )}
           />
 
-          {/* 📧 البريد الإلكتروني والهاتف */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               label={t("common.email", "البريد الإلكتروني")}
               type="email"
+              disabled={!isEditMode && creationMode === "select"}
               placeholder="example@domain.com"
               error={errors.email?.message}
               icon={<Mail size={16} />}
@@ -141,6 +194,7 @@ export default function ManagerModal({ isOpen, closeModal, user }: IManagerModal
             <Input
               label={t("common.phone", "رقم الهاتف")}
               type="tel"
+              disabled={!isEditMode && creationMode === "select"}
               placeholder="+20123456789"
               error={errors.phone?.message}
               icon={<Phone size={16} />}
@@ -148,32 +202,33 @@ export default function ManagerModal({ isOpen, closeModal, user }: IManagerModal
             />
           </div>
 
-          {/* 🔑 كلمة المرور وتأكيد كلمة المرور */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              label={
-                isEditMode
-                  ? t("managers.passwordOptional", "كلمة المرور (اختياري)")
-                  : t("common.password", "كلمة المرور")
-              }
-              type="password"
-              placeholder="••••••••"
-              error={errors.password?.message}
-              icon={<Lock size={16} />}
-              {...register("password")}
-            />
+          {(isEditMode || creationMode === "create") && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                label={
+                  isEditMode
+                    ? t("managers.passwordOptional", "كلمة المرور (اختياري)")
+                    : t("common.password", "كلمة المرور")
+                }
+                type="password"
+                placeholder="••••••••"
+                error={errors.password?.message}
+                icon={<Lock size={16} />}
+                {...register("password")}
+              />
 
-            <Input
-              label={t("common.confirmPassword", "تأكيد كلمة المرور")}
-              type="password"
-              placeholder="••••••••"
-              error={errors.password_confirmation?.message}
-              icon={<Lock size={16} />}
-              {...register("password_confirmation")}
-            />
-          </div>
+              <Input
+                label={t("common.confirmPassword", "تأكيد كلمة المرور")}
+                type="password"
+                placeholder="••••••••"
+                error={errors.password_confirmation?.message}
+                icon={<Lock size={16} />}
+                {...register("password_confirmation")}
+              />
+            </div>
+          )}
 
-          {/* 🛡️ الحالة والدور الوظيفي المدمج (Status & Role) */}
+          {/* 🛡️ الحالة والدور الوظيفي */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Controller
               name="status"
@@ -200,13 +255,7 @@ export default function ManagerModal({ isOpen, closeModal, user }: IManagerModal
                   disabled={isSubmitting || isRolesLoading}
                   placeholder={t("managers.selectRole", "اختر الدور...")}
                   options={roleOptions}
-                  value={
-                    Array.isArray(field.value) && field.value.length > 0
-                      ? String(field.value[0])
-                      : typeof field.value === "string" || typeof field.value === "number"
-                      ? String(field.value)
-                      : ""
-                  }
+                  value={field.value}
                   onChange={(val) => field.onChange(val ? [val] : [])}
                   error={errors.roles?.message}
                 />
