@@ -37,17 +37,17 @@ export const sectionItemAdapter = {
       product_id: formData.product_id || null,
       title: formData.title,
       subtitle: formData.subtitle || null,
-      description: formData.description || null, // Added missing field
+      description: formData.description || null,
       image: formData.image || null,
       link: formData.link || null,
-      button_text: formData.button_text || null, // Added missing field
-      action_text: formData.action_text || null, // Added missing field
-      float_title: formData.float_title || null, // Added missing field
-      float_subtitle: formData.float_subtitle || null, // Added missing field
-      stat_number: formData.stat_number || null, // Added missing field
-      stat_text: formData.stat_text || null, // Added missing field
+      button_text: formData.button_text || null,
+      action_text: formData.action_text || null,
+      float_title: formData.float_title || null,
+      float_subtitle: formData.float_subtitle || null,
+      stat_number: formData.stat_number || null,
+      stat_text: formData.stat_text || null,
       sort_order: formData.sort_order ?? 0,
-      data: formData.data || {}, // Fallback to empty object matching z.record
+      data: formData.data ?? null
     };
   },
 
@@ -57,17 +57,17 @@ export const sectionItemAdapter = {
       product_id: formData.product_id || null,
       title: formData.title,
       subtitle: formData.subtitle || null,
-      description: formData.description || null, // Added missing field
+      description: formData.description || null,
       image: formData.image || null,
       link: formData.link || null,
-      button_text: formData.button_text || null, // Added missing field
-      action_text: formData.action_text || null, // Added missing field
-      float_title: formData.float_title || null, // Added missing field
-      float_subtitle: formData.float_subtitle || null, // Added missing field
-      stat_number: formData.stat_number || null, // Added missing field
-      stat_text: formData.stat_text || null, // Added missing field
+      button_text: formData.button_text || null,
+      action_text: formData.action_text || null,
+      float_title: formData.float_title || null,
+      float_subtitle: formData.float_subtitle || null,
+      stat_number: formData.stat_number || null,
+      stat_text: formData.stat_text || null,
       sort_order: formData.sort_order ?? 0,
-      data: formData.data || {}, // Fallback to empty object matching z.record
+      data: formData.data ?? null
     };
   },
 };
