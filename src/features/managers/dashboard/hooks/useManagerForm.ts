@@ -1,20 +1,35 @@
-// src/features/managers/dashboard/hooks/useManagerForm.ts
-
 import { useEffect, useMemo, useRef } from "react";
 import { useForm, type Path } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-
 import { useManagerStore } from "../../model/store/useManagerStore";
 import { handleServerErrors } from "@/shared/utils/handleServerError";
-import { userSchema, type UserFormData, type UserFormInput } from "@/features/users/model/schema/userSchema";
-import { userFromDefault } from "@/features/users/dashboard/constants/userFromDefault";
-import type { InitialUserData } from "@/features/users/model/types/user.from.typs";
 import { mapUserToForm } from "@/features/users/dashboard/mappers/mapUserForm";
-import { userAdapter } from "@/features/users/adapters/user.adapter";
+
+
+import {
+  managerSchema,
+  type ManagerFormData,
+  type ManagerFormInput,
+} from "../../model/schema/managerSchema";
+import { managerAdapter } from "../../adapters/manager.adapter";
+import type { User } from "@/features/users/model/types/user.types";
+
+export const managerFormDefault: ManagerFormInput = {
+  mode: "select",
+  user_id: "",
+  name: "",
+  email: "",
+  phone: "",
+  avatar: "",
+  status: "active",
+  roles: [],
+  password: "",
+  password_confirmation: "",
+};
 
 export const useManagerForm = (
-  initialData?: InitialUserData | null,
+  initialData?: User | null,
   closeModal?: () => void,
   isOpen?: boolean
 ) => {
@@ -22,17 +37,24 @@ export const useManagerForm = (
 
   const prevIsOpenRef = useRef(isOpen);
 
-  const methods = useForm<UserFormInput, unknown, UserFormData>({
-    resolver: zodResolver(userSchema),
-    defaultValues: userFromDefault,
+  const methods = useForm<ManagerFormInput, unknown, ManagerFormData>({
+    resolver: zodResolver(managerSchema),
+    defaultValues: managerFormDefault,
   });
 
   const { reset, handleSubmit, setError } = methods;
 
   const isEditMode = Boolean(initialData?.id);
 
-  const sanitizedInitialValues = useMemo(
-    () => (initialData ? mapUserToForm(initialData) : userFromDefault),
+  const sanitizedInitialValues = useMemo<ManagerFormInput>(
+    () =>
+      initialData
+        ? {
+            ...mapUserToForm(initialData),
+            mode: "create",
+            user_id: initialData.id,
+          }
+        : managerFormDefault,
     [initialData]
   );
 
@@ -41,24 +63,36 @@ export const useManagerForm = (
     prevIsOpenRef.current = isOpen;
 
     if (justOpened) {
-      reset(isEditMode ? sanitizedInitialValues : userFromDefault);
+      reset(isEditMode ? sanitizedInitialValues : managerFormDefault);
     }
   }, [isOpen, reset, isEditMode, sanitizedInitialValues]);
 
   const resetForm = () => {
-    reset(userFromDefault);
+    reset(managerFormDefault);
   };
 
-  const submitManager = async (formData: UserFormData) => {
+  const submitManager = async (formData: ManagerFormData) => {
     if (isSubmitting) return;
 
     try {
-      if (isEditMode && initialData?.id) {
-        const payload = userAdapter.toUpdateDto(formData);
-        await update(initialData.id, payload);
-      } else {
-        const payload = userAdapter.toCreateDto(formData);
+
+      if (formData.mode === "create") {
+
+        const payload = {
+          mode: formData.mode,
+          user_id: formData.user_id,
+          roles: formData.roles,
+          status: formData.status,
+        };
         await create(payload);
+      } else {
+
+
+        const payload = managerAdapter.toCreateDto(formData);
+        if (payload.user_id == null) {
+          throw new Error("A user ID is required to update a manager.");
+        }
+        await update(payload.user_id, payload);
       }
 
       resetForm();
@@ -66,15 +100,17 @@ export const useManagerForm = (
     } catch (error: unknown) {
       console.error("Failed to submit manager:", error);
 
-      const managerFields: Path<UserFormInput>[] = [
-        "name" as Path<UserFormInput>,
-        "email" as Path<UserFormInput>,
-        "phone" as Path<UserFormInput>,
-        "password" as Path<UserFormInput>,
-        "password_confirmation" as Path<UserFormInput>,
-        "status" as Path<UserFormInput>,
-        "roles" as Path<UserFormInput>,
-        "avatar" as Path<UserFormInput>,
+      const managerFields: Path<ManagerFormInput>[] = [
+        "mode",
+        "user_id",
+        "name",
+        "email",
+        "phone",
+        "password",
+        "password_confirmation",
+        "status",
+        "roles",
+        "avatar",
       ];
 
       handleServerErrors(error, setError, managerFields);
