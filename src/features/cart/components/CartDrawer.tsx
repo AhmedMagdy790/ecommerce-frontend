@@ -131,8 +131,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                   const product = item.product;
                   const variant = item.variant;
                   const itemPrice = Number(variant?.price ?? product?.price ?? 0);
-                  const itemImage =
-                    product?.image || product?.thumbnail || '/images/placeholders/product.webp';
+                  const itemImage = product?.thumbnail || '/images/placeholders/product.webp';
 
                   return (
                     <div
