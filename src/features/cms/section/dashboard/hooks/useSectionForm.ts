@@ -1,68 +1,75 @@
+
 import { useEffect, useMemo, useRef } from "react";
 import { useForm, type Path } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { defaultSectionValues as defaultValues } from "../constants/sectionFormDefault";
+
 import { mapSectionToForm } from "../mappers/mapSectionForm";
+import { createDefaultSectionValues } from "../constants/sectionFormDefault";
+
 import { handleServerErrors } from "@/shared/utils/handleServerError";
 import { langKeys } from "@/shared/utils/langHelpers";
+
 import type { Section } from "../../model/types/section.types";
-import { useSectionStore } from "../../model/store/useSectionStore";
-import { sectionSchema, type SectionFormData, type SectionFormInput } from "../../model/schema/sectionSchema";
-import { sectionAdapter } from "../../adapters/section.adapter";
 import type { TranslatedText } from "@/shared/types/types";
+
+import { useSectionStore } from "../../model/store/useSectionStore";
+import {
+    sectionSchema,
+    type SectionFormData,
+    type SectionFormInput,
+} from "../../model/schema/sectionSchema";
+
+import { sectionAdapter } from "../../adapters/section.adapter";
 
 export const useSectionForm = (
     initialData?: Section<TranslatedText> | null,
     closeModal?: () => void,
     isOpen?: boolean,
-    pageId?: number
+    pageId?: number,
 ) => {
-    const { 
-        create, 
+    const {
+        create,
         update,
-        isSubmitting, 
-        submitError
+        isSubmitting,
+        submitError,
     } = useSectionStore();
 
     const prevIsOpenRef = useRef(isOpen);
 
+    // In edit mode, fall back to the page ID stored on the section.
+    const resolvedPageId = pageId ?? initialData?.page_id ?? 0;
+
+    const isEditMode = Boolean(initialData?.id);
+
+    const defaultValues = useMemo(
+        () => createDefaultSectionValues(resolvedPageId),
+        [resolvedPageId],
+    );
+
+    const sanitizedInitialValues = useMemo(
+        () => mapSectionToForm(resolvedPageId, initialData),
+        [resolvedPageId, initialData],
+    );
+
     const methods = useForm<SectionFormInput, unknown, SectionFormData>({
         resolver: zodResolver(sectionSchema),
-        defaultValues: {
-            ...defaultValues,
-            ...(pageId ? { page_id: pageId } : {}),
-        },
+        defaultValues,
     });
 
     const { reset, handleSubmit, setError } = methods;
 
-    const isEditMode = Boolean(initialData?.id);
-
-    const sanitizedInitialValues = useMemo(
-        () => (initialData ? mapSectionToForm(initialData) : {
-            ...defaultValues,
-            ...(pageId ? { page_id: pageId } : {}),
-        }),
-        [initialData, pageId]
-    );
-
     useEffect(() => {
         const justOpened = !prevIsOpenRef.current && isOpen;
+
         prevIsOpenRef.current = isOpen;
 
         if (justOpened) {
-            reset(isEditMode ? sanitizedInitialValues : {
-                ...defaultValues,
-                ...(pageId ? { page_id: pageId } : {}),
-            });
+            reset(sanitizedInitialValues);
         }
-    }, [isOpen, reset, isEditMode, sanitizedInitialValues, pageId]);
+    }, [isOpen, reset, sanitizedInitialValues]);
 
     const resetForm = () => {
-        reset({
-            ...defaultValues,
-            ...(pageId ? { page_id: pageId } : {}),
-        });
+        reset(createDefaultSectionValues(resolvedPageId));
     };
 
     const submitSection = async (formData: SectionFormData) => {
@@ -83,17 +90,17 @@ export const useSectionForm = (
             console.error("Failed to submit section:", error);
 
             const nameFields = langKeys.map(
-                (lang) => `name.${lang}` as Path<SectionFormInput>
+                (lang) => `name.${lang}` as Path<SectionFormInput>,
             );
 
             handleServerErrors(error, setError, [
                 ...nameFields,
-                'page_id',
-                'key',
-                'type',
-                'sort_order',
-                'is_active',
-                'settings'
+                "page_id",
+                "key",
+                "type",
+                "sort_order",
+                "is_active",
+                "settings",
             ]);
         }
     };
