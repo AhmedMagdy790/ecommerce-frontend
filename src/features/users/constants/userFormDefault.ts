@@ -10,5 +10,5 @@ export const defaultUserValues: UserFormData = {
   roles: [],
   avatar: null,
   password: "",
-  password_confirmation: "",
+  password_confirmed: "",
 };
