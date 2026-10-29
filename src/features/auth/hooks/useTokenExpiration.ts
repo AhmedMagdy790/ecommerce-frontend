@@ -5,131 +5,158 @@ const LOG_PREFIX = "[TOKEN EXPIRATION]";
 const MAX_TIMEOUT = 2_147_000_000;
 
 export const getTokenExpiration = (expiresIn?: number | null) => {
-    if (
-        typeof expiresIn !== "number" ||
-        !Number.isFinite(expiresIn) ||
-        expiresIn <= 0
-    ) {
-        console.warn(`${LOG_PREFIX} Invalid expiresIn`, { expiresIn });
-        return null;
-    }
+  if (
+    typeof expiresIn !== "number" ||
+    !Number.isFinite(expiresIn) ||
+    expiresIn <= 0
+  ) {
+    console.warn(`${LOG_PREFIX} Invalid expiresIn`, { expiresIn });
+    return null;
+  }
 
-    const expiresAt = Date.now() + expiresIn * 1000;
-
-    console.log(`${LOG_PREFIX} Expiration calculated`, {
-        now: new Date().toISOString(),
-        expiresInSeconds: expiresIn,
-        expiresAt: new Date(expiresAt).toISOString(),
-    });
-
-    return expiresAt;
+  return Date.now() + expiresIn * 1000;
 };
 
 interface UseTokenExpirationOptions {
-    onExpire?: () => void | Promise<void>;
-    refreshBeforeMs?: number;
+  onExpire?: () => void | Promise<void>;
+  refreshBeforeMs?: number;
+  idleTimeoutMs?: number;
 }
 
 export function useTokenExpiration({
-    onExpire,
-    refreshBeforeMs = 60_000,
+  onExpire,
+  refreshBeforeMs = 60_000,
+  idleTimeoutMs = 5 * 60_000,
 }: UseTokenExpirationOptions = {}) {
-    console.log("start useTokenExpiration")
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const expiresAt = useAuthStore((state) => state.accessTokenExpiresAt);
 
-    const accessToken = useAuthStore(
-        (state) => state.accessToken
-    );
+  const onExpireRef = useRef(onExpire);
 
-    const expiresAt = useAuthStore(
-        (state) => state.accessTokenExpiresAt
-    );
+  useEffect(() => {
+    onExpireRef.current = onExpire;
+  }, [onExpire]);
 
-    const onExpireRef = useRef(onExpire);
+  useEffect(() => {
+    if (!accessToken || expiresAt === null) {
+      return;
+    }
 
-    useEffect(() => {
-        onExpireRef.current = onExpire;
+    let timer: number | undefined;
+    let disposed = false;
+    let refreshing = false;
+    let lastActivityAt = Date.now();
 
-    }, [onExpire]);
+    const clearTimer = () => {
+      if (timer !== undefined) {
+        window.clearTimeout(timer);
+        timer = undefined;
+      }
+    };
 
-    useEffect(() => {
+    const isActive = () =>
+      document.visibilityState === "visible" &&
+      Date.now() - lastActivityAt < idleTimeoutMs;
 
-        if (!accessToken || expiresAt === null) {
+    const scheduleCheck = (delay: number) => {
+      clearTimer();
 
-            return;
+      timer = window.setTimeout(() => {
+        void checkExpiration();
+      }, Math.max(0, Math.min(delay, MAX_TIMEOUT)));
+    };
+
+    const checkExpiration = async () => {
+      clearTimer();
+
+      if (disposed) return;
+
+      if (!isActive()) {
+        if (document.visibilityState === "visible") {
+          const idleRemaining =
+            idleTimeoutMs - (Date.now() - lastActivityAt);
+
+          scheduleCheck(Math.max(1, idleRemaining));
         }
 
-        let timer: number | undefined;
-        let handled = false;
+        return;
+      }
 
-        const clearTimer = () => {
-            if (timer !== undefined) {
+      const timeUntilRefresh = expiresAt - Date.now() - refreshBeforeMs;
 
-                window.clearTimeout(timer);
-                timer = undefined;
-            }
-        };
+      if (timeUntilRefresh > 0) {
+        const idleRemaining =
+          idleTimeoutMs - (Date.now() - lastActivityAt);
 
-        const checkExpiration = () => {
-            clearTimer();
+        scheduleCheck(Math.min(timeUntilRefresh, idleRemaining));
+        return;
+      }
 
-            if (handled) {
-                console.log(`${LOG_PREFIX} Check skipped: already handled`);
-                return;
-            }
+      if (refreshing) return;
 
-            const now = Date.now();
-            const remaining = expiresAt - now;
-            const timeUntilRefresh = remaining - refreshBeforeMs;
+      refreshing = true;
 
- 
+      try {
+        await onExpireRef.current?.();
+      } catch (error: unknown) {
+        console.error(`${LOG_PREFIX} Refresh failed`, error);
+      } finally {
+        refreshing = false;
+      }
+    };
 
-            if (timeUntilRefresh <= 0) {
-                handled = true;
+    const handleActivity = () => {
+      const wasInactive = !isActive();
 
-                Promise.resolve(onExpireRef.current?.())
-                    .then(() => {
-                        console.log(
-                            `${LOG_PREFIX} onExpire completed successfully`
-                        );
-                    })
-                    .catch((error: unknown) => {
-                        console.error(
-                            `${LOG_PREFIX} onExpire failed`,
-                            error
-                        );
-                    });
+      lastActivityAt = Date.now();
+      
+      if (wasInactive) {
+        void checkExpiration();
+      }
+    };
 
-                return;
-            }
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        void checkExpiration();
+      } else {
+        clearTimer();
+      }
+    };
 
-            const delay = Math.min(timeUntilRefresh, MAX_TIMEOUT);
+    const activityEvents: (keyof DocumentEventMap)[] = [
+      "mousemove",
+      "mousedown",
+      "keydown",
+      "touchstart",
+      "scroll",
+      "pointerdown",
+    ];
 
-            timer = window.setTimeout(checkExpiration, delay);
-        };
+    activityEvents.forEach((event) => {
+      document.addEventListener(event, handleActivity, {
+        passive: true,
+      });
+    });
 
-        const handleVisibilityChange = () => {
+    document.addEventListener(
+      "visibilitychange",
+      handleVisibilityChange,
+    );
 
-            if (document.visibilityState === "visible") {
+    void checkExpiration();
 
-                checkExpiration();
-            }
-        };
+    return () => {
+      disposed = true;
+      clearTimer();
 
-        checkExpiration();
+      activityEvents.forEach((event) => {
+        document.removeEventListener(event, handleActivity);
+      });
 
-        document.addEventListener(
-            "visibilitychange",
-            handleVisibilityChange
-        );
-
-        return () => {
-
-            clearTimer();
-
-            document.removeEventListener(
-                "visibilitychange",
-                handleVisibilityChange
-            );
-        };
-    }, [accessToken, expiresAt, refreshBeforeMs]);
+      document.removeEventListener(
+        "visibilitychange",
+        handleVisibilityChange,
+      );
+    };
+  }, [accessToken, expiresAt, refreshBeforeMs, idleTimeoutMs]);
 }
