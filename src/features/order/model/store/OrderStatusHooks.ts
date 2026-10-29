@@ -19,7 +19,7 @@ export const orderStatusHooks = {
 
     const statusKey = item.status;
     if (statusKey) {
-      store.increment(statusKey as keyof OrderStatsData);
+      store.increment(statusKey);
     }
   },
 
@@ -35,10 +35,10 @@ export const orderStatusHooks = {
     
     const prevStatus = previousItem.status;
     if (prevStatus) {
-      store.decrement(prevStatus as keyof OrderStatsData);
+      store.decrement(prevStatus);
     }
 
-    store.increment("trashed" as keyof OrderStatsData);
+    store.increment("trashed");
   },
 
   onStatusChanged: (
@@ -48,12 +48,12 @@ export const orderStatusHooks = {
     const store = orderStatsStore.getState();
 
     if (previousStatus) {
-      store.decrement(previousStatus as keyof OrderStatsData);
+      store.decrement(previousStatus);
     }
 
     const newStatus = item.status;
     if (newStatus) {
-      store.increment(newStatus as keyof OrderStatsData);
+      store.increment(newStatus);
     }
   },
 
@@ -67,7 +67,7 @@ export const orderStatusHooks = {
 
     const currentStatus = item.status;
     if (currentStatus) {
-      store.increment(currentStatus as keyof OrderStatsData);
+      store.increment(currentStatus);
     }
   },
 };
