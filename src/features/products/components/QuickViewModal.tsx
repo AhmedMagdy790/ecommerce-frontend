@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { X, ShoppingBag, Heart, Star, Check } from "lucide-react";
+import { X, ShoppingBag, Heart, Check } from "lucide-react";
 
+import { useLang } from "@/shared/context/LanguageContext";
 import type { Product } from "@/features/product/model/types/product.types";
 import type { ProductVariant } from "@/features/product-variants/model/types/productVariant.types";
 
@@ -34,13 +35,11 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
   onToggleWishlist,
   isWishlisted = false,
 }) => {
-  const { t, i18n } = useTranslation("quickView");
+  const { t } = useTranslation("quickView");
 
-  const isArabic = (i18n.resolvedLanguage ?? i18n.language)
-    .toLowerCase()
-    .startsWith("ar");
+  const { isRTL } = useLang();
 
-  const locale = isArabic ? "ar-EG" : "en-US";
+  const locale = isRTL ? "ar-EG" : "en-US";
 
   const [selection, setSelection] = useState<SelectionState>({
     productId: null,
@@ -50,7 +49,11 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
   });
 
   const variants: ProductVariant<string>[] = Array.isArray(product?.variants)
-    ? product.variants
+    ? product.variants.filter(
+        (variant) =>
+          variant.status === "active" &&
+          variant.is_available === true,
+      )
     : [];
 
   const isCurrentProduct =
@@ -102,23 +105,20 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
 
   if (!isOpen || !product) return null;
 
-  const imagesList: string[] = [];
+  const imagesList = [
+    ...new Set(
+      [product.featured_image, product.thumbnail].filter(
+        (url): url is string =>
+          typeof url === "string" && url.trim().length > 0,
+      ),
+    ),
+  ];
 
-  if (product.image) imagesList.push(product.image);
-
-  if (product.thumbnail && !imagesList.includes(product.thumbnail)) {
-    imagesList.push(product.thumbnail);
+  if (imagesList.length === 0) {
+    imagesList.push("/images/placeholders/product.webp");
   }
 
-  if (Array.isArray(product.media)) {
-    product.media.forEach((item) => {
-      const url = item.preview_url;
 
-      if (url && !imagesList.includes(url)) {
-        imagesList.push(url);
-      }
-    });
-  }
 
   if (imagesList.length === 0) {
     imagesList.push("/placeholder-product.png");
@@ -127,26 +127,39 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
   const currentImage =
     imagesList[activeImageIndex] ?? imagesList[0];
 
-  const price = Number(
+  const rawPrice =
     selectedVariant?.price ??
-      product.price ??
-      product.starting_at ??
-      0,
-  );
+    product.starting_at ??
+    product.price;
 
-  const oldPrice = Number(product.oldPrice ?? 0);
-  const hasDiscount = oldPrice > price;
+  const price =
+    rawPrice !== null && rawPrice !== undefined && rawPrice !== ""
+      ? Number(rawPrice)
+      : null;
+
+  const oldPrice =
+    product?.old_price != null && product.old_price !== ""
+      ? Number(product.old_price)
+      : null;
+
+  const hasValidPrice =
+    price !== null && Number.isFinite(price) && price >= 0;
+
+  const hasDiscount =
+    oldPrice !== null &&
+    oldPrice !== undefined &&
+    Number.isFinite(oldPrice) &&
+    price !== null &&
+    Number.isFinite(price) &&
+    oldPrice > price;
 
   const discountPercentage = hasDiscount
-    ? Math.round(((oldPrice - price) / oldPrice) * 100)
+    ? Math.round(((oldPrice - price!) / oldPrice) * 100)
     : 0;
+
 
   const productName = product.name;
 
-  const categoryName =
-    product.category?.name ??
-    product.brand?.name ??
-    t("store", "Store");
 
   const formatPrice = (amount: number) =>
     new Intl.NumberFormat(locale, {
@@ -161,7 +174,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto p-3 sm:p-5"
-      dir={isArabic ? "rtl" : "ltr"}
+      dir={isRTL ? "rtl" : "ltr"}
     >
       {/* Backdrop */}
       <button
@@ -183,7 +196,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
           type="button"
           onClick={onClose}
           aria-label={t("close", "Close")}
-          className={`absolute top-3 z-10 h-10 w-10 ${isArabic ? "left-3" : "right-3"} ${actionButtonClass}`}
+          className={`absolute top-3 z-10 h-10 w-10 ${isRTL ? "left-3" : "right-3"} ${actionButtonClass}`}
         >
           <X className="h-5 w-5" />
         </button>
@@ -242,24 +255,6 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
           {/* Product details */}
           <div className="flex min-w-0 flex-col justify-between gap-6 p-5 sm:p-7">
             <div>
-              <div className="flex flex-wrap items-center justify-between gap-3 pe-10 text-xs text-text-muted">
-                <span>{categoryName}</span>
-
-                {product.rating != null &&
-                  Number(product.rating) > 0 && (
-                    <div className="flex items-center gap-1 font-medium text-text-primary">
-                      <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
-                      <span>{Number(product.rating).toFixed(1)}</span>
-
-                      {product.reviewsCount != null &&
-                        Number(product.reviewsCount) > 0 && (
-                          <span className="text-text-muted">
-                            ({product.reviewsCount})
-                          </span>
-                        )}
-                    </div>
-                  )}
-              </div>
 
               <h2
                 id="quick-view-title"
@@ -270,9 +265,11 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
 
               {/* Price */}
               <div className="mt-3 flex flex-wrap items-baseline gap-3">
-                <span className="text-2xl font-bold text-primary">
-                  {formatPrice(price)}
-                </span>
+                {hasValidPrice && (
+                  <span className="text-2xl font-bold text-primary">
+                    {formatPrice(price)}
+                  </span>
+                )}
 
                 {hasDiscount && (
                   <span className="text-sm text-text-muted line-through">
