@@ -1,3 +1,4 @@
+
 import { Outlet } from "react-router-dom";
 import { useLang } from "@/shared/context/LanguageContext";
 
@@ -19,11 +20,8 @@ export default function UserLayout() {
         <Navbar />
       </header>
 
-      <main
-        id="main-content"
-        className="w-full min-w-0 flex-1 overflow-x-clip py-8"
-      >
-        <Container>
+      <main className="w-full min-w-0 flex-1 overflow-x-clip py-8 sm:py-10">
+        <Container size="lg">
           <Outlet />
         </Container>
       </main>
