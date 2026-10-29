@@ -2,18 +2,17 @@
 
 import { profileApi } from "@/api/client";
 import type { SuccessApiResponse } from "@/shared/types/api.types";
-import type { 
-  UpdateAvatarDto, 
+import type {  
   UpdatePasswordDto, 
-  UpdateProfileDto 
-} from "@/features/auth/model/types/user.dto";
-import type { User } from "@/features/auth/model/types/user.types";
+} from "@/features/auth/model/types/auth.dto";
+import type { User } from "@/features/users/model/types/user.types";
+import type { UpdateUserDto } from "@/features/users/model/types/user.dto";
 
 export const profileService = {
-  updateProfile(payload: UpdateProfileDto) {
+  updateProfile(payload: UpdateUserDto) {
     return profileApi.updateProfile<
       SuccessApiResponse<{ user: User }>,
-      UpdateProfileDto
+      UpdateUserDto
     >(payload);
   },
 
@@ -24,10 +23,10 @@ export const profileService = {
     >(payload);
   },
 
-  updateAvatar(payload: UpdateAvatarDto) {
+  updateAvatar(payload: UpdateUserDto) {
     return profileApi.updateAvatar<
       SuccessApiResponse<{ user: User }>,
-      UpdateAvatarDto
+      UpdateUserDto
     >(payload);
   },
 };
