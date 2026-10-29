@@ -18,18 +18,18 @@ interface CheckoutSummaryProps {
 interface CheckoutCartItem {
   variant?: {
     name?: string;
-    price?: number;
+    price?: number | string | null;
     image_url?: string;
     image?: string;
   };
   product?: {
     name?: string;
-    price?: number;
+    price?: number | string | null;
     image_url?: string;
     image?: string;
   };
   name?: string;
-  price?: number;
+  price?: number | string | null;
   quantity?: number;
   image?: string;
 }
@@ -113,7 +113,7 @@ export default function CheckoutSummary({ loading = false }: CheckoutSummaryProp
                   </div>
                 </div>
                 <span className="font-bold text-sm text-text-primary shrink-0">
-                  {formatCurrency(price * quantity, currencySymbol)}
+                  {formatCurrency(Number(price) * quantity, currencySymbol)}
                 </span>
               </div>
             );
