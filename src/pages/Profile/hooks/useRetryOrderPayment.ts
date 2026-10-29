@@ -9,7 +9,7 @@ interface RetryPaymentVariables {
 export function useRetryOrderPayment() {
   return useMutation({
     mutationFn: ({ orderId, paymentGatewayId }: RetryPaymentVariables) =>
-      orderApi.retryPayment(orderId, { payment_gateway_id: paymentGatewayId }),
+      orderApi.retryPayment<{ data: { checkout_url: string }}>(orderId, { payment_gateway_id: paymentGatewayId }),
 
     onSuccess: (response) => {
 
