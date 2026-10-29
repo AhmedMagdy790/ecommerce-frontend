@@ -13,7 +13,7 @@ export const userSchema = z
     roles: z.array(z.union([z.string(), z.number()])).default([]),
     avatar: z.string().optional().nullable(),
     password: z.string().optional().or(z.literal("")),
-    password_confirmation: z.string().optional().nullable(),
+    password_confirmed: z.string().optional().nullable(),
   })
   .superRefine((data, ctx) => {
     // 1. التحقق من طول كلمة المرور فقط عند كتابتها
@@ -26,7 +26,7 @@ export const userSchema = z
     }
 
     // 2. التحقق من تطابق كلمتي المرور
-    if (data.password && data.password !== data.password_confirmation) {
+    if (data.password && data.password !== data.password_confirmed) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "كلمة المرور غير متطابقة",
