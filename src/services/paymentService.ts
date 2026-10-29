@@ -7,7 +7,7 @@ export const paymentService = {
   async getPaymentGateways(
     countryId: number,
   ): Promise<PaymentGateway<string>[]> {
-    const response = await storeApi.getPaymentGateways({
+    const response = await storeApi.getPaymentGateways<{ data: { gateways: PaymentGateway<string>[] } }>({
       country_id: countryId,
     });
 
