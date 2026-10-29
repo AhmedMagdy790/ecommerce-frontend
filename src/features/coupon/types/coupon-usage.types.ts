@@ -1,4 +1,4 @@
-import type { User } from "@/features/auth/types/auth.types";
+import type { User } from "@/features/users/model/types/user.types";
 import type { Coupon } from "./coupon.types";
 import type { Order } from "@/features/order/model/types/order.types";
 
