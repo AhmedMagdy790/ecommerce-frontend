@@ -4,12 +4,13 @@ import { GripVertical, Pencil, Trash2, ListOrdered, Eye, EyeOff } from "lucide-r
 import { Link } from "react-router-dom";
 import type { Section } from "../../model/types/section.types";
 import { getLocalizedName } from "@/shared/utils/localizeName";
+import type { TranslatedText } from "@/shared/types/types";
 
 interface SectionCardProps {
-  section: Section;
+  section: Section<TranslatedText>;
   index: number;
   lang: string;
-  onEdit: (section: Section) => void;
+  onEdit: (section: Section<TranslatedText>) => void;
   onDelete: (id: string | number) => void;
   onToggleStatus: (id: string | number) => void; // إضافة دالة تبديل الحالة
 }
