@@ -86,6 +86,22 @@ export const checkLanguageError = (errors: any, lang: string, fields: string[] =
   return fields.some((field) => Boolean(errors[field]?.[lang]));
 };
 
+export function getValidImage(value?: string | null): string | undefined {
+  return typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : undefined;
+}
+
+export function toNumber(value: unknown, fallback = 0): number {
+  if (value === null || value === undefined || value === "") {
+    return fallback;
+  }
+
+  const number = Number(value);
+
+  return Number.isFinite(number) ? number : fallback;
+}
+
 export function wait(seconds: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, seconds * 1000);
