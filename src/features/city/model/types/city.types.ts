@@ -1,4 +1,4 @@
-import type { Address } from "@/features/auth/types/auth.types";
+import type { Address } from "@/features/address/model/types/address.types";
 import type { Country } from "@/features/country/model/types/country.types";
 import type { ShippingCourier } from "@/features/shipping/model/types/shipping.types";
 import type { TranslatedText } from "@/shared/types/types";
