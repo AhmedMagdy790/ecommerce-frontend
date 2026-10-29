@@ -41,7 +41,7 @@ export function useProductOptions(
       const thumbnail =
         (typeof product.featured_image === "string"
           ? product.featured_image
-          : product.featured_image?.url) ??
+          : product.featured_image) ??
         product.thumbnail ??
         "/images/placeholders/product.webp";
 
