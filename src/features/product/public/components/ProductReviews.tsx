@@ -5,7 +5,7 @@ import { Star } from "lucide-react";
 import { useLang } from "@/shared/context/LanguageContext";
 import { Container } from "@/shared/components/layout/Container";
 
-interface Review {
+export interface Review {
   id: string | number;
   name: string | { ar?: string; en?: string };
   avatar?: string;
