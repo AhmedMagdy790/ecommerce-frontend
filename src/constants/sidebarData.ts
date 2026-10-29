@@ -37,7 +37,6 @@ export const navItems: NavItem[] = [
     name: "Profile Settings",
     subItems: [
       { name: "Personal Info", path: "/admin/profile" },
-      { name: "My Addresses", path: "/admin/profile/address" },
       { name: "Security", path: "/admin/profile/security" },
     ],
   },
