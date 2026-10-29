@@ -24,7 +24,6 @@ function getImageUrl(imageProp: unknown): string {
   return "/images/placeholders/product.webp";
 }
 
-// 👈 توسيع نوع المدخلات ليقبل Product أو SectionItem أو أي كائن بيانات مشابه
 export function mapCmsProducts(
   products: (Product<string> | SectionItem<string> | Record<string, any>)[] | null | undefined,
   lang: string
@@ -32,21 +31,18 @@ export function mapCmsProducts(
   if (!Array.isArray(products)) return [];
 
   return products.map((product) => {
-    // 1. استخراج السعر بأمان مع مراعاة كافة الاحتمالات
+
     const rawPrice =
       product.price ??
       product.starting_at ??
       (Array.isArray(product.variants) ? product.variants?.[0]?.price : undefined);
 
-    // 2. استخراج الصورة المناسبة
-    const rawImage = product.featured_image ?? product.thumbnail ?? product.image;
+    const rawImage = product.featured_image ?? product.thumbnail;
 
-    // 3. معالجة الاسم (سواء كان نصاً مباشراً أو كائن ترجمة)
     const name = typeof product.name === "object" && product.name !== null
       ? (product.name[lang] || product.name["en"] || Object.values(product.name)[0] || "")
       : (product.name ?? "");
 
-    // 4. معالجة الوصف
     const description = typeof product.description === "object" && product.description !== null
       ? (product.description[lang] || product.description["en"] || "")
       : product.description;
