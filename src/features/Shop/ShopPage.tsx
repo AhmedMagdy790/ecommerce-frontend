@@ -131,6 +131,7 @@ export const ShopPage: React.FC = () => {
           <ProductFilters
             filters={filters}
             onChange={(newFilters) => setFilters(newFilters)}
+            disabledSearch={true}
             onReset={handleResetFilters}
             categories={categories}
             brands={brands}
