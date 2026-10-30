@@ -38,6 +38,8 @@ export interface Product<TText = Record<string, string> | string> {
   old_price?: string | number | null;
   starting_at: string | null;
 
+  has_stock?: boolean;
+
   brand?: Brand<TText> | null;
   category?: Category<TText> | null;
   variants?: ProductVariant<TText>[];

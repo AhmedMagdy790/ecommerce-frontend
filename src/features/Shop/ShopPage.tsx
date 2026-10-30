@@ -63,7 +63,10 @@ export const ShopPage: React.FC = () => {
     variant?: ProductVariant<string>,
     quantity = 1,
   ) => {
+    console.log("add", _product)
+    console.log("add", variant)
     if (!variant?.id) return;
+
 
     try {
       await addToCart({

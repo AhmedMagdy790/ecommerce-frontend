@@ -1,6 +1,6 @@
 // src/components/ProductCard.tsx
 
-import React from "react";
+import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ShoppingBag, Eye, Heart } from "lucide-react";
@@ -19,6 +19,12 @@ interface ProductCardProps {
   isWishlisted?: boolean;
 }
 
+const toNumber = (value: unknown): number | null => {
+  if (value === null || value === undefined || value === "") return null;
+  const n = Number(value);
+  return Number.isFinite(n) && n >= 0 ? n : null;
+};
+
 export const ProductCard: React.FC<ProductCardProps> = ({
   product,
   onAddToCart,
@@ -28,65 +34,79 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const { t, i18n } = useTranslation("productCard");
 
-  // تحديد الـ Locale تلقائياً بناءً على اللغة الحالية لـ i18next دون الحاجة لـ useLang
-  const locale = i18n.language === "ar" ? "ar-EG" : "en-US";
+  console.log("", product)
+  const locale = i18n.language?.startsWith("ar") ? "ar-EG" : "en-EG";
 
-  const mainImage = product.thumbnail;
-
-  const primaryVariant: ProductVariant<string> | undefined =
-  Array.isArray(product.variants)
-    ? product.variants.find(
-        (variant) =>
-          variant.status === "active" &&
-          variant.is_available === true,
-      )
-    : undefined;
-
-  const rawPrice =
-    primaryVariant?.price ??
-    product.starting_at ??
-    product.price;
-
-  const price =
-    rawPrice !== null &&
-    rawPrice !== undefined &&
-    rawPrice !== ""
-      ? Number(rawPrice)
-      : null;
-
-  const rawOldPrice = product.old_price;
-
-  const oldPrice =
-    rawOldPrice !== null &&
-    rawOldPrice !== undefined &&
-    rawOldPrice !== ""
-      ? Number(rawOldPrice)
-      : null;
-
-  const hasValidPrice =
-    price !== null &&
-    Number.isFinite(price) &&
-    price >= 0;
-
-  const hasDiscount =
-    hasValidPrice &&
-    oldPrice !== null &&
-    Number.isFinite(oldPrice) &&
-    oldPrice > 0 &&
-    oldPrice > price;
-
-  const discountPercentage = hasDiscount
-    ? Math.round(((oldPrice - price) / oldPrice) * 100)
-    : 0;
-
-  const productName = product.name;
-
-  const formatPrice = (amount: number) =>
-    new Intl.NumberFormat(locale, {
+  const formatPrice = useMemo(() => {
+    const formatter = new Intl.NumberFormat(locale, {
       style: "currency",
       currency: "EGP",
       maximumFractionDigits: 2,
-    }).format(amount);
+    });
+    return (amount: number) => formatter.format(amount);
+  }, [locale]);
+
+  const {
+    primaryVariant,
+    inStock,
+    hasMultipleVariants,
+    price,
+    hasPriceRange,
+  } = useMemo(() => {
+    const variants: ProductVariant<string>[] = Array.isArray(product.variants)
+      ? product.variants
+      : [];
+
+    const availableVariants = variants
+      .filter((v) => v.status === "active" && v.is_available === true)
+      .sort(
+        (a, b) =>
+          (toNumber(a.price) ?? Infinity) - (toNumber(b.price) ?? Infinity),
+      );
+
+    const primaryVariant = availableVariants[0];
+
+    const inStock =
+      variants.length > 0
+        ? availableVariants.length > 0
+        : (product as { has_stock?: boolean }).has_stock ?? true;
+
+    const price =
+      toNumber(primaryVariant?.price) ??
+      toNumber(product.starting_at) ??
+      toNumber(product.price);
+
+    const prices = variants
+      .map((v) => toNumber(v.price))
+      .filter((p): p is number => p !== null);
+
+    const hasPriceRange = prices.length > 1 && Math.min(...prices) !== Math.max(...prices);
+
+    return {
+      variants,
+      availableVariants,
+      primaryVariant,
+      inStock,
+      hasMultipleVariants: variants.length > 1,
+      price,
+      hasPriceRange,
+    };
+  }, [product]);
+
+  const productName = product.name;
+  const mainImage = product.thumbnail || product.featured_image;
+
+  const handleAddToCart = () => {
+    if (!inStock) return;
+
+    // أكتر من variant: خلّي المستخدم يختار
+    if (hasMultipleVariants && onQuickView) {
+      onQuickView(product);
+      return;
+    }
+
+    onAddToCart?.(product, primaryVariant);
+  };
 
   const actionButtonClass =
     "flex h-9 w-9 items-center justify-center rounded-full bg-surface text-text-secondary shadow-md transition-colors duration-200 hover:bg-surface-secondary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
@@ -94,8 +114,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const linkClass =
     "transition-colors duration-200 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
+  const wishlistLabel = isWishlisted
+    ? t("removeFromWishlist", "Remove from wishlist")
+    : t("addToWishlist", "Add to wishlist");
+
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-panel border border-border bg-surface shadow-xs transition-all duration-200 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl">
+    <article
+      className={`group relative flex flex-col overflow-hidden rounded-panel border border-border bg-surface shadow-xs transition-all duration-200 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl ${
+        !inStock ? "opacity-90" : ""
+      }`}
+    >
       {/* Product image */}
       <div className="relative aspect-square w-full overflow-hidden bg-surface-secondary">
         {mainImage ? (
@@ -103,7 +131,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             src={mainImage}
             alt={productName}
             loading="lazy"
-            className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+            className={`h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105 ${
+              !inStock ? "grayscale" : ""
+            }`}
           />
         ) : (
           <div
@@ -123,9 +153,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               </span>
             )}
 
-            {hasDiscount && (
-              <span className="rounded-card bg-rose-500 px-2.5 py-1 text-xs font-bold text-white shadow-sm">
-                -{discountPercentage}%
+            {!inStock && (
+              <span className="rounded-card bg-neutral-800 px-2.5 py-1 text-xs font-bold text-white shadow-sm">
+                {t("outOfStock", "Out of stock")}
               </span>
             )}
           </div>
@@ -137,20 +167,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 type="button"
                 onClick={() => onToggleWishlist(product)}
                 className={`${actionButtonClass} ${
-                  isWishlisted
-                    ? "text-rose-600 dark:text-rose-400"
-                    : ""
+                  isWishlisted ? "text-rose-600 dark:text-rose-400" : ""
                 }`}
-                title={
-                  isWishlisted
-                    ? t("removeFromWishlist", "Remove from wishlist")
-                    : t("addToWishlist", "Add to wishlist")
-                }
-                aria-label={
-                  isWishlisted
-                    ? t("removeFromWishlist", "Remove from wishlist")
-                    : t("addToWishlist", "Add to wishlist")
-                }
+                title={wishlistLabel}
+                aria-label={wishlistLabel}
                 aria-pressed={isWishlisted}
               >
                 <Heart
@@ -177,10 +197,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
       {/* Product details */}
       <div className="flex flex-1 flex-col justify-between p-4 sm:p-5">
-        <div>
+        <div className="space-y-1">
+          {(product.brand?.name || product.category?.name) && (
+            <p className="flex flex-wrap items-center gap-x-1.5 text-xs text-text-muted">
+              {product.brand?.name && (
+                <span className="font-medium">{product.brand.name}</span>
+              )}
+              {product.brand?.name && product.category?.name && (
+                <span aria-hidden="true">•</span>
+              )}
+              {product.category?.name && <span>{product.category.name}</span>}
+            </p>
+          )}
 
-
-          {/* Product name */}
           <Link
             to={`/products/${product.slug}`}
             className={`line-clamp-2 text-sm font-bold text-text-primary ${linkClass}`}
@@ -192,16 +221,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         {/* Price and add to cart */}
         <div className="mt-4 flex items-center justify-between gap-3 border-t border-border/60 pt-3">
           <div className="flex min-w-0 flex-col">
-            {hasDiscount && (
-              <span className="text-xs text-text-muted line-through font-medium">
-                {formatPrice(oldPrice)}
-              </span>
-            )}
-
-            {hasValidPrice ? (
-              <span className="text-base font-bold text-primary">
-                {formatPrice(price)}
-              </span>
+            {price !== null ? (
+              <>
+                {hasPriceRange && (
+                  <span className="text-xs font-medium text-text-muted">
+                    {t("startingFrom", "Starting from")}
+                  </span>
+                )}
+                <span className="text-base font-bold text-primary">
+                  {formatPrice(price)}
+                </span>
+              </>
             ) : (
               <span className="text-sm text-text-muted">
                 {t("priceUnavailable", "Price unavailable")}
@@ -212,12 +242,23 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           {onAddToCart && (
             <button
               type="button"
-              onClick={() => onAddToCart(product, primaryVariant)}
-              className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-card bg-primary px-3.5 py-2 text-xs font-bold text-white transition-all duration-200 hover:opacity-90 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary shadow-xs"
-              aria-label={t("addToCart", "Add to cart")}
+              onClick={handleAddToCart}
+              disabled={!inStock}
+              className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-card bg-primary px-3.5 py-2 text-xs font-bold text-white shadow-xs transition-all duration-200 hover:opacity-90 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100"
+              aria-label={
+                inStock
+                  ? t("addToCart", "Add to cart")
+                  : t("outOfStock", "Out of stock")
+              }
             >
               <ShoppingBag className="h-4 w-4" />
-              <span>{t("add", "Add")}</span>
+              <span>
+                {!inStock
+                  ? t("outOfStock", "Out of stock")
+                  : hasMultipleVariants && onQuickView
+                    ? t("selectOptions", "Options")
+                    : t("add", "Add")}
+              </span>
             </button>
           )}
         </div>

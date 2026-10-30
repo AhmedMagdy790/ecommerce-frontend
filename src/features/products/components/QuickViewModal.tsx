@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+// src/components/QuickViewModal.tsx
+
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { X, ShoppingBag, Heart, Check } from "lucide-react";
@@ -20,80 +22,77 @@ interface QuickViewModalProps {
   isWishlisted?: boolean;
 }
 
-interface SelectionState {
-  productId: Product<string>["id"] | null;
-  variant: ProductVariant<string> | undefined;
-  quantity: number;
-  imageIndex: number;
+type VariantWithInventory = ProductVariant<string> & {
+  inventory?: { available_stock?: number } | null;
+};
+
+const PLACEHOLDER_IMAGE = "/images/placeholders/product.webp";
+
+
+export const QuickViewModal: React.FC<QuickViewModalProps> = (props) => {
+  const { product, isOpen } = props;
+
+  if (!isOpen || !product) return null;
+
+  return <QuickViewContent key={product.id} {...props} product={product} />;
+};
+
+
+interface QuickViewContentProps extends Omit<QuickViewModalProps, "product"> {
+  product: Product<string>;
 }
 
-export const QuickViewModal: React.FC<QuickViewModalProps> = ({
+const QuickViewContent: React.FC<QuickViewContentProps> = ({
   product,
-  isOpen,
   onClose,
   onAddToCart,
   onToggleWishlist,
   isWishlisted = false,
 }) => {
   const { t } = useTranslation("quickView");
-
   const { isRTL } = useLang();
+  const locale = isRTL ? "ar-EG" : "en-EG";
 
-  const locale = isRTL ? "ar-EG" : "en-US";
+  const variants = useMemo<VariantWithInventory[]>(
+    () =>
+      Array.isArray(product.variants)
+        ? (product.variants as VariantWithInventory[]).filter(
+            (v) => v.status === "active" && v.is_available === true,
+          )
+        : [],
+    [product.variants],
+  );
 
-  const [selection, setSelection] = useState<SelectionState>({
-    productId: null,
-    variant: undefined,
-    quantity: 1,
-    imageIndex: 0,
-  });
+  const [variantId, setVariantId] = useState<number | undefined>(
+    variants[0]?.id,
+  );
+  const [quantity, setQuantity] = useState(1);
+  const [imageIndex, setImageIndex] = useState(0);
 
-  const variants: ProductVariant<string>[] = Array.isArray(product?.variants)
-    ? product.variants.filter(
-        (variant) =>
-          variant.status === "active" &&
-          variant.is_available === true,
-      )
-    : [];
+  const selectedVariant = variants.find((v) => v.id === variantId);
 
-  const isCurrentProduct =
-    product !== null && selection.productId === product.id;
+  // أقصى كمية = المخزون المتاح للـ variant المختار (لو الـ API رجّعه)
+  const maxQuantity = selectedVariant?.inventory?.available_stock;
 
-  const selectedVariant = isCurrentProduct
-    ? selection.variant
-    : variants[0];
-
-  const quantity = isCurrentProduct ? selection.quantity : 1;
-  const activeImageIndex = isCurrentProduct ? selection.imageIndex : 0;
-
-  const updateSelection = (
-    updates: Partial<Omit<SelectionState, "productId">>,
-  ) => {
-    if (!product) return;
-
-    setSelection((current) => {
-      const sameProduct = current.productId === product.id;
-
-      return {
-        productId: product.id,
-        variant: sameProduct ? current.variant : variants[0],
-        quantity: sameProduct ? current.quantity : 1,
-        imageIndex: sameProduct ? current.imageIndex : 0,
-        ...updates,
-      };
-    });
+  const selectVariant = (variant: VariantWithInventory) => {
+    setVariantId(variant.id);
+    setQuantity(1);
   };
 
-  // Escape key and body scroll lock.
-  useEffect(() => {
-    if (!isOpen || !product) return;
+  const increaseQuantity = () =>
+    setQuantity((q) =>
+      typeof maxQuantity === "number" ? Math.min(maxQuantity, q + 1) : q + 1,
+    );
 
+  const decreaseQuantity = () => setQuantity((q) => Math.max(1, q - 1));
+
+  // Escape + قفل scroll الصفحة
+  useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
     };
 
     const previousOverflow = document.body.style.overflow;
-
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", handleKeyDown);
 
@@ -101,65 +100,37 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen, product, onClose]);
+  }, [onClose]);
 
-  if (!isOpen || !product) return null;
+  // الصور: featured + thumbnail + gallery بدون تكرار
+  const imagesList = useMemo(() => {
+    const urls = [
+      product.featured_image,
+      product.thumbnail,
+      ...(product.gallery?.map((g) => g.url) ?? []),
+    ].filter(
+      (url): url is string => typeof url === "string" && url.trim().length > 0,
+    );
 
-  const imagesList = [
-    ...new Set(
-      [product.featured_image, product.thumbnail].filter(
-        (url): url is string =>
-          typeof url === "string" && url.trim().length > 0,
-      ),
-    ),
-  ];
+    const unique = [...new Set(urls)];
+    return unique.length > 0 ? unique : [PLACEHOLDER_IMAGE];
+  }, [product.featured_image, product.thumbnail, product.gallery]);
 
-  if (imagesList.length === 0) {
-    imagesList.push("/images/placeholders/product.webp");
-  }
+  const currentImage = imagesList[imageIndex] ?? imagesList[0];
 
-
-
-  if (imagesList.length === 0) {
-    imagesList.push("/placeholder-product.png");
-  }
-
-  const currentImage =
-    imagesList[activeImageIndex] ?? imagesList[0];
-
+  // السعر
   const rawPrice =
-    selectedVariant?.price ??
-    product.starting_at ??
-    product.price;
+    selectedVariant?.price ?? product.starting_at ?? product.price;
 
-  const price =
+  const parsedPrice =
     rawPrice !== null && rawPrice !== undefined && rawPrice !== ""
       ? Number(rawPrice)
       : null;
 
-  const oldPrice =
-    product?.old_price != null && product.old_price !== ""
-      ? Number(product.old_price)
+  const price =
+    parsedPrice !== null && Number.isFinite(parsedPrice) && parsedPrice >= 0
+      ? parsedPrice
       : null;
-
-  const hasValidPrice =
-    price !== null && Number.isFinite(price) && price >= 0;
-
-  const hasDiscount =
-    oldPrice !== null &&
-    oldPrice !== undefined &&
-    Number.isFinite(oldPrice) &&
-    price !== null &&
-    Number.isFinite(price) &&
-    oldPrice > price;
-
-  const discountPercentage = hasDiscount
-    ? Math.round(((oldPrice - price!) / oldPrice) * 100)
-    : 0;
-
-
-  const productName = product.name;
-
 
   const formatPrice = (amount: number) =>
     new Intl.NumberFormat(locale, {
@@ -168,12 +139,19 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
       maximumFractionDigits: 2,
     }).format(amount);
 
+  const productName = product.name;
+  const canAddToCart = Boolean(selectedVariant);
+
   const actionButtonClass =
     "inline-flex items-center justify-center rounded-control border border-border bg-surface text-text-secondary transition-colors hover:bg-surface-hover hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
+  const wishlistLabel = isWishlisted
+    ? t("removeFromWishlist", "Remove from wishlist")
+    : t("addToWishlist", "Add to wishlist");
+
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto p-3 sm:p-5"
+      className="fixed inset-0 z-[99999999] flex items-center justify-center overflow-y-auto p-3 sm:p-5"
       dir={isRTL ? "rtl" : "ltr"}
     >
       {/* Backdrop */}
@@ -191,12 +169,14 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
         aria-labelledby="quick-view-title"
         className="relative z-[101] my-auto w-full max-w-4xl overflow-hidden rounded-panel border border-border bg-surface shadow-xl"
       >
-        {/* Close button */}
+        {/* Close */}
         <button
           type="button"
           onClick={onClose}
           aria-label={t("close", "Close")}
-          className={`absolute top-3 z-10 h-10 w-10 ${isRTL ? "left-3" : "right-3"} ${actionButtonClass}`}
+          className={`absolute top-3 z-10 h-10 w-10 ${
+            isRTL ? "left-3" : "right-3"
+          } ${actionButtonClass}`}
         >
           <X className="h-5 w-5" />
         </button>
@@ -210,24 +190,18 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                 alt={productName}
                 className="h-full w-full object-cover"
               />
-
-              {hasDiscount && (
-                <span className="absolute start-3 top-3 rounded-control bg-error px-2.5 py-1 text-xs font-bold text-white shadow-sm">
-                  -{discountPercentage}%
-                </span>
-              )}
             </div>
 
             {imagesList.length > 1 && (
               <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
                 {imagesList.map((imgUrl, index) => {
-                  const isSelected = activeImageIndex === index;
+                  const isSelected = imageIndex === index;
 
                   return (
                     <button
                       key={`${imgUrl}-${index}`}
                       type="button"
-                      onClick={() => updateSelection({ imageIndex: index })}
+                      onClick={() => setImageIndex(index)}
                       aria-label={t("selectImage", {
                         defaultValue: "Select image {{number}}",
                         number: index + 1,
@@ -252,34 +226,39 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
             )}
           </div>
 
-          {/* Product details */}
+          {/* Details */}
           <div className="flex min-w-0 flex-col justify-between gap-6 p-5 sm:p-7">
             <div>
+              {(product.brand?.name || product.category?.name) && (
+                <p className="text-xs text-text-muted">
+                  {[product.brand?.name, product.category?.name]
+                    .filter(Boolean)
+                    .join(" • ")}
+                </p>
+              )}
 
               <h2
                 id="quick-view-title"
-                className="mt-3 text-xl font-bold leading-relaxed text-text-primary"
+                className="mt-2 text-xl font-bold leading-relaxed text-text-primary"
               >
                 {productName}
               </h2>
 
               {/* Price */}
-              <div className="mt-3 flex flex-wrap items-baseline gap-3">
-                {hasValidPrice && (
+              <div className="mt-3">
+                {price !== null ? (
                   <span className="text-2xl font-bold text-primary">
                     {formatPrice(price)}
                   </span>
-                )}
-
-                {hasDiscount && (
-                  <span className="text-sm text-text-muted line-through">
-                    {formatPrice(oldPrice)}
+                ) : (
+                  <span className="text-sm text-text-muted">
+                    {t("priceUnavailable", "Price unavailable")}
                   </span>
                 )}
               </div>
 
               {/* Variants */}
-              {variants.length > 0 && (
+              {variants.length > 0 ? (
                 <div className="mt-5 border-t border-border pt-4">
                   <h3 className="text-sm font-semibold text-text-primary">
                     {t("availableOptions", "Available options")}
@@ -287,10 +266,14 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
 
                   <div className="mt-3 flex flex-wrap gap-2">
                     {variants.map((variant) => {
-                      const isSelected =
-                        selectedVariant?.id === variant.id;
+                      const isSelected = selectedVariant?.id === variant.id;
+
+                      const attributesLabel = variant.attributes
+                        ? Object.values(variant.attributes).join(" / ")
+                        : "";
 
                       const variantLabel =
+                        attributesLabel ||
                         variant.sku ||
                         t("optionNumber", {
                           defaultValue: "Option #{{id}}",
@@ -301,9 +284,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                         <button
                           key={variant.id}
                           type="button"
-                          onClick={() =>
-                            updateSelection({ variant })
-                          }
+                          onClick={() => selectVariant(variant)}
                           aria-pressed={isSelected}
                           className={`inline-flex items-center gap-1.5 rounded-control border px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                             isSelected
@@ -311,61 +292,75 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                               : "border-border bg-surface text-text-secondary hover:bg-surface-hover"
                           }`}
                         >
-                          {isSelected && (
-                            <Check className="h-3.5 w-3.5" />
-                          )}
+                          {isSelected && <Check className="h-3.5 w-3.5" />}
                           <span>{variantLabel}</span>
                         </button>
                       );
                     })}
                   </div>
                 </div>
+              ) : (
+                <p className="mt-5 border-t border-border pt-4 text-sm text-text-muted">
+                  {t("outOfStock", "Out of stock")}
+                </p>
               )}
 
               {/* Quantity */}
-              <div className="mt-5 border-t border-border pt-4">
-                <label
-                  htmlFor="quick-view-quantity"
-                  className="text-sm font-semibold text-text-primary"
-                >
-                  {t("quantity", "Quantity")}
-                </label>
-
-                <div className="mt-3 inline-flex items-center rounded-control border border-border bg-surface">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      updateSelection({
-                        quantity: Math.max(1, quantity - 1),
-                      })
-                    }
-                    disabled={quantity <= 1}
-                    aria-label={t("decreaseQuantity", "Decrease quantity")}
-                    className="px-3 py-2 text-text-secondary transition-colors hover:text-text-primary disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    −
-                  </button>
-
+              {canAddToCart && (
+                <div className="mt-5 border-t border-border pt-4">
                   <span
-                    id="quick-view-quantity"
-                    aria-live="polite"
-                    className="min-w-10 text-center text-sm font-semibold text-text-primary"
+                    id="quick-view-quantity-label"
+                    className="text-sm me-3 font-semibold text-text-primary"
                   >
-                    {quantity}
+                    {t("quantity", "Quantity")}
                   </span>
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      updateSelection({ quantity: quantity + 1 })
-                    }
-                    aria-label={t("increaseQuantity", "Increase quantity")}
-                    className="px-3 py-2 text-text-secondary transition-colors hover:text-text-primary"
+                  <div
+                    role="group"
+                    aria-labelledby="quick-view-quantity-label"
+                    className="mt-3 inline-flex items-center rounded-control border border-border bg-surface"
                   >
-                    +
-                  </button>
+                    <button
+                      type="button"
+                      onClick={decreaseQuantity}
+                      disabled={quantity <= 1}
+                      aria-label={t("decreaseQuantity", "Decrease quantity")}
+                      className="px-3 py-2 text-text-secondary transition-colors hover:text-text-primary disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      −
+                    </button>
+
+                    <span
+                      aria-live="polite"
+                      className="min-w-10 text-center text-sm font-semibold text-text-primary"
+                    >
+                      {quantity}
+                    </span>
+
+                    <button
+                      type="button"
+                      onClick={increaseQuantity}
+                      disabled={
+                        typeof maxQuantity === "number" &&
+                        quantity >= maxQuantity
+                      }
+                      aria-label={t("increaseQuantity", "Increase quantity")}
+                      className="px-3 py-2 text-text-secondary transition-colors hover:text-text-primary disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  {typeof maxQuantity === "number" && (
+                    <p className="mt-2 text-xs text-text-muted">
+                      {t("availableQuantity", {
+                        defaultValue: "{{count}} available",
+                        count: maxQuantity,
+                      })}
+                    </p>
+                  )}
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Actions */}
@@ -374,11 +369,13 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                 {onAddToCart && (
                   <button
                     type="button"
+                    disabled={!canAddToCart}
                     onClick={() => {
+                      if (!selectedVariant) return;
                       onAddToCart(product, selectedVariant, quantity);
                       onClose();
                     }}
-                    className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-control bg-primary px-4 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-primary-hover active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-control bg-primary px-4 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-primary-hover active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <ShoppingBag className="h-4 w-4" />
                     <span>{t("addToCart", "Add to cart")}</span>
@@ -389,11 +386,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
                   <button
                     type="button"
                     onClick={() => onToggleWishlist(product)}
-                    aria-label={
-                      isWishlisted
-                        ? t("removeFromWishlist", "Remove from wishlist")
-                        : t("addToWishlist", "Add to wishlist")
-                    }
+                    aria-label={wishlistLabel}
                     aria-pressed={isWishlisted}
                     className={`${actionButtonClass} h-11 w-11 shrink-0 ${
                       isWishlisted ? "text-error" : ""
