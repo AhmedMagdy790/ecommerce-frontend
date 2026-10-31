@@ -49,8 +49,6 @@ export const useAuthStore = create<IAuthState>()(
 
         
         initializeAuth: async () => {
-            console.log("get().isInitialized", get().isInitialized)
-            console.log("get().isRefreshing", get().isRefreshing)
             if (get().isInitialized || get().isRefreshing) {
                 return;
             }

@@ -34,7 +34,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const { t, i18n } = useTranslation("productCard");
 
-  console.log("", product)
   const locale = i18n.language?.startsWith("ar") ? "ar-EG" : "en-EG";
 
   const formatPrice = useMemo(() => {
