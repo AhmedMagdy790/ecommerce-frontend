@@ -9,7 +9,7 @@ import { LanguageProvider } from "@/shared/context/LanguageContext";
 import { AuthProvider } from "@/app/providers/AuthProvider";
 import ConfirmProvider from "@/shared/components/confirmModal/ConfirmModal";
 import { NotificationProvider } from "@/app/providers/NotificationProvider";
-
+import { RegionProvider } from "@/shared/context/RegionContext";
 import { AuthBootstrap } from "@/app/bootstrap/AuthBootstrap";
 import AppContentGate from "@/app/bootstrap/AppContentGate";
 import { AppBootstrap } from "../bootstrap/AppBootstrap";
@@ -26,6 +26,7 @@ export default function AppProviders({
       <DirectionProvider>
         <QueryProvider>
           <LanguageProvider>
+            <RegionProvider>
             <SettingsProvider>
               <AppBootstrap>
                 <HelmetProvider>
@@ -43,6 +44,7 @@ export default function AppProviders({
                 </HelmetProvider>
               </AppBootstrap>
             </SettingsProvider>
+            </RegionProvider>
           </LanguageProvider>
         </QueryProvider>
       </DirectionProvider>

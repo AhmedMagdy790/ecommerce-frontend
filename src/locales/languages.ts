@@ -1,35 +1,48 @@
 // src/locales/languages.ts
 
+interface LanguageConfig {
+  dir: "ltr" | "rtl";
+  name: string;
+  nativeName: string;
+}
 
-const languageModules = import.meta.glob("./*/*.json", { eager: true });
+type JsonObject = Record<string, unknown>;
 
-const buildUIStrings = () => {
-  const result: Record<string, Record<string, any>> = {};
+interface LanguageResources extends Record<string, JsonObject | LanguageConfig> {
+  _config: LanguageConfig;
+}
 
-  for (const path in languageModules) {
+const languageModules = import.meta.glob<JsonObject>(
+  "./*/*.json",
+  {
+    eager: true,
+    import: "default",
+  },
+);
 
-    const match = path.match(/\.\/([^/]+)\/([^/]+)\.json$/);
-    if (match) {
-      const [, lng, fileName] = match;
-      if (!result[lng]) {
-        result[lng] = {};
-      }
-      const mod = languageModules[path] as any;
-      const content = mod.default || mod;
+const buildUIStrings = (): Record<string, LanguageResources> => {
+  const result: Record<string, Record<string, JsonObject>> = {};
 
+  for (const [path, content] of Object.entries(languageModules)) {
+    const match = path.match(/^\.\/([^/]+)\/([^/]+)\.json$/);
 
-      if (fileName === "config") {
-        result[lng]["_config"] = content;
-      } else {
+    if (!match) continue;
 
-        result[lng][fileName] = content;
-      }
+    const [, lng, fileName] = match;
+
+    if (!result[lng]) {
+      result[lng] = {};
     }
+
+    const key = fileName === "config" ? "_config" : fileName;
+
+    result[lng][key] = content;
   }
 
-  return result;
+  return result as Record<string, LanguageResources>;
 };
 
-export const UI_STRINGS = buildUIStrings() as Record<string, any>;
+export const UI_STRINGS = buildUIStrings();
 
-export type TranslationSchema = typeof UI_STRINGS[keyof typeof UI_STRINGS];
+export type TranslationSchema =
+  (typeof UI_STRINGS)[keyof typeof UI_STRINGS];
