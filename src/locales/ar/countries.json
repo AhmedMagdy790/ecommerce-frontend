@@ -1,0 +1,26 @@
+{
+    "confirm_import": "هل أنت متأكد من استيراد هذه الدول؟",
+    "import_success": "تم استيراد الدول بنجاح.",
+    "import_error": "فشل استيراد الدول.",
+    "import_button": "استيراد الدول",
+    "editCountry": "تعديل الدولة",
+    "addNewCountry": "إضافة دولة جديدة",
+    "modalDescription": "أدخل بيانات الدولة بالأسفل.",
+    "countryName": "اسم الدولة",
+    "namePlaceholder": "أدخل اسم الدولة",
+    "code": "كود الدولة",
+    "phoneCode": "مفتاح الهاتف",
+    "currency": "العملة",
+    "title": "الدول",
+    "add_new": "إضافة دولة جديدة",
+    "status": {
+        "suspended": "موقوف",
+        "changeTitle": "تغيير الحالة",
+        "changeDescription": "اختر الحالة الجديدة."
+    },
+    "modal": {
+        "basic": {
+        "section_title": "المعلومات الأساسية"
+        }
+    }
+}

@@ -1,0 +1,25 @@
+{
+  "stats": {
+    "total": "Total inventory",
+    "in_stock": "In stock",
+    "low_stock": "Low stock",
+    "out_of_stock": "Out of stock",
+    "total_inventory": "Total inventory",
+    "active_inventory": "Active inventory"
+  },
+  "selectVariant": "Select variant",
+  "editInventory": "Edit inventory",
+  "addNewInventory": "Add new inventory",
+  "modalDescription": "Enter the inventory information below.",
+  "productVariant": "Product variant",
+  "selectVariantPlaceholder": "Choose a product variant",
+  "stockQuantity": "Stock quantity",
+  "reservedQuantity": "Reserved quantity",
+  "not_found": "Inventory not found",
+  "details_subtitle": "View inventory details",
+  "stock": "Stock",
+  "reserved": "Reserved",
+  "available": "Available",
+  "title": "Inventory",
+  "item": "Inventory item"
+}

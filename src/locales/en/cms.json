@@ -1,0 +1,74 @@
+{
+  "sections": {
+    "editItem": "Edit section item",
+    "addNewItem": "Add new item",
+    "itemModalDescription": "Enter the item information below.",
+    "tabs": {
+      "general": "General",
+      "media": "Media",
+      "advanced": "Advanced"
+    },
+    "itemTitle": "Item title",
+    "titlePlaceholder": "Enter item title",
+    "itemSubtitle": "Item subtitle",
+    "subtitlePlaceholder": "Enter item subtitle",
+    "itemDescription": "Item description",
+    "descriptionPlaceholder": "Enter item description",
+    "itemImage": "Item image",
+    "itemLink": "Item link",
+    "buttonText": "Button text",
+    "floatTitle": "Floating title",
+    "floatSubtitle": "Floating subtitle",
+    "statNumber": "Statistic number",
+    "statText": "Statistic text",
+    "sortOrder": "Sort order",
+    "editSection": "Edit section",
+    "addNewSection": "Add new section",
+    "modalDescription": "Enter the section information below.",
+    "sectionName": "Section name",
+    "namePlaceholder": "Enter section name",
+    "selectProducts": "Select products",
+    "selectProductsHint": "Choose the products to display in this section.",
+    "noProductsFound": "No products found",
+    "selectedCount": "Selected items: {{count}}"
+  },
+  "modal": {
+    "basic": {
+      "section_title": "Basic information",
+      "item_title": "Item information"
+    }
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "page": {
+    "editPage": "Edit page",
+    "addNewPage": "Add new page",
+    "modalDescription": "Enter the page information below.",
+    "title": "Page title",
+    "titlePlaceholder": "Enter page title",
+    "slug": "Slug",
+    "slugPlaceholder": "Enter page slug",
+    "content": "Content",
+    "contentPlaceholder": "Enter page content",
+    "metaTitle": "Meta title",
+    "metaTitlePlaceholder": "Enter meta title",
+    "metaDescription": "Meta description",
+    "metaDescriptionPlaceholder": "Enter meta description"
+  },
+  "pageBuilder": {
+    "subtitle": "Build and organize your page sections.",
+    "addSection": "Add section",
+    "editSection": "Edit section",
+    "sectionName": "Section name",
+    "sectionType": "Section type",
+    "sectionsList": "Page sections",
+    "noSections": "No sections added yet."
+  },
+  "common": {
+    "cancel": "Cancel",
+    "status": "Status",
+    "selectStatus": "Select status"
+  }
+}

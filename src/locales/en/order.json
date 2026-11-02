@@ -2,7 +2,6 @@
   "back": "Back to Orders",
 
   "subtotal": "Subtotal",
-  "shipping": "Shipping",
   "tax": "Tax",
   "discount": "Discount",
   "total": "Total",
@@ -29,8 +28,15 @@
     "total": "Total",
     "date": "Order Date",
     "viewOrder": "View Order",
+    "viewOrders": "Go to orders list",
     "continueShopping": "Continue Shopping",
-    "notFound": "Order not found."
+    "notFound": "Order not found.",
+     "shippingAddress": "Shipping address",
+    "paymentMethod": "Payment method",
+    "summary": "Order summary",
+    "subtotal": "Subtotal",
+    "shippingCost": "Shipping cost",
+    "discount": "Discount"
   },
 
   "details": {
@@ -40,6 +46,24 @@
     "shipping": "Shipping Address",
     "payment": "Payment Method",
     "quantity": "Quantity",
-    "notFound": "Order not found."
+    "notFound": "Order not found.",
+    "notFoundDesc": "The requested order could not be found.",
+    "customer": "Customer"
+  },
+  "shipping": {
+    "free": "Free shipping",
+    "costLabel": "Shipping"
+  },
+  "errors": {
+    "orderNotFound": "Order not found.",
+    "invalidOrderSlug": "Invalid order reference."
+  },
+  "page": {
+    "title": "Orders"
+  },
+  "actions": {
+    "viewActive": "View active",
+    "viewTrashed": "View deleted",
+    "create": "Create order"
   }
 }

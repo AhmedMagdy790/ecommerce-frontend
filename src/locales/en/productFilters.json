@@ -1,0 +1,27 @@
+{
+  "title": "Filters",
+  "reset": "Reset filters",
+  "search": {
+    "title": "Search",
+    "placeholder": "Search products...",
+    "label": "Search products",
+    "submit": "Search"
+  },
+  "categories": {
+    "title": "Categories"
+  },
+  "price": {
+    "title": "Price range",
+    "min": "Minimum price",
+    "minPlaceholder": "Min price",
+    "max": "Maximum price",
+    "maxPlaceholder": "Max price",
+    "invalidRange": "Maximum price must be greater than or equal to minimum price.",
+    "apply": "Apply price"
+  },
+  "brands": {
+    "title": "Brands"
+  },
+  "filtersButton": "Filters",
+  "close": "Close"
+}

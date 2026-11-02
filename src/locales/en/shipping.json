@@ -1,0 +1,28 @@
+{
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "editCourier": "Edit shipping courier",
+  "addNewCourier": "Add new shipping courier",
+  "modalDescription": "Configure shipping provider details, endpoints, and credentials.",
+  "courierName": "Courier name",
+  "namePlaceholder": "e.g. DHL, Aramex",
+  "description": "Description",
+  "descriptionPlaceholder": "Optional details or instructions...",
+  "code": "Courier code",
+  "phone": "Phone number",
+  "email": "Email address",
+  "driver": "Driver identifier",
+  "apiEndpoint": "API endpoint",
+  "apiKey": "API key",
+  "supportsCod": "Supports cash on delivery (COD)",
+  "trackingUrl": "Tracking URL template",
+  "modal": {
+    "multilingual": {
+      "section_title": "Multilingual information"
+    }
+  },
+  "view_active": "View active",
+  "view_trashed": "View deleted"
+}

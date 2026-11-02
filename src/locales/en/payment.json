@@ -1,0 +1,49 @@
+{
+    "cash": "Cash",
+    "online": "Online payment",
+    "wallet": "Mobile wallet",
+    "test": "Test mode",
+    "live": "Live mode",
+    "typeOnline": "Online",
+    "typeOffline": "Offline",
+    "typeTransfer": "Bank transfer",
+    "allowsDigital": "Supports digital products",
+    "allowsPhysical": "Supports physical products",
+    "allowsBoth": "Supports both product types",
+    "editGateway": "Edit payment gateway",
+    "addNewGateway": "Add new payment gateway",
+    "modalDescription": "Enter the payment gateway information below.",
+    "gatewayName": "Gateway name",
+    "namePlaceholder": "Enter gateway name",
+    "description": "Description",
+    "descriptionPlaceholder": "Enter gateway description",
+    "countries": "Supported countries",
+    "selectCountries": "Select countries",
+    "supportedCurrencies": "Supported currencies",
+    "selectCurrencies": "Select currencies",
+    "gateway": "Gateway",
+    "selectGateway": "Select gateway",
+    "type": "Payment type",
+    "selectType": "Select payment type",
+    "minAmount": "Minimum amount",
+    "maxAmount": "Maximum amount",
+    "extraFees": "Additional fees",
+    "iconName": "Icon name",
+    "logo": "Logo",
+    "credentialsTitle": "Gateway credentials",
+    "publicKey": "Public key",
+    "secretKey": "Secret key",
+    "mode": "Mode",
+    "selectMode": "Select mode",
+    "modal": {
+        "basic": {
+        "section_title": "Basic information"
+        }
+    },
+    "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+    },
+    "view_active": "View active",
+    "view_trashed": "View deleted"
+}

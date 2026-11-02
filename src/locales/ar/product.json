@@ -1,3 +1,131 @@
 {
-  "title": "منتجات"
+  "title": "منتجات",
+  "remove": "إزالة",
+  "addToCart": "أضف إلى السلة",
+  "modal": {
+    "edit_title": "تعديل المنتج",
+    "create_title": "إضافة منتج جديد",
+    "description": "أدخل بيانات المنتج بالأسفل.",
+    "steps": {
+      "basic": "المعلومات الأساسية",
+      "variants": "المتغيرات",
+      "media": "الصور والوسائط"
+    },
+    "basic": {
+      "section_title": "المعلومات الأساسية",
+      "brand": "العلامة التجارية",
+      "category": "التصنيف",
+      "status": "الحالة"
+    },
+    "media": {
+      "featured_title": "الصورة الرئيسية",
+      "upload_featured": "رفع الصورة الرئيسية",
+      "gallery_title": "معرض صور المنتج"
+    },
+    "variants": {
+      "title": "متغيرات المنتج",
+      "add": "إضافة متغير",
+      "sku": "رمز المنتج",
+      "price": "السعر",
+      "stock": "كمية المخزون",
+      "weight": "الوزن",
+      "length": "الطول",
+      "width": "العرض",
+      "height": "الارتفاع"
+    },
+    "actions": {
+      "prev": "السابق",
+      "cancel": "إلغاء",
+      "next": "التالي",
+      "save": "حفظ",
+      "submit": "إرسال"
+    },
+    "edit_variant_title": "تعديل المتغير",
+    "create_variant_title": "إضافة متغير جديد"
+  },
+  "fields": {
+    "name": "اسم المنتج",
+    "category": "التصنيف",
+    "status": "الحالة",
+    "description": "الوصف"
+  },
+  "placeholders": {
+    "name": "أدخل اسم المنتج",
+    "description": "أدخل وصف المنتج"
+  },
+  "breadcrumb": {
+    "dashboard": "لوحة التحكم",
+    "products": "المنتجات"
+  },
+  "layout": {
+    "title": "إدارة المنتجات",
+    "description": "إدارة المنتجات وبياناتها."
+  },
+  "quantity": {
+    "label": "الكمية"
+  },
+  "stock": {
+    "inStock": "متوفر في المخزون",
+    "outOfStock": "غير متوفر في المخزون"
+  },
+  "cart": {
+    "addedSuccess": "تمت إضافة المنتج إلى السلة بنجاح"
+  },
+  "actions": {
+    "addToCart": "أضف إلى السلة",
+    "unavailable": "غير متاح"
+  },
+  "description": {
+    "title": "وصف المنتج"
+  },
+  "product": {
+    "notFound": "المنتج غير موجود",
+    "notFoundDesc": "تعذر العثور على المنتج الذي تبحث عنه.",
+    "retry": "إعادة المحاولة",
+    "browseOther": "تصفح منتجات أخرى",
+    "relatedProducts": "منتجات ذات صلة"
+  },
+  "errors": {
+    "selectSize": "يرجى اختيار المقاس",
+    "selectColor": "يرجى اختيار اللون"
+  },
+  "badges": {
+    "authentic": "منتج أصلي",
+    "sale": "عرض خاص"
+  },
+  "variants": {
+    "size": "المقاس",
+    "selectSize": "اختر المقاس",
+    "sizeGuide": "دليل المقاسات",
+    "color": "اللون",
+    "selectColor": "اختر اللون"
+  },
+  "perks": {
+    "fastDelivery": {
+      "title": "توصيل سريع",
+      "subtitle": "حتى باب منزلك"
+    },
+    "qualityGuarantee": {
+      "title": "ضمان الجودة",
+      "subtitle": "جودة يمكنك الوثوق بها"
+    },
+    "easyReturns": {
+      "title": "إرجاع سهل",
+      "subtitle": "إجراءات إرجاع بسيطة"
+    }
+  },
+  "reviews": {
+    "title": "تقييمات العملاء",
+    "countLabel": "إجمالي التقييمات"
+  },
+  "size": "المقاس",
+  "color": "اللون",
+  "nav": {
+    "home": "الرئيسية",
+    "shop": "المتجر"
+  },
+  "relatedProducts": {
+    "title": "منتجات ذات صلة",
+    "productImage": "صورة المنتج"
+  }
 }

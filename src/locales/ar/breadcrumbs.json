@@ -1,0 +1,18 @@
+{
+  "home": "الرئيسية",
+  "dashboard": "لوحة التحكم",
+  "products": "المنتجات",
+  "categories": "التصنيفات",
+  "brands": "العلامات التجارية",
+  "countries": "الدول",
+  "cities": "المدن",
+  "orders": "الطلبات",
+  "customers": "العملاء",
+  "users": "المستخدمون",
+  "settings": "الإعدادات",
+  "profile": "الملف الشخصي",
+  "edit": "تعديل",
+  "create": "إنشاء",
+  "show": "التفاصيل",
+  "navigationLabel": "التنقل بين الصفحات"
+}

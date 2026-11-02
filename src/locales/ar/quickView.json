@@ -1,0 +1,16 @@
+{
+  "removeFromWishlist": "إزالة من المفضلة",
+  "addToWishlist": "إضافة إلى المفضلة",
+  "close": "إغلاق",
+  "selectImage": "اختر الصورة",
+  "priceUnavailable": "السعر غير متاح",
+  "availableOptions": "الخيارات المتاحة",
+  "optionNumber": "الخيار {{number}}",
+  "outOfStock": "نفد المخزون",
+  "quantity": "الكمية",
+  "decreaseQuantity": "تقليل الكمية",
+  "increaseQuantity": "زيادة الكمية",
+  "availableQuantity": "الكمية المتاحة: {{count}}",
+  "addToCart": "أضف إلى السلة",
+  "viewDetails": "عرض تفاصيل المنتج"
+}

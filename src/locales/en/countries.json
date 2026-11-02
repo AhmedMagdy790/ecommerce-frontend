@@ -1,0 +1,26 @@
+{
+    "confirm_import": "Are you sure you want to import these countries?",
+    "import_success": "Countries imported successfully.",
+    "import_error": "Failed to import countries.",
+    "import_button": "Import countries",
+    "editCountry": "Edit country",
+    "addNewCountry": "Add new country",
+    "modalDescription": "Enter the country information below.",
+    "countryName": "Country name",
+    "namePlaceholder": "Enter country name",
+    "code": "Country code",
+    "phoneCode": "Phone code",
+    "currency": "Currency",
+    "title": "Countries",
+    "add_new": "Add new country",
+    "status": {
+        "suspended": "Suspended",
+        "changeTitle": "Change status",
+        "changeDescription": "Select the new status."
+    },
+    "modal": {
+        "basic": {
+        "section_title": "Basic information"
+        }
+    }
+}

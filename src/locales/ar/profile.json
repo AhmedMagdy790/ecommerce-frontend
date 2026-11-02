@@ -16,15 +16,92 @@
     }
   },
   "sections": {
+     "info": {
+      "title": "المعلومات الشخصية",
+      "description": "إدارة معلومات حسابك الشخصية.",
+      "contactTitle": "معلومات التواصل",
+      "contactDescription": "إدارة بريدك الإلكتروني ورقم هاتفك.",
+      "unsavedChanges": "لديك تغييرات لم يتم حفظها.",
+      "upToDate": "معلوماتك محدثة."
+    },
     "security": {
+      "info": {
+        "title": "المعلومات الشخصية",
+        "description": "إدارة معلومات حسابك الشخصية.",
+        "contactTitle": "معلومات التواصل",
+        "contactDescription": "إدارة بريدك الإلكتروني ورقم هاتفك.",
+        "unsavedChanges": "لديك تغييرات لم يتم حفظها.",
+        "upToDate": "معلوماتك محدثة."
+      },
       "title": "إعدادات الأمان",
       "description": "حافظ على أمان حسابك من خلال تحديث كلمة المرور بشكل دوري.",
-      "comingSoon": "سيتم توفير ميزات تغيير كلمة المرور والمصادقة الثنائية (2FA) قريبًا."
+      "comingSoon": "سيتم توفير ميزات تغيير كلمة المرور والمصادقة الثنائية (2FA) قريبًا.",
+       "currentPassword": "كلمة المرور الحالية",
+      "currentPasswordHint": "أدخل كلمة المرور الحالية",
+      "newPassword": "كلمة المرور الجديدة",
+      "newPasswordHint": "أدخل كلمة المرور الجديدة",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "confirmPasswordHint": "أعد إدخال كلمة المرور الجديدة",
+      "changePassword": "تغيير كلمة المرور",
+      "changePasswordDescription": "حدّث كلمة المرور للحفاظ على أمان حسابك.",
+      "hidePassword": "إخفاء كلمة المرور",
+      "showPassword": "إظهار كلمة المرور",
+      "passwordPrivacy": "يتم تشفير كلمة المرور وتخزينها بأمان.",
+      "updating": "جارٍ التحديث...",
+      "updatePassword": "تحديث كلمة المرور"
     },
     "orders": {
       "title": "سجل الطلبات",
       "description": "استعرض جميع طلبات الشراء الخاصة بك وتابع حالتها.",
-      "empty": "لا توجد طلبات سابقة حتى الآن."
+      "empty": "لا توجد طلبات سابقة حتى الآن.",
+      "loading": "جارٍ تحميل طلباتك...",
+      "error": "تعذر تحميل الطلبات. يرجى المحاولة مرة أخرى.",
+      "empty_title": "لم تقم بإجراء أي طلبات حتى الآن",
+      "start_shopping": "ابدأ التسوق",
+      "orderNumber": "رقم الطلب",
+      "location": "عنوان الشحن",
+      "itemsCount": "عدد المنتجات",
+      "paymentMethod": "طريقة الدفع",
+      "paymentStatus": "حالة الدفع",
+      "orderStatus": "حالة الطلب",
+      "total": "الإجمالي",
+      "managePayment": "إدارة الدفع"
     }
-  }
+  },
+  "update_avatar": "تحديث الصورة الشخصية",
+  "default_user_name": "مستخدم",
+  "account_verified": "حساب موثّق",
+  "joined_date": "تاريخ الانضمام",
+  "stats": {
+    "total_orders": "إجمالي الطلبات",
+    "active_orders": "الطلبات النشطة"
+  },
+  "avatar_update_failed": "فشل تحديث الصورة الشخصية",
+  "name": "الاسم بالكامل",
+  "email": "البريد الإلكتروني",
+  "phone": "رقم الهاتف",
+  "placeholders": {
+    "name": "أدخل اسمك بالكامل",
+    "email": "أدخل بريدك الإلكتروني",
+    "phone": "أدخل رقم هاتفك"
+  },
+  "overview": {
+    "title": "أمان الحساب",
+    "breadcrumbLabel": "حسابي",
+    "description": "إدارة حسابك ومعلوماتك الشخصية وطلباتك.",
+    "sectionsTitle": "إعدادات الحساب",
+    "orders": {
+      "title": "طلباتي",
+      "description": "عرض طلباتك وإدارتها."
+    },
+    "personalInfo": {
+      "title": "المعلومات الشخصية",
+      "description": "إدارة اسمك ومعلومات التواصل الخاصة بك."
+    },
+    "security": {
+      "title": "الأمان",
+      "description": "إدارة كلمة المرور وأمان حسابك."
+    }
+  },
+  "loading": "جارٍ التحميل..."
 }

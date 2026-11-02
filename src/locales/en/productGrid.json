@@ -1,0 +1,7 @@
+{
+  "loading": "Loading products...",
+  "empty": {
+    "title": "No products found",
+    "description": "Try changing your filters or search for something else."
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "city": {
+    "name": "City name",
+    "country": "Country",
+    "city_code": "City code"
+  },
+  "common": {
+    "status": "Status"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "toggle": "Click to change status"
+  },
+  "editCity": "Edit city",
+  "addNewCity": "Add new city",
+  "modalDescription": "Enter city details to manage it in the store.",
+  "modal": {
+    "basic": {
+      "section_title": "Basic city information"
+    }
+  },
+  "cityName": "City name",
+  "namePlaceholder": "e.g. Cairo",
+  "country": "Country",
+  "selectCountry": "Select country...",
+  "filters": {
+    "status": "Status",
+    "status_placeholder": "Filter by status",
+    "all": "All",
+    "active": "Active",
+    "inactive": "Inactive",
+    "country": "Country",
+    "country_placeholder": "Select a country"
+  }
+}

@@ -20,7 +20,8 @@
     "categories": "Categories",
     "wishlist": "Wishlist",
     "profile": "Profile",
-    "orders": "Orders"
+    "orders": "Orders",
+    "dashboard": "Dashboard"
   },
   
   "nav": {
@@ -132,7 +133,25 @@
     "settings": "Settings",
     "addresses": "Addresses",
     "paymentMethods": "Payment Methods",
-    "security": "Security"
+    "title": "My profile",
+    "general": {
+      "heading": "General information",
+      "subheading": "Manage your personal information."
+    },
+    "fields": {
+      "name": "Full name",
+      "email": "Email address",
+      "phone": "Phone number",
+      "current_password": "Current password",
+      "new_password": "New password",
+      "confirm_password": "Confirm new password"
+    },
+    "security": {
+      "page_title": "Account security",
+      "heading": "Change password",
+      "subheading": "Update your password to keep your account secure.",
+      "update_password": "Update password"
+    }
   },
 
   "orders": {
@@ -145,13 +164,16 @@
   },
 
   "status": {
+    "label": "Status",
     "pending": "Pending",
     "processing": "Processing",
     "shipped": "Shipped",
     "delivered": "Delivered",
     "cancelled": "Cancelled",
     "paid": "Paid",
-    "failed": "Failed"
+    "failed": "Failed",
+     "active": "Active",
+    "inactive": "Inactive"
   },
 
   "messages": {
@@ -171,27 +193,16 @@
     "maxLength": "Maximum {{count}} characters."
   },
 
-  "footer": {
-    "about": "About",
-    "privacy": "Privacy Policy",
-    "terms": "Terms & Conditions",
-    "returns": "Returns",
-    "shipping": "Shipping Policy",
-    "support": "Support",
-    "newsletter": "Newsletter",
-    "subscribe": "Subscribe",
-    "copyright": "All rights reserved."
-  },
-
   "theme": {
     "light": "Light",
     "dark": "Dark",
     "system": "System"
   },
 
+
   "language": {
-    "english": "English",
-    "arabic": "Arabic"
+    "changeTo": "Change language to",
+    "current": "Current language"
   },
 
   "pagination": {
@@ -204,11 +215,12 @@
   "errors": {
     "404": "Page not found",
     "500": "Internal server error",
-    "network": "Network error"
+    "network": "Network error",
+    "title": "Something went wrong",
+    "default_message": "An unexpected error occurred. Please try again.",
+    "retry": "Try again"
   },
 
-
-  "loading": "Loading...",
   "error": "Something went wrong",
   "save": "Save",
   "cancel": "Cancel",
@@ -222,10 +234,184 @@
     "light": "Light Mode",
     "dark": "Dark Mode"
   },
+  "home": "Home",
+  "logo": "Logo",
+  "copyright": "All rights reserved.",
   "support": { "title": "Support" },
   "about": { "contact": "contact" },
   "welcome_user": "Welcome, {{name}}",
   "sign_in": "Sign In",
   "signed_in_as": "Signed in as",
-  "sign_out": "Sign Out"
+  "sign_out": "Sign Out",
+  "no_results": "No results found",
+  "actions": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "restore": "Restore",
+    "permanentDelete": "Delete permanently"
+  },
+  "total_items": "Total items",
+  "show": "Show",
+  "per_page": "Per page",
+  "clear_filters": "Clear filters",
+  "clear": "Clear",
+  "restore": "Restore",
+  "force_delete": "Delete permanently",
+  "search_placeholder": "Search...",
+  "all": "All",
+  "imageUpload": {
+    "avatarHint": "Upload a profile picture",
+    "imageUploaded": "Image uploaded successfully",
+    "noImageSelected": "No image selected",
+    "browse": "Browse files",
+    "categoryImage": "Category image",
+    "clickToUpload": "Click to upload an image"
+  },
+  "actionsLabel": "Actions",
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you're looking for doesn't exist or may have been moved.",
+    "backHome": "Back to home"
+  },
+  "newsletter": {
+    "badge": "Stay updated",
+    "title": "Subscribe to our newsletter",
+    "description": "Get updates about new products and exclusive offers.",
+    "placeholder": "Enter your email address",
+    "button": "Subscribe",
+    "success": "Thank you for subscribing!"
+  },
+  "sections": {
+    "whyChooseUsSubtitle": "Discover why customers choose us."
+  },
+  "shipping": {
+    "editRate": "Edit shipping rate",
+    "addNewRate": "Add new shipping rate",
+    "rateModalDescription": "Configure the shipping rate details and delivery fees.",
+    "courier": "Courier",
+    "selectCourier": "Select a courier",
+    "city": "City",
+    "selectCity": "Select a city",
+    "fee": "Shipping fee",
+    "codFee": "Cash on delivery fee",
+    "deliveryFrom": "Delivery from (days)",
+    "deliveryTo": "Delivery to (days)",
+    "baseCost": "Base cost",
+    "baseWeight": "Base weight (kg)",
+    "extraPerKg": "Extra cost per kg",
+    "maxWeight": "Maximum weight (kg)",
+    "freeThreshold": "Free shipping threshold"
+  },
+  "country": {
+    "select": "Select country",
+    "selectPlaceholder": "Choose a country"
+  },
+  "loading": "Loading...",
+  "selectStatus": "Select status",
+  "common": {
+    "saving": "Saving...",
+    "save": "Save",
+    "yes": "Yes",
+    "no": "No",
+    "loading": "Loading...",
+    "status": "Status",
+    "selectStatus": "Select status",
+    "selectOption": "Select an option"
+  },
+  "modal": {
+    "multilingual": {
+      "section_title": "Multilingual information"
+    }
+  },
+  "yes": "Yes",
+  "no": "No",
+  "selectOption": "Select...",
+  "productGallery": {
+    "mainImage": "Main product image",
+    "zoomHint": "Click to zoom in",
+    "selectImage": "Select image",
+    "thumbnailAlt": "Product thumbnail"
+  },
+  "order": {
+    "editOrder": "Edit order",
+    "addNewOrder": "Add new order",
+    "modalDescription": "Enter the order information below.",
+    "sections": {
+      "customer": "Customer information",
+      "shipping": "Shipping information",
+      "payment": "Payment information"
+    },
+    "customerName": "Customer name",
+    "namePlaceholder": "Enter customer name",
+    "phonePrimary": "Primary phone",
+    "phoneSecondary": "Secondary phone",
+    "phonePlaceholder": "Enter phone number",
+    "email": "Email address",
+    "shippingAddress": "Shipping address",
+    "addressPlaceholder": "Enter shipping address",
+    "cityId": "City",
+    "shippingCourierId": "Shipping courier",
+    "paymentMethod": "Payment method",
+    "selectPayment": "Select payment method",
+    "couponCode": "Coupon code",
+    "notes": "Notes",
+    "notesPlaceholder": "Add order notes",
+    "stats": {
+      "total": "Total orders",
+      "pending": "Pending",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "returned": "Returned",
+      "trashed": "Deleted"
+    },
+    "updateStatusTitle": "Update order status",
+    "orderNumber": "Order number",
+    "columns": {
+      "status": "Status"
+    },
+    "selectStatus": "Select order status"
+  },
+  "order_status": {
+    "pending": "Pending",
+    "processing": "Processing",
+    "shipped": "Shipped",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "returned": "Returned"
+  },
+  "payment": {
+    "cash": "Cash",
+    "online": "Online payment",
+    "wallet": "Mobile wallet"
+  },
+  "saving": "Saving...",
+  "update": "Update",
+  "create": "Create",
+  "selected": "Selected",
+  "currency": "Currency",
+  "selectAll": "Select all",
+  "clearSelection": "Clear selection",
+  "noResults": "No results found",
+  "back": "Back",
+  "email": "Email",
+  "phone": "Phone",
+  "passwordOptional": "Password (optional)",
+  "password": "Password",
+  "confirmPassword": "Confirm password",
+  "statuses": {
+    "suspended": "Suspended",
+    "changeTitle": "Change status",
+    "changeDescription": "Select the new status."
+  },
+   "navbar": {
+    "selectCountry": "Select country",
+    "moreOptions": "More options",
+    "displaySettings": "Display settings",
+    "language": "Language",
+    "country": "Country",
+    "appearance": "Appearance"
+  },
+  "close": "Close"
 }

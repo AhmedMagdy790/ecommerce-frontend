@@ -13,11 +13,19 @@
     "success": "Success"
   },
 
-   "contact": {
+  "contact": {
     "title": "Contact Information",
     "fullName": "Full Name",
     "email": "Email Address",
-    "phone": "Phone Number"
+    "phone": "Phone Number",
+    "phonePrimary": "Primary Phone Number",
+    "phoneSecondary": "Secondary Phone Number (Optional)",
+    "placeholders": {
+      "fullName": "John Doe",
+      "email": "name@example.com",
+      "phonePrimary": "+20 123 456 7890",
+      "phoneSecondary": "+20 198 765 4321"
+    }
   },
 
   "billing": {
@@ -41,6 +49,18 @@
 
   "payment": {
     "title": "Payment Method",
+    "secure": "Secure Checkout",
+    "notes": "Order Notes (Optional)",
+    "notesPlaceholder": "Notes regarding your order, e.g. special delivery instructions...",
+    "methods": {
+       "defaultDesc": "Secure and encrypted payment method.",
+      "card": "Credit or debit card",
+      "cardDesc": "Pay securely using your card.",
+      "cod": "Cash on delivery",
+      "codDesc": "Pay when your order arrives.",
+      "wallet": "Digital wallet",
+      "walletDesc": "Pay using your digital wallet."
+    },
 
     "cash": {
       "title": "Cash on Delivery",
@@ -57,7 +77,7 @@
       "description": "Transfer the amount to our bank account."
     }
   },
-    "shippingAddress": {
+  "shippingAddress": {
     "title": "Shipping Address",
     "fullName": "Full Name",
     "phone": "Phone Number",
@@ -70,6 +90,11 @@
   "shipping": {
     "title": "Shipping Method",
     "free": "Free",
+
+    "selectCityFirst": "Please select a city first.",
+    "defaultCourier": "Default courier",
+    "estimatedDays": "Estimated delivery: {{days}} days",
+    "noOptions": "No shipping options available.",
 
     "standard": {
       "title": "Standard Shipping",
@@ -88,5 +113,92 @@
       "description": "Pick up your order from our store.",
       "estimated": "Usually ready within 24 hours"
     }
+  },
+  "page": {
+    "title": "Checkout",
+    "subtitle": "Complete your purchase securely by filling out the steps below."
+  },
+  "stepper": {
+    "contact": "Contact",
+    "address": "Address",
+    "shipping": "Shipping",
+    "payment": "Payment",
+    "review": "Review"
+  },
+  "summary": {
+    "title": "Order Summary",
+    "quantity": "Qty: {{count}}",
+    "emptyCart": "Your cart is empty",
+    "promoPlaceholder": "Promo code",
+    "apply": "Apply",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "calculatedAtNext": "Calculated later",
+    "tax": "Tax",
+    "discount": "Discount",
+    "paymentFee": "Payment Fee",
+    "total": "Total",
+    "taxNote": "Taxes and shipping are calculated during the checkout steps.",
+     "securePayment": "Secure payment"
+  },
+  "address": {
+    "title": "Shipping Address",
+    "deliveryLocation": "Delivery Location",
+    "countryId": "Country",
+    "selectCountry": "Select country...",
+    "cityId": "City",
+    "selectCountryFirst": "Select country first...",
+    "loadingCities": "Loading cities...",
+    "selectCity": "Select city...",
+    "addressLine": "Street Address",
+    "addressLine2": "Street Address 2 (Optional)",
+    "placeholders": {
+      "addressLine": "123 Main St",
+      "addressLine2": "Apt, Suite, Building (Optional)"
+    },
+    "firstName": "First name",
+    "lastName": "Last name",
+    "street": "Street address",
+    "postalCode": "Postal code"
+  },
+  "buttons": {
+    "back": "Back",
+    "continueToShipping": "Continue to Shipping",
+    "continueToPayment": "Continue to Payment",
+    "reviewOrder": "Review Order",
+     "placingOrder": "Placing Order...",
+    "placeOrder": "Place Order",
+    "next": "Next"
+  },
+  "review": {
+    "title": "Review Your Order",
+    "subtitle": "Please review your information before placing the order.",
+    "shippingAddress": "Shipping & Contact Address",
+    "shippingMethod": "Shipping Method",
+    "shippingCost": "Cost",
+    "paymentMethod": "Payment Method",
+    "cityId": "City",
+    "methodId": "Shipping method"
+  },
+   "loading": {
+    "cart": "Loading your cart..."
+  },
+  "notes": {
+    "title": "Order notes",
+    "description": "Add any special instructions for your order.",
+    "placeholder": "Write your notes here..."
+  },
+
+  "paypal": {
+    "canceledTitle": "Payment canceled",
+    "canceledMessage": "Your PayPal payment was canceled.",
+    "returnToCheckout": "Return to checkout",
+    "viewCart": "View cart"
+  },
+  "stripe": {
+    "canceledTitle": "Payment canceled",
+    "canceledMessage": "Your Stripe payment was canceled.",
+    "backToCheckout": "Back to checkout",
+    "viewOrder": "View order"
   }
 }

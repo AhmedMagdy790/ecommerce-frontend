@@ -1,0 +1,44 @@
+{
+  "navigation": {
+    "itemModalDescription": "Configure the navigation link, page reference, or child items.",
+    "name": "Menu name",
+    "location": "Location key",
+    "items": "Menu structure"
+  },
+  "common": {
+    "loading": "Loading...",
+    "status": "Status",
+    "selectStatus": "Select status"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "toggle": "Click to change status"
+  },
+  "modal": {
+    "multilingual": {
+      "section_title": "Multilingual information"
+    }
+  },
+  "editMenu": "Edit navigation menu",
+  "addNewMenu": "Add new navigation menu",
+  "modalDescription": "Enter navigation menu details and select its location.",
+  "menuName": "Menu name",
+  "namePlaceholder": "e.g. Main Header Menu",
+  "locationKey": "Location key (identifier)",
+  "locationPlaceholder": "Select location...",
+  "noPage": "No page (custom link only)",
+  "editItem": "Edit navigation item",
+  "addNewItem": "Add navigation item",
+  "itemTitle": "Item title",
+  "titlePlaceholder": "e.g. About Us, Services",
+  "customUrl": "Custom URL",
+  "pageId": "Internal page (optional)",
+  "selectPage": "Select an internal page...",
+  "sortOrder": "Sort order",
+  "itemsManagement": "Manage menu items",
+  "itemsPageSubtitle": "Reorder and manage menu links and pages.",
+  "addItem": "Add item",
+  "itemsList": "Menu items",
+  "noItems": "No items yet. Add your first item to get started."
+}

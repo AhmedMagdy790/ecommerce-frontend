@@ -6,7 +6,8 @@
     "categories": "الفئات",
     "price": "السعر",
     "apply": "تطبيق الفلاتر",
-    "clear": "مسح الفلاتر"
+    "clear": "مسح الفلاتر",
+    "reset": "إعادة تعيين الفلاتر"
   },
 
   "sort": {
@@ -21,7 +22,9 @@
   "pagination": {
     "previous": "السابق",
     "next": "التالي",
-    "page": "صفحة"
+    "page": "صفحة",
+    "label": "التنقل بين الصفحات",
+    "goToPage": "الانتقال إلى الصفحة {{page}}"
   },
 
   "products": {
@@ -39,5 +42,17 @@
     "accessories": "إكسسوارات",
     "electronics": "إلكترونيات",
     "home": "المنزل"
+  },
+  "errors": {
+    "addToCart": "تعذر إضافة المنتج إلى السلة."
+  },
+  "subtitle": "اكتشف المنتجات التي تناسبك.",
+  "searchPlaceholder": "ابحث عن المنتجات...",
+  "showingProducts": "عرض المنتجات",
+  "productsCount": "{{count}} منتج",
+  "productsSection": "جميع المنتجات",
+  "hero": {
+    "title": "اكتشف منتجاتنا",
+    "description": "تصفح مجموعتنا واعثر على ما تحتاج إليه."
   }
 }

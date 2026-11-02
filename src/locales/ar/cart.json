@@ -1,7 +1,6 @@
 {
   "title": "سلة التسوق",
   "description": "راجع منتجاتك قبل إتمام الطلب.",
-  "empty": "سلة التسوق فارغة حالياً.",
   "continue_shopping": "متابعة التسوق",
   "summary": {
     "title": "ملخص الطلب",
@@ -9,12 +8,38 @@
     "shipping": "الشحن",
     "tax": "الضريبة",
     "total": "الإجمالي",
-    "checkout": "إتمام عملية الشراء"
+    "checkout": "إتمام عملية الشراء",
+    "fastShipping": "شحن سريع",
+    "secureCheckout": "دفع آمن"
   },
    "subtotal": "المجموع الفرعي",
-  "shipping": "الشحن",
   "tax": "الضريبة",
   "discount": "الخصم",
   "total": "الإجمالي",
-  "checkout": "إتمام الطلب"
+  "checkout": "إتمام الطلب",
+  "sku": "رمز المنتج",
+  "color": "اللون",
+  "size": "المقاس",
+  "processing": "جارٍ المعالجة...",
+  "coupon": {
+    "title": "هل لديك كود خصم؟",
+    "placeholder": "أدخل كود الخصم",
+    "applying": "جارٍ تطبيق الكود...",
+    "apply": "تطبيق"
+  },
+  "empty": {
+    "title": "سلة التسوق فارغة",
+    "description": "يبدو أنك لم تضف أي منتجات إلى سلتك بعد.",
+    "continueShopping": "متابعة التسوق"
+  },
+  "shipping": {
+    "title": "حساب تكلفة الشحن",
+    "country": "الدولة",
+    "city": "المدينة",
+    "calculating": "جارٍ الحساب...",
+    "calculate": "احسب تكلفة الشحن"
+  },
+  "badge": "سلة التسوق",
+  "itemsCount": "{{count}} منتجات",
+  "clearCart": "إفراغ السلة"
 }

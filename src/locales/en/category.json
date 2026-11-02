@@ -1,0 +1,23 @@
+{
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "categories": {
+    "mainCategoryNone": "Main Category (None)",
+    "editCategory": "Edit Category",
+    "addNewCategory": "Add Category",
+    "modalDescription": "Enter category details to manage it in store",
+    "categoryName": "Category Name",
+    "namePlaceholder": "e.g. Electronics",
+    "parentCategoryOptional": "Parent Category (Optional)",
+    "selectParent": "Select Parent Category",
+    "categoryDescription": "Category Description",
+    "descriptionPlaceholder": "Write a short category description..."
+  },
+  "modal": {
+    "basic": {
+      "section_title": "Basic Category Information"
+    }
+  }
+}

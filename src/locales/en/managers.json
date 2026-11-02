@@ -1,0 +1,18 @@
+{
+    "editManager": "Edit manager",
+    "addNewManager": "Add new manager",
+    "modalDescription": "Enter the manager information below.",
+    "selectExistingUser": "Select an existing user",
+    "createNewUser": "Create a new user",
+    "selectUserLabel": "Select user",
+    "managerName": "Manager name",
+    "namePlaceholder": "Enter manager name",
+    "passwordOptional": "Password (optional)",
+    "role": "Role",
+    "selectRole": "Select role",
+    "modal": {
+        "basic": {
+          "section_title": "Basic information"
+        }
+      }
+}

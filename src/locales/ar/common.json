@@ -20,7 +20,8 @@
     "categories": "الأقسام",
     "wishlist": "المفضلة",
     "profile": "الملف الشخصي",
-    "orders": "الطلبات"
+    "orders": "الطلبات",
+     "dashboard": "لوحة التحكم"
   },
   
   "nav": {
@@ -131,7 +132,25 @@
     "settings": "الإعدادات",
     "addresses": "العناوين",
     "paymentMethods": "طرق الدفع",
-    "security": "الأمان"
+     "title": "ملفي الشخصي",
+    "general": {
+      "heading": "المعلومات العامة",
+      "subheading": "إدارة معلوماتك الشخصية."
+    },
+    "fields": {
+      "name": "الاسم بالكامل",
+      "email": "البريد الإلكتروني",
+      "phone": "رقم الهاتف",
+      "current_password": "كلمة المرور الحالية",
+      "new_password": "كلمة المرور الجديدة",
+      "confirm_password": "تأكيد كلمة المرور الجديدة"
+    },
+    "security": {
+      "page_title": "أمان الحساب",
+      "heading": "تغيير كلمة المرور",
+      "subheading": "حدّث كلمة المرور للحفاظ على أمان حسابك.",
+      "update_password": "تحديث كلمة المرور"
+    }
   },
 
   "orders": {
@@ -144,13 +163,16 @@
   },
 
   "status": {
+    "label": "الحالة",
     "pending": "قيد الانتظار",
     "processing": "قيد المعالجة",
     "shipped": "تم الشحن",
     "delivered": "تم التوصيل",
     "cancelled": "ملغي",
     "paid": "مدفوع",
-    "failed": "فشل"
+    "failed": "فشل",
+    "active": "نشط",
+    "inactive": "غير نشط"
   },
 
   "messages": {
@@ -170,18 +192,6 @@
     "maxLength": "الحد الأقصى {{count}} أحرف."
   },
 
-  "footer": {
-    "about": "من نحن",
-    "privacy": "سياسة الخصوصية",
-    "terms": "الشروط والأحكام",
-    "returns": "الإرجاع",
-    "shipping": "سياسة الشحن",
-    "support": "الدعم",
-    "newsletter": "النشرة البريدية",
-    "subscribe": "اشتراك",
-    "copyright": "جميع الحقوق محفوظة."
-  },
-
   "theme": {
     "light": "فاتح",
     "dark": "داكن",
@@ -189,8 +199,8 @@
   },
 
   "language": {
-    "english": "الإنجليزية",
-    "arabic": "العربية"
+    "changeTo": "تغيير اللغة إلى",
+    "current": "اللغة الحالية"
   },
 
   "pagination": {
@@ -203,7 +213,10 @@
   "errors": {
     "404": "الصفحة غير موجودة",
     "500": "خطأ داخلي في الخادم",
-    "network": "خطأ في الشبكة"
+    "network": "خطأ في الشبكة",
+     "title": "حدث خطأ",
+    "default_message": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.",
+    "retry": "إعادة المحاولة"
   },
 
   "loading": "جاري التحميل...",
@@ -220,10 +233,183 @@
     "light": "الوضع الفاتح",
     "dark": "الوضع الداكن"
   },
+  "home": "الرئيسية",
+  "logo": "الشعار",
+  "copyright": "جميع الحقوق محفوظة.",
   "support": { "title": "الدعم" },
   "about": { "contact": "اتصل بنا" },
   "welcome_user": "أهلاً، {{name}}",
   "sign_in": "تسجيل الدخول",
   "signed_in_as": "مسجل الدخول باسم",
-  "sign_out": "تسجيل الخروج"
+  "sign_out": "تسجيل الخروج",
+   "no_results": "لا توجد نتائج",
+  "actions": {
+    "edit": "تعديل",
+    "delete": "حذف",
+    "restore": "استعادة",
+    "permanentDelete": "حذف نهائي"
+  },
+  "total_items": "إجمالي العناصر",
+  "show": "عرض",
+  "per_page": "لكل صفحة",
+  "clear_filters": "مسح عوامل التصفية",
+  "clear": "مسح",
+  "restore": "استعادة",
+  "force_delete": "حذف نهائي",
+  "search_placeholder": "ابحث...",
+  "all": "الكل",
+  "imageUpload": {
+    "avatarHint": "ارفع صورة الملف الشخصي",
+    "imageUploaded": "تم رفع الصورة بنجاح",
+    "noImageSelected": "لم يتم اختيار صورة",
+    "browse": "تصفح الملفات",
+    "categoryImage": "صورة التصنيف",
+    "clickToUpload": "اضغط لرفع صورة"
+  },
+  "actionsLabel": "الإجراءات",
+  "notFound": {
+    "title": "الصفحة غير موجودة",
+    "description": "الصفحة التي تبحث عنها غير موجودة أو ربما تم نقلها.",
+    "backHome": "العودة للرئيسية"
+  },
+  "newsletter": {
+    "badge": "ابقَ على اطلاع",
+    "title": "اشترك في نشرتنا البريدية",
+    "description": "احصل على آخر أخبار المنتجات والعروض الحصرية.",
+    "placeholder": "أدخل بريدك الإلكتروني",
+    "button": "اشترك",
+    "success": "شكرًا لاشتراكك!"
+  },
+  "sections": {
+    "whyChooseUsSubtitle": "اكتشف لماذا يختارنا عملاؤنا."
+  },
+  "shipping": {
+    "editRate": "تعديل سعر الشحن",
+    "addNewRate": "إضافة سعر شحن جديد",
+    "rateModalDescription": "قم بإعداد تفاصيل سعر الشحن ورسوم التوصيل.",
+    "courier": "شركة الشحن",
+    "selectCourier": "اختر شركة الشحن",
+    "city": "المدينة",
+    "selectCity": "اختر المدينة",
+    "fee": "رسوم الشحن",
+    "codFee": "رسوم الدفع عند الاستلام",
+    "deliveryFrom": "التوصيل من (أيام)",
+    "deliveryTo": "التوصيل خلال (أيام)",
+    "baseCost": "التكلفة الأساسية",
+    "baseWeight": "الوزن الأساسي (كجم)",
+    "extraPerKg": "تكلفة كل كجم إضافي",
+    "maxWeight": "الوزن الأقصى (كجم)",
+    "freeThreshold": "الحد الأدنى للشحن المجاني"
+  },
+  "country": {
+    "select": "اختر الدولة",
+    "selectPlaceholder": "حدد الدولة"
+  },
+  "selectStatus": "اختر الحالة",
+  "common": {
+    "saving": "جارٍ الحفظ...",
+    "save": "حفظ",
+    "yes": "نعم",
+    "no": "لا",
+    "loading": "جارٍ التحميل...",
+    "status": "الحالة",
+    "selectStatus": "اختر الحالة",
+    "selectOption": "اختر خيارًا"
+  },
+  "modal": {
+    "multilingual": {
+      "section_title": "المعلومات متعددة اللغات"
+    }
+  },
+   "yes": "نعم",
+  "no": "لا",
+  "selectOption": "اختر...",
+  "productGallery": {
+    "mainImage": "الصورة الرئيسية للمنتج",
+    "zoomHint": "اضغط لتكبير الصورة",
+    "selectImage": "اختر الصورة",
+    "thumbnailAlt": "صورة مصغرة للمنتج"
+  },
+  "order": {
+    "editOrder": "تعديل الطلب",
+    "addNewOrder": "إضافة طلب جديد",
+    "modalDescription": "أدخل بيانات الطلب بالأسفل.",
+    "sections": {
+      "customer": "بيانات العميل",
+      "shipping": "بيانات الشحن",
+      "payment": "بيانات الدفع"
+    },
+    "customerName": "اسم العميل",
+    "namePlaceholder": "أدخل اسم العميل",
+    "phonePrimary": "رقم الهاتف الأساسي",
+    "phoneSecondary": "رقم هاتف إضافي",
+    "phonePlaceholder": "أدخل رقم الهاتف",
+    "email": "البريد الإلكتروني",
+    "shippingAddress": "عنوان الشحن",
+    "addressPlaceholder": "أدخل عنوان الشحن",
+    "cityId": "المدينة",
+    "shippingCourierId": "شركة الشحن",
+    "paymentMethod": "طريقة الدفع",
+    "selectPayment": "اختر طريقة الدفع",
+    "couponCode": "كود الخصم",
+    "notes": "ملاحظات",
+    "notesPlaceholder": "أضف ملاحظات الطلب",
+    "stats": {
+      "total": "إجمالي الطلبات",
+      "pending": "قيد الانتظار",
+      "processing": "قيد المعالجة",
+      "shipped": "تم الشحن",
+      "completed": "مكتملة",
+      "cancelled": "ملغاة",
+      "returned": "مرتجعة",
+      "trashed": "محذوفة"
+    },
+    "updateStatusTitle": "تحديث حالة الطلب",
+    "orderNumber": "رقم الطلب",
+    "columns": {
+      "status": "الحالة"
+    },
+    "selectStatus": "اختر حالة الطلب"
+  },
+  "order_status": {
+    "pending": "قيد الانتظار",
+    "processing": "قيد المعالجة",
+    "shipped": "تم الشحن",
+    "completed": "مكتمل",
+    "cancelled": "ملغى",
+    "returned": "مرتجع"
+  },
+  "payment": {
+    "cash": "نقدًا",
+    "online": "دفع إلكتروني",
+    "wallet": "محفظة إلكترونية"
+  },
+  "saving": "جارٍ الحفظ...",
+  "update": "تحديث",
+  "create": "إنشاء",
+  "selected": "محدد",
+  "currency": "العملة",
+  "selectAll": "تحديد الكل",
+  "clearSelection": "إلغاء التحديد",
+  "noResults": "لا توجد نتائج",
+  "back": "رجوع",
+  "email": "البريد الإلكتروني",
+  "phone": "الهاتف",
+  "passwordOptional": "كلمة المرور (اختياري)",
+  "password": "كلمة المرور",
+  "confirmPassword": "تأكيد كلمة المرور",
+   "statuses": {
+    "suspended": "موقوف",
+    "changeTitle": "تغيير الحالة",
+    "changeDescription": "اختر الحالة الجديدة."
+  },
+  "navbar": {
+    "selectCountry": "اختر الدولة",
+    "moreOptions": "المزيد من الخيارات",
+    "displaySettings": "إعدادات العرض",
+    "language": "اللغة",
+    "country": "الدولة",
+    "appearance": "المظهر"
+  },
+  "close": "إغلاق"
 }

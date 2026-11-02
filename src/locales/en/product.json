@@ -1,3 +1,131 @@
 {
-  "title": "Product"
+  "title": "Product",
+   "remove": "Remove",
+  "addToCart": "Add to cart",
+  "modal": {
+    "edit_title": "Edit product",
+    "create_title": "Add new product",
+    "description": "Enter the product information below.",
+    "steps": {
+      "basic": "Basic information",
+      "variants": "Variants",
+      "media": "Images and media"
+    },
+    "basic": {
+      "section_title": "Basic information",
+      "brand": "Brand",
+      "category": "Category",
+      "status": "Status"
+    },
+    "media": {
+      "featured_title": "Featured image",
+      "upload_featured": "Upload featured image",
+      "gallery_title": "Product gallery"
+    },
+    "variants": {
+      "title": "Product variants",
+      "add": "Add variant",
+      "sku": "SKU",
+      "price": "Price",
+      "stock": "Stock quantity",
+      "weight": "Weight",
+      "length": "Length",
+      "width": "Width",
+      "height": "Height"
+    },
+    "actions": {
+      "prev": "Previous",
+      "cancel": "Cancel",
+      "next": "Next",
+      "save": "Save",
+      "submit": "Submit"
+    },
+    "edit_variant_title": "Edit variant",
+    "create_variant_title": "Add new variant"
+  },
+  "fields": {
+    "name": "Product name",
+    "category": "Category",
+    "status": "Status",
+    "description": "Description"
+  },
+  "placeholders": {
+    "name": "Enter product name",
+    "description": "Enter product description"
+  },
+  "breadcrumb": {
+    "dashboard": "Dashboard",
+    "products": "Products"
+  },
+  "layout": {
+    "title": "Product management",
+    "description": "Manage your products and their information."
+  },
+  "quantity": {
+    "label": "Quantity"
+  },
+  "stock": {
+    "inStock": "In stock",
+    "outOfStock": "Out of stock"
+  },
+  "cart": {
+    "addedSuccess": "Product added to cart successfully"
+  },
+  "actions": {
+    "addToCart": "Add to cart",
+    "unavailable": "Unavailable"
+  },
+  "description": {
+    "title": "Product description"
+  },
+  "product": {
+    "notFound": "Product not found",
+    "notFoundDesc": "The product you're looking for could not be found.",
+    "retry": "Try again",
+    "browseOther": "Browse other products",
+    "relatedProducts": "Related products"
+  },
+  "errors": {
+    "selectSize": "Please select a size",
+    "selectColor": "Please select a color"
+  },
+  "badges": {
+    "authentic": "Authentic product",
+    "sale": "On sale"
+  },
+  "variants": {
+    "size": "Size",
+    "selectSize": "Select a size",
+    "sizeGuide": "Size guide",
+    "color": "Color",
+    "selectColor": "Select a color"
+  },
+  "perks": {
+    "fastDelivery": {
+      "title": "Fast delivery",
+      "subtitle": "Delivered to your door"
+    },
+    "qualityGuarantee": {
+      "title": "Quality guarantee",
+      "subtitle": "Quality you can trust"
+    },
+    "easyReturns": {
+      "title": "Easy returns",
+      "subtitle": "Hassle-free returns"
+    }
+  },
+  "reviews": {
+    "title": "Customer reviews",
+    "countLabel": "total reviews"
+  },
+  "size": "Size",
+  "color": "Color",
+  "nav": {
+    "home": "Home",
+    "shop": "Shop"
+  },
+  "relatedProducts": {
+    "title": "Related products",
+    "productImage": "Product image"
+  }
 }

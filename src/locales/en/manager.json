@@ -1,0 +1,17 @@
+{
+  "managers": {
+    "name": "Manager",
+    "avatar": "Profile picture",
+    "roles": "Roles and permissions"
+  },
+  "common": {
+    "email": "Email",
+    "phone": "Phone",
+    "status": "Status"
+  },
+  "status": {
+    "active": "Active",
+    "pending": "Pending",
+    "suspended": "Suspended"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "city": {
+    "name": "اسم المدينة",
+    "country": "الدولة",
+    "city_code": "رمز المدينة"
+  },
+  "common": {
+    "status": "الحالة"
+  },
+  "status": {
+    "active": "نشطة",
+    "inactive": "غير نشطة",
+    "toggle": "اضغط لتغيير الحالة"
+  },
+  "editCity": "تعديل المدينة",
+  "addNewCity": "إضافة مدينة جديدة",
+  "modalDescription": "أدخل بيانات المدينة لإدارتها في المتجر.",
+  "modal": {
+    "basic": {
+      "section_title": "البيانات الأساسية للمدينة"
+    }
+  },
+  "cityName": "اسم المدينة",
+  "namePlaceholder": "مثال: القاهرة",
+  "country": "الدولة",
+  "selectCountry": "اختر الدولة...",
+  "filters": {
+    "status": "الحالة",
+    "status_placeholder": "تصفية حسب الحالة",
+    "all": "الكل",
+    "active": "نشطة",
+    "inactive": "غير نشطة",
+    "country": "الدولة",
+    "country_placeholder": "اختر الدولة"
+  }
+}

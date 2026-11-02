@@ -1,0 +1,18 @@
+{
+    "editManager": "تعديل المدير",
+    "addNewManager": "إضافة مدير جديد",
+    "modalDescription": "أدخل بيانات المدير بالأسفل.",
+    "selectExistingUser": "اختيار مستخدم موجود",
+    "createNewUser": "إنشاء مستخدم جديد",
+    "selectUserLabel": "اختر المستخدم",
+    "managerName": "اسم المدير",
+    "namePlaceholder": "أدخل اسم المدير",
+    "passwordOptional": "كلمة المرور (اختياري)",
+    "role": "الدور",
+    "selectRole": "اختر الدور",
+    "modal": {
+        "basic": {
+        "section_title": "المعلومات الأساسية"
+        }
+    }
+}

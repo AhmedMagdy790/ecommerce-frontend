@@ -2,7 +2,6 @@
   "back": "العودة إلى الطلبات",
 
   "subtotal": "المجموع الفرعي",
-  "shipping": "الشحن",
   "tax": "الضريبة",
   "discount": "الخصم",
   "total": "الإجمالي",
@@ -29,8 +28,15 @@
     "total": "الإجمالي",
     "date": "تاريخ الطلب",
     "viewOrder": "عرض الطلب",
+    "viewOrders": "الانتقال إلى قائمة الطلبات",
     "continueShopping": "متابعة التسوق",
-    "notFound": "لم يتم العثور على الطلب."
+    "notFound": "لم يتم العثور على الطلب.",
+    "shippingAddress": "عنوان الشحن",
+    "paymentMethod": "طريقة الدفع",
+    "summary": "ملخص الطلب",
+    "subtotal": "المجموع الفرعي",
+    "shippingCost": "تكلفة الشحن",
+    "discount": "الخصم"
   },
 
   "details": {
@@ -40,6 +46,24 @@
     "shipping": "عنوان الشحن",
     "payment": "طريقة الدفع",
     "quantity": "الكمية",
-    "notFound": "لم يتم العثور على الطلب."
+    "notFound": "لم يتم العثور على الطلب.",
+    "notFoundDesc": "تعذر العثور على الطلب المطلوب.",
+    "customer": "العميل"
+  },
+  "shipping": {
+    "free": "شحن مجاني",
+    "costLabel": "رسوم الشحن"
+  },
+  "errors": {
+    "orderNotFound": "الطلب غير موجود.",
+    "invalidOrderSlug": "مرجع الطلب غير صالح."
+  },
+  "page": {
+    "title": "الطلبات"
+  },
+  "actions": {
+    "viewActive": "عرض الطلبات النشطة",
+    "viewTrashed": "عرض الطلبات المحذوفة",
+    "create": "إنشاء طلب"
   }
 }

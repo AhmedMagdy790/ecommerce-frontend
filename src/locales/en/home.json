@@ -44,7 +44,8 @@
 
   "newArrivals": {
     "title": "New Arrivals",
-    "viewAll": "View All"
+    "viewAll": "View All",
+    "badge": "New arrivals"
   },
 
   "whyChooseUs": {
@@ -68,5 +69,9 @@
 
   "brandLogos": {
     "title": "Trusted Brands"
-  }
+  },
+  "products": {
+    "handpicked": "Handpicked for you"
+  },
+  "priceUnavailable": "Price unavailable"
 }

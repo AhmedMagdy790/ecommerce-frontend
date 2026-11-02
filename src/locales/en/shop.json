@@ -6,7 +6,8 @@
     "categories": "Categories",
     "price": "Price",
     "apply": "Apply Filters",
-    "clear": "Clear Filters"
+    "clear": "Clear Filters",
+    "reset": "Reset filters"
   },
 
   "sort": {
@@ -21,7 +22,9 @@
   "pagination": {
     "previous": "Previous",
     "next": "Next",
-    "page": "Page"
+    "page": "Page",
+    "label": "Pagination",
+    "goToPage": "Go to page {{page}}"
   },
 
   "products": {
@@ -39,5 +42,18 @@
     "accessories": "Accessories",
     "electronics": "Electronics",
     "home": "Home"
+  },
+
+  "errors": {
+    "addToCart": "Failed to add product to cart."
+  },
+  "subtitle": "Discover products you'll love.",
+  "searchPlaceholder": "Search products...",
+  "showingProducts": "Showing products",
+  "productsCount": "{{count}} products",
+  "productsSection": "All Products",
+  "hero": {
+    "title": "Discover our products",
+    "description": "Explore our collection and find what you need."
   }
 }

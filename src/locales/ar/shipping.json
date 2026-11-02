@@ -1,0 +1,28 @@
+{
+  "status": {
+    "active": "نشط",
+    "inactive": "غير نشط"
+  },
+  "editCourier": "تعديل شركة الشحن",
+  "addNewCourier": "إضافة شركة شحن جديدة",
+  "modalDescription": "إعداد بيانات شركة الشحن وروابط API وبيانات الاتصال.",
+  "courierName": "اسم شركة الشحن",
+  "namePlaceholder": "مثال: DHL أو Aramex",
+  "description": "الوصف",
+  "descriptionPlaceholder": "تفاصيل أو تعليمات اختيارية...",
+  "code": "رمز شركة الشحن",
+  "phone": "رقم الهاتف",
+  "email": "البريد الإلكتروني",
+  "driver": "السائق",
+  "apiEndpoint": "رابط API",
+  "apiKey": "مفتاح API",
+  "supportsCod": "يدعم الدفع عند الاستلام",
+  "trackingUrl": "قالب رابط تتبع الشحنة",
+  "modal": {
+    "multilingual": {
+      "section_title": "المعلومات متعددة اللغات"
+    }
+  },
+   "view_active": "عرض النشطة",
+  "view_trashed": "عرض المحذوفة"
+}

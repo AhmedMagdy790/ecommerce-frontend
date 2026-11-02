@@ -1,0 +1,23 @@
+{
+  "status": {
+    "active": "نشط",
+    "inactive": "غير نشط"
+  },
+  "categories": {
+    "mainCategoryNone": "تصنيف رئيسي (بدون)",
+    "editCategory": "تعديل التصنيف",
+    "addNewCategory": "إضافة تصنيف",
+    "modalDescription": "أدخل بيانات التصنيف لإدارته في المتجر",
+    "categoryName": "اسم التصنيف",
+    "namePlaceholder": "مثال: الإلكترونيات",
+    "parentCategoryOptional": "التصنيف الأب (اختياري)",
+    "selectParent": "اختر التصنيف الأب",
+    "categoryDescription": "وصف التصنيف",
+    "descriptionPlaceholder": "اكتب وصفًا مختصرًا للتصنيف..."
+  },
+  "modal": {
+    "basic": {
+      "section_title": "البيانات الأساسية للتصنيف"
+    }
+  }
+}

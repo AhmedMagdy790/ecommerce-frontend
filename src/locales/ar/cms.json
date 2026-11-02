@@ -1,0 +1,74 @@
+{
+    "sections": {
+        "editItem": "تعديل عنصر القسم",
+        "addNewItem": "إضافة عنصر جديد",
+        "itemModalDescription": "أدخل بيانات العنصر بالأسفل.",
+        "tabs": {
+            "general": "عام",
+            "media": "الوسائط",
+            "advanced": "متقدم"
+        },
+        "itemTitle": "عنوان العنصر",
+        "titlePlaceholder": "أدخل عنوان العنصر",
+        "itemSubtitle": "العنوان الفرعي للعنصر",
+        "subtitlePlaceholder": "أدخل العنوان الفرعي",
+        "itemDescription": "وصف العنصر",
+        "descriptionPlaceholder": "أدخل وصف العنصر",
+        "itemImage": "صورة العنصر",
+        "itemLink": "رابط العنصر",
+        "buttonText": "نص الزر",
+        "floatTitle": "العنوان العائم",
+        "floatSubtitle": "العنوان الفرعي العائم",
+        "statNumber": "رقم الإحصائية",
+        "statText": "نص الإحصائية",
+        "sortOrder": "ترتيب العرض",
+        "editSection": "تعديل القسم",
+        "addNewSection": "إضافة قسم جديد",
+        "modalDescription": "أدخل بيانات القسم بالأسفل.",
+        "sectionName": "اسم القسم",
+        "namePlaceholder": "أدخل اسم القسم",
+        "selectProducts": "اختيار المنتجات",
+        "selectProductsHint": "اختر المنتجات التي تريد عرضها في هذا القسم.",
+        "noProductsFound": "لم يتم العثور على منتجات",
+        "selectedCount": "العناصر المحددة: {{count}}"
+    },
+    "modal": {
+        "basic": {
+            "section_title": "المعلومات الأساسية",
+            "item_title": "معلومات العنصر"
+        }
+    },
+    "status": {
+        "active": "نشط",
+        "inactive": "غير نشط"
+    },
+    "page": {
+        "editPage": "تعديل الصفحة",
+        "addNewPage": "إضافة صفحة جديدة",
+        "modalDescription": "أدخل بيانات الصفحة بالأسفل.",
+        "title": "عنوان الصفحة",
+        "titlePlaceholder": "أدخل عنوان الصفحة",
+        "slug": "الرابط المختصر",
+        "slugPlaceholder": "أدخل الرابط المختصر",
+        "content": "المحتوى",
+        "contentPlaceholder": "أدخل محتوى الصفحة",
+        "metaTitle": "عنوان محركات البحث",
+        "metaTitlePlaceholder": "أدخل عنوان محركات البحث",
+        "metaDescription": "وصف محركات البحث",
+        "metaDescriptionPlaceholder": "أدخل وصف محركات البحث"
+    },
+    "pageBuilder": {
+        "subtitle": "أنشئ أقسام الصفحة ونظّم ترتيبها.",
+        "addSection": "إضافة قسم",
+        "editSection": "تعديل القسم",
+        "sectionName": "اسم القسم",
+        "sectionType": "نوع القسم",
+        "sectionsList": "أقسام الصفحة",
+        "noSections": "لم تتم إضافة أقسام بعد."
+    },
+    "common": {
+        "cancel": "إلغاء",
+        "status": "الحالة",
+        "selectStatus": "اختر الحالة"
+    }
+}

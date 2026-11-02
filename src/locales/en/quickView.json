@@ -1,0 +1,16 @@
+{
+  "removeFromWishlist": "Remove from wishlist",
+  "addToWishlist": "Add to wishlist",
+  "close": "Close",
+  "selectImage": "Select image",
+  "priceUnavailable": "Price unavailable",
+  "availableOptions": "Available options",
+  "optionNumber": "Option {{number}}",
+  "outOfStock": "Out of stock",
+  "quantity": "Quantity",
+  "decreaseQuantity": "Decrease quantity",
+  "increaseQuantity": "Increase quantity",
+  "availableQuantity": "Available quantity: {{count}}",
+  "addToCart": "Add to cart",
+  "viewDetails": "View product details"
+}

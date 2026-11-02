@@ -1,0 +1,13 @@
+{
+    "editUser": "Edit user",
+    "addNewUser": "Add new user",
+    "modalDescription": "Enter the user information below.",
+    "name": "Full name",
+    "namePlaceholder": "Enter full name",
+    "email": "Email address",
+    "phone": "Phone number",
+    "password": "Password",
+    "passwordConfirmation": "Confirm password",
+    "title": "Users",
+    "add": "Add user"
+}

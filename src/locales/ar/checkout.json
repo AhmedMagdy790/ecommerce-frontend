@@ -1,27 +1,45 @@
 {
-  "title": "التحقق",
+  "title": "إتمام الشراء",
   "placeOrder": {
     "button": "تأكيد الطلب",
-    "processing": "جارٍ إنشاء الطلب...",
-    "secure": "عملية دفع آمنة"
+    "processing": "جاري معالجة طلبك...",
+    "secure": "دفع آمن 100%"
   },
 
   "progress": {
-    "cart": "السلة",
-    "checkout": "الدفع",
-    "payment": "وسيلة الدفع",
-    "success": "تم الطلب"
+    "cart": "سلة التسوق",
+    "checkout": "إتمام الشراء",
+    "payment": "الدفع",
+    "success": "تم بنجاح"
   },
 
-   "contact": {
-    "title": "بيانات التواصل",
+  "contact": {
+    "title": "معلومات الاتصال",
     "fullName": "الاسم الكامل",
     "email": "البريد الإلكتروني",
-    "phone": "رقم الهاتف"
+    "phone": "رقم الهاتف",
+    "phonePrimary": "رقم الهاتف الرئيسي",
+    "phoneSecondary": "رقم هاتف إضافي (اختياري)",
+    "placeholders": {
+      "fullName": "أحمد محمد",
+      "email": "name@example.com",
+      "phonePrimary": "+20 123 456 7890",
+      "phoneSecondary": "+20 198 765 4321"
+    }
+  },
+
+  "billing": {
+    "title": "عنوان الفواتير",
+    "sameAsShipping": "عنوان الفواتير هو نفس عنوان الشحن",
+    "fullName": "الاسم الكامل",
+    "address": "العنوان",
+    "city": "المدينة",
+    "country": "الدولة",
+    "postalCode": "الرمز البريدي"
   },
 
   "checkout": {
-    "billing": "عنوان الفاتورة",
+    "billing": "عنوان الفواتير",
     "shipping": "عنوان الشحن",
     "payment": "طريقة الدفع",
     "orderSummary": "ملخص الطلب",
@@ -30,52 +48,164 @@
 
   "payment": {
     "title": "طريقة الدفع",
+    "secure": "دفع آمن ومحمي",
+    "notes": "ملاحظات الطلب (اختياري)",
+    "notesPlaceholder": "ملاحظات بخصوص طلبك، مثل: تعليمات توصيل خاصة...",
+
+    "methods": {
+      "defaultDesc": "طريقة دفع آمنة ومشفرة.",
+      "card": "بطاقة ائتمان أو خصم",
+      "cardDesc": "ادفع بأمان باستخدام بطاقتك.",
+      "cod": "الدفع عند الاستلام",
+      "codDesc": "ادفع عند وصول طلبك.",
+      "wallet": "محفظة إلكترونية",
+      "walletDesc": "ادفع باستخدام محفظتك الإلكترونية."
+    },
 
     "cash": {
       "title": "الدفع عند الاستلام",
-      "description": "ادفع عند استلام طلبك."
+      "description": "ادفع نقداً عند استلام طلبك."
     },
 
     "card": {
-      "title": "بطاقة ائتمانية / مدى",
-      "description": "ادفع بأمان باستخدام بطاقتك."
+      "title": "بطاقة ائتمان / خصم مباشر",
+      "description": "ادفع بأمان باستخدام بطاقتك البنكية."
     },
 
     "bank": {
       "title": "تحويل بنكي",
-      "description": "حوّل المبلغ إلى حسابنا البنكي."
+      "description": "قم بتحويل المبلغ إلى حسابنا البنكي."
     }
   },
+
   "shippingAddress": {
     "title": "عنوان الشحن",
     "fullName": "الاسم الكامل",
     "phone": "رقم الهاتف",
     "country": "الدولة",
     "city": "المدينة",
-    "addressLine1": "العنوان",
-    "addressLine2": "الشقة أو الدور أو تفاصيل إضافية (اختياري)",
+    "addressLine1": "العنوان (السطر الأول)",
+    "addressLine2": "رقم الشقة، المجمع، إلخ (اختياري)",
     "postalCode": "الرمز البريدي"
   },
+
   "shipping": {
-    "title": "طريقة الشحن",
+    "title": "خيار الشحن",
     "free": "مجاني",
+    "selectCityFirst": "يرجى اختيار المدينة أولاً.",
+    "defaultCourier": "شركة الشحن الافتراضية",
+    "estimatedDays": "التوصيل المتوقع: {{days}} أيام",
+    "noOptions": "لا توجد خيارات شحن متاحة.",
 
     "standard": {
-      "title": "الشحن العادي",
-      "description": "خيار اقتصادي للطلبات اليومية.",
-      "estimated": "التوصيل المتوقع: من 3 إلى 5 أيام عمل"
+      "title": "الشحن القياسي",
+      "description": "شحن بتكلفة مناسبة للطلبات اليومية.",
+      "estimated": "التوصيل المتوقع: 3–5 أيام عمل"
     },
 
     "express": {
       "title": "الشحن السريع",
       "description": "توصيل سريع للطلبات المستعجلة.",
-      "estimated": "التوصيل المتوقع: من يوم إلى يومي عمل"
+      "estimated": "التوصيل المتوقع: 1–2 يوم عمل"
     },
 
     "pickup": {
       "title": "الاستلام من المتجر",
-      "description": "استلم طلبك بنفسك من أقرب فرع.",
-      "estimated": "جاهز للاستلام خلال 24 ساعة"
+      "description": "استلم طلبك بنفسك من فرعنا.",
+      "estimated": "يكون جاهزاً عادةً خلال 24 ساعة"
     }
+  },
+
+  "page": {
+    "title": "إتمام الشراء",
+    "subtitle": "أكمل عملية الشراء بأمان من خلال تعبئة البيانات أدناه."
+  },
+
+  "stepper": {
+    "contact": "التواصل",
+    "address": "العنوان",
+    "shipping": "الشحن",
+    "payment": "الدفع",
+    "review": "المراجعة"
+  },
+
+  "summary": {
+    "title": "ملخص الطلب",
+    "quantity": "الكمية: {{count}}",
+    "emptyCart": "سلة التسوق فارغة",
+    "promoPlaceholder": "رمز التخفيض (كوبون)",
+    "apply": "تطبيق",
+    "subtotal": "المجموع الفرعي",
+    "shipping": "الشحن",
+    "calculatedAtNext": "يُحسب في الخطوة التالية",
+    "tax": "الضريبة",
+    "discount": "الخصم",
+    "paymentFee": "رسوم الدفع",
+    "total": "الإجمالي",
+    "taxNote": "يتم احتساب الضرائب وتكاليف الشحن أثناء خطوات إتمام الشراء.",
+    "securePayment": "دفع آمن"
+  },
+
+  "address": {
+    "title": "عنوان الشحن",
+    "deliveryLocation": "موقع التسليم",
+    "countryId": "الدولة",
+    "selectCountry": "اختر الدولة...",
+    "cityId": "المدينة",
+    "selectCountryFirst": "اختر الدولة أولاً...",
+    "loadingCities": "جاري تحميل المدن...",
+    "selectCity": "اختر المدينة...",
+    "addressLine": "عنوان الشارع",
+    "addressLine2": "تفاصيل إضافية للعنوان (اختياري)",
+    "placeholders": {
+      "addressLine": "الشارع الرئيسي، المبنى",
+      "addressLine2": "الشقة، الدور، المبنى (اختياري)"
+    },
+     "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
+    "street": "عنوان الشارع",
+    "postalCode": "الرمز البريدي"
+  },
+
+  "buttons": {
+    "back": "السابق",
+    "continueToShipping": "المتابعة إلى الشحن",
+    "continueToPayment": "المتابعة إلى الدفع",
+    "reviewOrder": "مراجعة الطلب",
+    "placingOrder": "جاري إتمام الطلب...",
+    "placeOrder": "تأكيد وإرسال الطلب",
+    "next": "التالي"
+  },
+
+  "review": {
+    "title": "مراجعة الطلب",
+    "subtitle": "يرجى مراجعة بياناتك قبل إتمام الطلب.",
+    "shippingAddress": "عنوان الشحن والتواصل",
+    "shippingMethod": "وسيلة الشحن",
+    "shippingCost": "التكلفة",
+    "paymentMethod": "طريقة الدفع",
+    "cityId": "المدينة",
+    "methodId": "طريقة الشحن"
+  },
+
+  "loading": {
+    "cart": "جارٍ تحميل سلة التسوق..."
+  },
+  "notes": {
+    "title": "ملاحظات الطلب",
+    "description": "أضف أي تعليمات خاصة بطلبك.",
+    "placeholder": "اكتب ملاحظاتك هنا..."
+  },
+  "paypal": {
+    "canceledTitle": "تم إلغاء الدفع",
+    "canceledMessage": "تم إلغاء عملية الدفع عبر PayPal.",
+    "returnToCheckout": "العودة إلى إتمام الطلب",
+    "viewCart": "عرض السلة"
+  },
+  "stripe": {
+    "canceledTitle": "تم إلغاء الدفع",
+    "canceledMessage": "تم إلغاء عملية الدفع عبر Stripe.",
+    "backToCheckout": "العودة إلى إتمام الطلب",
+    "viewOrder": "عرض الطلب"
   }
 }

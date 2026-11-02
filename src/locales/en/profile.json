@@ -16,15 +16,92 @@
     }
   },
   "sections": {
+    "info": {
+      "title": "Personal information",
+      "description": "Manage your personal account information.",
+      "contactTitle": "Contact information",
+      "contactDescription": "Manage your email address and phone number.",
+      "unsavedChanges": "You have unsaved changes.",
+      "upToDate": "Your information is up to date."
+    },
     "security": {
+      "info": {
+        "title": "Personal information",
+        "description": "Manage your personal account information.",
+        "contactTitle": "Contact information",
+        "contactDescription": "Manage your email address and phone number.",
+        "unsavedChanges": "You have unsaved changes.",
+        "upToDate": "Your information is up to date."
+      },
       "title": "Security Settings",
       "description": "Secure your account by regularly updating your password.",
-      "comingSoon": "Password change and Two-Factor Authentication (2FA) features will be available soon."
+      "comingSoon": "Password change and Two-Factor Authentication (2FA) features will be available soon.",
+      "currentPassword": "Current password",
+      "currentPasswordHint": "Enter your current password",
+      "newPassword": "New password",
+      "newPasswordHint": "Enter your new password",
+      "confirmPassword": "Confirm password",
+      "confirmPasswordHint": "Re-enter your new password",
+      "changePassword": "Change password",
+      "changePasswordDescription": "Update your password to keep your account secure.",
+      "hidePassword": "Hide password",
+      "showPassword": "Show password",
+      "passwordPrivacy": "Your password is encrypted and stored securely.",
+      "updating": "Updating...",
+      "updatePassword": "Update password"
     },
     "orders": {
       "title": "Order History",
       "description": "View and track all your purchase orders.",
-      "empty": "No previous orders yet."
+      "empty": "No previous orders yet.",
+      "loading": "Loading your orders...",
+      "error": "Unable to load your orders. Please try again.",
+      "empty_title": "You haven't placed any orders yet",
+      "start_shopping": "Start shopping",
+      "orderNumber": "Order number",
+      "location": "Shipping address",
+      "itemsCount": "Items",
+      "paymentMethod": "Payment method",
+      "paymentStatus": "Payment status",
+      "orderStatus": "Order status",
+      "total": "Total",
+      "managePayment": "Manage payment"
     }
-  }
+  },
+  "update_avatar": "Update profile picture",
+  "default_user_name": "User",
+  "account_verified": "Verified account",
+  "joined_date": "Joined on",
+  "stats": {
+    "total_orders": "Total orders",
+    "active_orders": "Active orders"
+  },
+  "avatar_update_failed": "Failed to update profile picture",
+  "name": "Full name",
+  "email": "Email address",
+  "phone": "Phone number",
+  "placeholders": {
+    "name": "Enter your full name",
+    "email": "Enter your email address",
+    "phone": "Enter your phone number"
+  },
+  "overview": {
+    "title": "Account security",
+    "breadcrumbLabel": "My account",
+    "description": "Manage your account, personal information, and orders.",
+    "sectionsTitle": "Account settings",
+    "orders": {
+      "title": "My orders",
+      "description": "View and manage your orders."
+    },
+    "personalInfo": {
+      "title": "Personal information",
+      "description": "Manage your name and contact information."
+    },
+    "security": {
+      "title": "Security",
+      "description": "Manage your password and account security."
+    }
+  },
+  "loading": "Loading..."
 }

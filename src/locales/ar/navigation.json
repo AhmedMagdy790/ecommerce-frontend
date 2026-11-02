@@ -1,0 +1,44 @@
+{
+  "navigation": {
+    "itemModalDescription": "أعدّ رابط القائمة أو الصفحة المرتبطة أو العناصر الفرعية.",
+    "name": "اسم القائمة",
+    "location": "مفتاح الموقع",
+    "items": "بنية القائمة"
+  },
+  "common": {
+    "loading": "جارٍ التحميل...",
+    "status": "الحالة",
+    "selectStatus": "اختر الحالة"
+  },
+  "status": {
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "toggle": "اضغط لتغيير الحالة"
+  },
+  "modal": {
+    "multilingual": {
+      "section_title": "المعلومات متعددة اللغات"
+    }
+  },
+  "editMenu": "تعديل قائمة التنقل",
+  "addNewMenu": "إضافة قائمة تنقل جديدة",
+  "modalDescription": "أدخل تفاصيل قائمة التنقل واختر موقعها.",
+  "menuName": "اسم القائمة",
+  "namePlaceholder": "مثال: القائمة الرئيسية",
+  "locationKey": "مفتاح الموقع (المعرّف)",
+  "locationPlaceholder": "اختر الموقع...",
+  "noPage": "بدون صفحة (رابط مخصص فقط)",
+  "editItem": "تعديل عنصر القائمة",
+  "addNewItem": "إضافة عنصر للقائمة",
+  "itemTitle": "عنوان العنصر",
+  "titlePlaceholder": "مثال: من نحن، الخدمات",
+  "customUrl": "رابط مخصص",
+  "pageId": "صفحة داخلية (اختياري)",
+  "selectPage": "اختر صفحة داخلية...",
+  "sortOrder": "ترتيب العرض",
+  "itemsManagement": "إدارة عناصر القائمة",
+  "itemsPageSubtitle": "أعد ترتيب روابط وصفحات القائمة وأدرها.",
+  "addItem": "إضافة عنصر",
+  "itemsList": "عناصر القائمة",
+  "noItems": "لا توجد عناصر بعد. أضف أول عنصر للبدء."
+}

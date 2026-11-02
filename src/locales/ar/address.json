@@ -1,0 +1,70 @@
+{
+    "title": "عناويني",
+    "addresses": {
+        "types": {
+            "shipping": "عنوان الشحن",
+            "billing": "عنوان الفوترة",
+            "both": "الشحن والفوترة"
+        },
+        "editAddress": "تعديل العنوان",
+        "addNewAddress": "إضافة عنوان جديد",
+        "modalDescription": "أدخل تفاصيل عنوان التوصيل لطلباتك.",
+        "country": "الدولة",
+        "selectCountry": "اختر الدولة...",
+        "city": "المدينة",
+        "selectCity": "اختر المدينة...",
+        "type": "نوع العنوان",
+        "selectType": "اختر النوع...",
+        "phoneContact": "رقم التواصل",
+        "streetDetails": "تفاصيل الشارع",
+        "streetPlaceholder": "مثال: ١٥ شارع أحمد عرابي",
+        "area": "المنطقة / الحي",
+        "areaPlaceholder": "مثال: المعادي",
+        "buildingNumber": "رقم المبنى / الشقة",
+        "setAsDefault": "تعيين كعنوان افتراضي"
+    },
+    "types": {
+        "home": "Home",
+        "work": "Work",
+        "office": "Office",
+        "other": "Other"
+    },
+    "backToAddresses": "Back to addresses",
+    "backToAccount": "Back to account",
+    "breadcrumb": "My addresses",
+    "description": "Manage your saved shipping addresses.",
+    "addAddress": "Add address",
+    "retry": "Try again",
+    "loading": "Loading...",
+    "empty": {
+        "title": "No addresses yet",
+        "description": "Add an address to make your checkout faster and easier."
+    },
+    "listLabel": "Saved addresses",
+    "defaultAddress": "Default address",
+    "makeDefault": "Make default",
+    "editAddress": "Edit address",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Are you sure you want to delete this address?",
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "form": {
+        "createTitle": "Add a new address",
+        "description": "Enter your address details below.",
+        "type": "Address type",
+        "country": "Country",
+        "selectCountry": "Select a country",
+        "city": "City",
+        "selectCity": "Select a city",
+        "area": "Area",
+        "areaPlaceholder": "Enter your area",
+        "street": "Street address",
+        "streetPlaceholder": "Enter your street address",
+        "building": "Building / Apartment",
+        "phone": "Phone number",
+        "makeDefault": "Set as default address",
+        "makeDefaultDescription": "Use this address automatically during checkout.",
+        "createButton": "Save address"
+    }
+}

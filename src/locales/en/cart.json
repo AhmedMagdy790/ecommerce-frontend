@@ -1,7 +1,6 @@
 {
   "title": "Shopping Cart",
   "description": "Review your items before proceeding to checkout.",
-  "empty": "Your cart is currently empty.",
   "continue_shopping": "Continue Shopping",
   "summary": {
     "title": "Order Summary",
@@ -9,12 +8,38 @@
     "shipping": "Shipping",
     "tax": "Tax",
     "total": "Total",
-    "checkout": "Proceed to Checkout"
+    "checkout": "Proceed to Checkout",
+    "secureCheckout": "Secure Checkout",
+    "fastShipping": "Fast Shipping"
   },
    "subtotal": "Subtotal",
-  "shipping": "Shipping",
   "tax": "Tax",
   "discount": "Discount",
   "total": "Total",
-  "checkout": "Proceed to Checkout"
+  "checkout": "Proceed to Checkout",
+   "sku": "SKU",
+  "color": "Color",
+  "size": "Size",
+  "processing": "Processing...",
+  "coupon": {
+    "title": "Have a coupon?",
+    "placeholder": "Enter coupon code",
+    "applying": "Applying...",
+    "apply": "Apply"
+  },
+  "empty": {
+    "title": "Your cart is empty",
+    "description": "Looks like you haven't added any products yet.",
+    "continueShopping": "Continue Shopping"
+  },
+  "shipping": {
+    "title": "Calculate Shipping",
+    "country": "Country",
+    "city": "City",
+    "calculating": "Calculating...",
+    "calculate": "Calculate Shipping"
+  },
+  "badge": "Shopping cart",
+  "itemsCount": "{{count}} items",
+  "clearCart": "Clear cart"
 }

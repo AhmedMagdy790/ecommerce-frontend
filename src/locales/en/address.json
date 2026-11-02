@@ -1,0 +1,70 @@
+{
+    "title": "My addresses",
+    "addresses": {
+        "types": {
+            "shipping": "Shipping",
+            "billing": "Billing",
+            "both": "Shipping and billing"
+        },
+        "editAddress": "Edit address",
+        "addNewAddress": "Add new address",
+        "modalDescription": "Enter delivery address details for your orders.",
+        "country": "Country",
+        "selectCountry": "Select country...",
+        "city": "City",
+        "selectCity": "Select city...",
+        "type": "Address type",
+        "selectType": "Select type...",
+        "phoneContact": "Phone contact",
+        "streetDetails": "Street details",
+        "streetPlaceholder": "e.g. 15 Ahmed Orabi St",
+        "area": "Area / district",
+        "areaPlaceholder": "e.g. Maadi",
+        "buildingNumber": "Building / apartment number",
+        "setAsDefault": "Set as default address"
+    },
+    "types": {
+        "home": "المنزل",
+        "work": "العمل",
+        "office": "المكتب",
+        "other": "أخرى"
+    },
+    "backToAddresses": "العودة إلى العناوين",
+    "backToAccount": "العودة إلى الحساب",
+    "breadcrumb": "عناويني",
+    "description": "إدارة عناوين الشحن المحفوظة.",
+    "addAddress": "إضافة عنوان",
+    "retry": "إعادة المحاولة",
+    "loading": "جارٍ التحميل...",
+    "empty": {
+        "title": "لا توجد عناوين حتى الآن",
+        "description": "أضف عنوانًا لتسهيل وتسريع عملية إتمام الطلب."
+    },
+    "listLabel": "العناوين المحفوظة",
+    "defaultAddress": "العنوان الافتراضي",
+    "makeDefault": "تعيين كافتراضي",
+    "editAddress": "تعديل العنوان",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "confirmDelete": "هل أنت متأكد أنك تريد حذف هذا العنوان؟",
+    "cancel": "إلغاء",
+    "saving": "جارٍ الحفظ...",
+    "form": {
+        "createTitle": "إضافة عنوان جديد",
+        "description": "أدخل تفاصيل عنوانك بالأسفل.",
+        "type": "نوع العنوان",
+        "country": "الدولة",
+        "selectCountry": "اختر الدولة",
+        "city": "المدينة",
+        "selectCity": "اختر المدينة",
+        "area": "المنطقة",
+        "areaPlaceholder": "أدخل اسم المنطقة",
+        "street": "عنوان الشارع",
+        "streetPlaceholder": "أدخل عنوان الشارع",
+        "building": "المبنى / الشقة",
+        "phone": "رقم الهاتف",
+        "makeDefault": "تعيين كعنوان افتراضي",
+        "makeDefaultDescription": "استخدم هذا العنوان تلقائيًا عند إتمام الطلب.",
+        "createButton": "حفظ العنوان"
+    }
+}

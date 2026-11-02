@@ -1,0 +1,49 @@
+{
+    "cash": "نقدًا",
+    "online": "دفع إلكتروني",
+    "wallet": "محفظة إلكترونية",
+    "test": "وضع الاختبار",
+    "live": "الوضع الفعلي",
+    "typeOnline": "إلكتروني",
+    "typeOffline": "غير إلكتروني",
+    "typeTransfer": "تحويل بنكي",
+    "allowsDigital": "يدعم المنتجات الرقمية",
+    "allowsPhysical": "يدعم المنتجات المادية",
+    "allowsBoth": "يدعم كلا النوعين من المنتجات",
+    "editGateway": "تعديل بوابة الدفع",
+    "addNewGateway": "إضافة بوابة دفع جديدة",
+    "modalDescription": "أدخل بيانات بوابة الدفع بالأسفل.",
+    "gatewayName": "اسم بوابة الدفع",
+    "namePlaceholder": "أدخل اسم بوابة الدفع",
+    "description": "الوصف",
+    "descriptionPlaceholder": "أدخل وصف بوابة الدفع",
+    "countries": "الدول المدعومة",
+    "selectCountries": "اختر الدول",
+    "supportedCurrencies": "العملات المدعومة",
+    "selectCurrencies": "اختر العملات",
+    "gateway": "بوابة الدفع",
+    "selectGateway": "اختر بوابة الدفع",
+    "type": "نوع الدفع",
+    "selectType": "اختر نوع الدفع",
+    "minAmount": "الحد الأدنى للمبلغ",
+    "maxAmount": "الحد الأقصى للمبلغ",
+    "extraFees": "رسوم إضافية",
+    "iconName": "اسم الأيقونة",
+    "logo": "الشعار",
+    "credentialsTitle": "بيانات اعتماد بوابة الدفع",
+    "publicKey": "المفتاح العام",
+    "secretKey": "المفتاح السري",
+    "mode": "وضع التشغيل",
+    "selectMode": "اختر وضع التشغيل",
+    "modal": {
+        "basic": {
+        "section_title": "المعلومات الأساسية"
+        }
+    },
+    "status": {
+        "active": "نشطة",
+        "inactive": "غير نشطة"
+    },
+    "view_active": "عرض النشطة",
+    "view_trashed": "عرض المحذوفة"
+}

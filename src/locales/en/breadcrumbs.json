@@ -1,0 +1,18 @@
+{
+  "home": "Home",
+  "dashboard": "Dashboard",
+  "products": "Products",
+  "categories": "Categories",
+  "brands": "Brands",
+  "countries": "Countries",
+  "cities": "Cities",
+  "orders": "Orders",
+  "customers": "Customers",
+  "users": "Users",
+  "settings": "Settings",
+  "profile": "Profile",
+  "edit": "Edit",
+  "create": "Create",
+  "show": "Details",
+  "navigationLabel": "Breadcrumb navigation"
+}

@@ -1,0 +1,25 @@
+{
+  "stats": {
+    "total": "إجمالي المخزون",
+    "in_stock": "متوفر",
+    "low_stock": "مخزون منخفض",
+    "out_of_stock": "نفد المخزون",
+    "total_inventory": "إجمالي المخزون",
+    "active_inventory": "المخزون النشط"
+  },
+  "selectVariant": "اختر المتغير",
+  "editInventory": "تعديل المخزون",
+  "addNewInventory": "إضافة مخزون جديد",
+  "modalDescription": "أدخل بيانات المخزون بالأسفل.",
+  "productVariant": "متغير المنتج",
+  "selectVariantPlaceholder": "اختر متغير المنتج",
+  "stockQuantity": "كمية المخزون",
+  "reservedQuantity": "الكمية المحجوزة",
+  "not_found": "المخزون غير موجود",
+  "details_subtitle": "عرض تفاصيل المخزون",
+  "stock": "المخزون",
+  "reserved": "محجوز",
+  "available": "متاح",
+  "title": "المخزون",
+  "item": "عنصر مخزون"
+}
