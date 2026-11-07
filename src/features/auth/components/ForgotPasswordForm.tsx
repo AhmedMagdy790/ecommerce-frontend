@@ -4,7 +4,7 @@ import { Mail, ArrowLeft, LoaderCircle, CheckCircle2 } from 'lucide-react';
 import { useForgotPasswordForm } from '../hooks/useForgotPasswordForm';
 
 export const ForgotPasswordForm = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("auth");
   const { methods, onSubmit, isLoading, submitError, isSuccess } = useForgotPasswordForm();
 
   const {
@@ -17,14 +17,14 @@ export const ForgotPasswordForm = () => {
       {/* 1. Header Section */}
       <div className="mb-8">
         <span className="mb-4 inline-flex rounded-full bg-primary-soft px-3 py-1.5 text-xs font-semibold text-primary">
-          {t("auth.resetPasswordLabel", "PASSWORD RECOVERY")}
+          {t("resetPasswordLabel", "PASSWORD RECOVERY")}
         </span>
 
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          {t('auth.resetPasswordTitle', 'Reset Password')}
+          {t('resetPasswordTitle', 'Reset Password')}
         </h1>
         <p className="mt-3 text-sm leading-6 text-text-secondary">
-          {t('auth.resetPasswordSubtitle', 'Enter your email address and we will send you instructions to reset your password')}
+          {t('resetPasswordSubtitle', 'Enter your email address and we will send you instructions to reset your password')}
         </p>
       </div>
 
@@ -47,7 +47,7 @@ export const ForgotPasswordForm = () => {
             className="flex items-center gap-2 rounded-xl border border-success/20 bg-success-bg p-3 text-sm text-success"
           >
             <CheckCircle2 size={18} className="shrink-0 text-success" />
-            <span>{t('auth.resetEmailSent', 'A password reset link has been sent to your email address.')}</span>
+            <span>{t('resetEmailSent', 'A password reset link has been sent to your email address.')}</span>
           </div>
         )}
 
@@ -56,7 +56,7 @@ export const ForgotPasswordForm = () => {
           {/* Email Field */}
           <div>
             <label htmlFor="forgot-email" className="mb-2 block text-sm font-medium">
-              {t('auth.emailAddress', 'Email Address')}
+              {t('emailAddress', 'Email Address')}
             </label>
             <div className="relative">
               <Mail
@@ -92,10 +92,10 @@ export const ForgotPasswordForm = () => {
             {isLoading ? (
               <>
                 <LoaderCircle size={18} className="animate-spin" />
-                <span>{t('auth.sending', 'Sending...')}</span>
+                <span>{t('sending', 'Sending...')}</span>
               </>
             ) : (
-              <span>{t('auth.sendResetLink', 'Send Reset Link')}</span>
+              <span>{t('sendResetLink', 'Send Reset Link')}</span>
             )}
           </button>
         </form>
@@ -107,7 +107,7 @@ export const ForgotPasswordForm = () => {
             className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
           >
             <ArrowLeft aria-hidden="true" size={16} className="rtl:rotate-180" />
-            <span>{t('auth.backToLogin', 'Back to Login')}</span>
+            <span>{t('backToLogin', 'Back to Login')}</span>
           </Link>
         </div>
       </div>

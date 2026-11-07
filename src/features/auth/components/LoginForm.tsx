@@ -4,7 +4,7 @@ import { Mail, LockKeyhole, ArrowRight, LoaderCircle } from "lucide-react";
 import { useLoginForm } from "../hooks/useLoginForm";
 
 export const LoginForm = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("auth");
   const { methods, onSubmit, isLoading, submitError } = useLoginForm();
 
   const {
@@ -23,16 +23,16 @@ export const LoginForm = () => {
       {/* 1. Header Section */}
       <div className="mb-8">
         <span className="mb-4 inline-flex rounded-full bg-primary-soft px-3 py-1.5 text-xs font-semibold text-primary">
-          {t("auth.signInLabel", "ACCOUNT ACCESS")}
+          {t("signInLabel", "ACCOUNT ACCESS")}
         </span>
 
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          {t("auth.welcomeBack", "Welcome back")}
+          {t("welcomeBack", "Welcome back")}
         </h1>
 
         <p className="mt-3 text-sm leading-6 text-text-secondary">
           {t(
-            "auth.enterCredentials",
+            "enterCredentials",
             "Enter your credentials to sign in to your account."
           )}
         </p>
@@ -75,14 +75,14 @@ export const LoginForm = () => {
               d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.15 2.68 1.15 6.62l4.12 3.14c.95-2.85 3.6-4.91 6.73-4.91z"
             />
           </svg>
-          {t("auth.continueWithGoogle", "Continue with Google")}
+          {t("continueWithGoogle", "Continue with Google")}
         </button>
 
         {/* 3. Divider (Or continue with email) */}
         <div className="flex items-center gap-4">
           <div className="h-px flex-1 bg-border" />
           <span className="text-xs uppercase tracking-wider text-text-muted">
-            {t("auth.orContinueWith", "Or continue with")}
+            {t("orContinueWith", "Or continue with")}
           </span>
           <div className="h-px flex-1 bg-border" />
         </div>
@@ -94,7 +94,7 @@ export const LoginForm = () => {
               htmlFor="login-email"
               className="mb-2 block text-sm font-medium"
             >
-              {t("auth.emailAddress", "Email address")}
+              {t("emailAddress", "Email address")}
             </label>
 
             <div className="relative">
@@ -127,14 +127,14 @@ export const LoginForm = () => {
           <div>
             <div className="mb-2 flex items-center justify-between gap-3">
               <label htmlFor="login-password" className="text-sm font-medium">
-                {t("auth.password", "Password")}
+                {t("password", "Password")}
               </label>
 
               <Link
                 to="/auth/forgot-password"
                 className="text-xs font-semibold text-primary hover:underline"
               >
-                {t("auth.forgotPassword", "Forgot password?")}
+                {t("forgotPassword", "Forgot password?")}
               </Link>
             </div>
 
@@ -175,11 +175,11 @@ export const LoginForm = () => {
             {isLoading ? (
               <>
                 <LoaderCircle size={18} className="animate-spin" />
-                {t("auth.signingIn", "Signing in...")}
+                {t("signingIn", "Signing in...")}
               </>
             ) : (
               <>
-                {t("auth.signIn", "Sign in")}
+                {t("signIn", "Sign in")}
                 <ArrowRight
                   aria-hidden="true"
                   size={18}
@@ -192,12 +192,12 @@ export const LoginForm = () => {
 
         {/* 5. Footer Link */}
         <p className="text-center text-sm text-text-secondary pt-2 border-t border-border">
-          {t("auth.noAccount", "Don't have an account?")}{" "}
+          {t("noAccount", "Don't have an account?")}{" "}
           <Link
             to="/auth/register"
             className="font-semibold text-primary hover:underline"
           >
-            {t("auth.signUp", "Sign up")}
+            {t("signUp", "Sign up")}
           </Link>
         </p>
       </div>

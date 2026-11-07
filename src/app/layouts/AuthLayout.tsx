@@ -6,7 +6,8 @@ import { ShieldCheck, Zap, Heart, Store } from "lucide-react";
 
 export default function AuthLayout() {
   const { isRTL } = useLang();
-  const { t } = useTranslation();
+  const { t: tcommon } = useTranslation("common");
+  const { t: tauth } = useTranslation("auth");
 
   return (
     <div
@@ -16,12 +17,12 @@ export default function AuthLayout() {
       <header className="relative z-10 flex h-20 items-center justify-between px-5 sm:px-8 lg:px-12">
         <Link
           to="/"
-          aria-label={t("common.home", "Home")}
+          aria-label={tcommon("home", "Home")}
           className="flex items-center gap-2"
         >
           <img
             src="/assets/logo.svg"
-            alt={t("common.logo", "Logo")}
+            alt={tcommon("logo", "Logo")}
             className="h-9 w-auto"
           />
         </Link>
@@ -43,19 +44,19 @@ export default function AuthLayout() {
 
           <div className="relative z-10 max-w-lg">
             <span className="mb-5 inline-flex rounded-full border border-primary/20 bg-background/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-              {t("auth.brandEyebrow", "Welcome to our store")}
+              {tauth("brandEyebrow", "Welcome to our store")}
             </span>
 
             <h1 className="text-4xl font-bold leading-tight tracking-tight xl:text-5xl">
-              {t("auth.brandTitle", "Your journey starts")}{" "}
+              {tauth("brandTitle", "Your journey starts")}{" "}
               <span className="text-primary">
-                {t("auth.brandHighlight", "here")}
+                {tauth("brandHighlight", "here")}
               </span>
             </h1>
 
             <p className="mt-5 max-w-md text-base leading-8 text-text-secondary">
-              {t(
-                "auth.brandDescription",
+              {tauth(
+                "brandDescription",
                 "Sign in to access your account and manage your shopping experience with ease."
               )}
             </p>
@@ -80,18 +81,18 @@ export default function AuthLayout() {
             {[
               {
                 icon: ShieldCheck,
-                title: t("auth.secure", "Secure"),
-                description: t("auth.secureDescription", "Your data stays protected"),
+                title: tauth("secure", "Secure"),
+                description: tauth("secureDescription", "Your data stays protected"),
               },
               {
                 icon: Zap,
-                title: t("auth.fast", "Fast"),
-                description: t("auth.fastDescription", "A smooth experience"),
+                title: tauth("fast", "Fast"),
+                description: tauth("fastDescription", "A smooth experience"),
               },
               {
                 icon: Heart,
-                title: t("auth.reliable", "Reliable"),
-                description: t("auth.reliableDescription", "Here when you need us"),
+                title: tauth("reliable", "Reliable"),
+                description: tauth("reliableDescription", "Here when you need us"),
               },
             ].map(({ icon: Icon, title, description }) => (
               <div key={title} className="text-center">
@@ -114,7 +115,7 @@ export default function AuthLayout() {
       </main>
 
       <footer className="px-5 py-5 text-center text-xs text-text-muted">
-        {t("common.copyright", {
+        {tcommon("copyright", {
           year: new Date().getFullYear(),
           defaultValue: `© ${new Date().getFullYear()} All rights reserved.`,
         })}

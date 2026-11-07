@@ -4,7 +4,7 @@ import { User, Mail, Phone, LockKeyhole, ArrowRight, LoaderCircle } from 'lucide
 import { useRegisterForm } from '../hooks/useRegisterForm';
 
 export const RegisterForm = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("auth");
   const { methods, onSubmit, isLoading, submitError } = useRegisterForm();
 
   const {
@@ -24,14 +24,14 @@ export const RegisterForm = () => {
       {/* Form Header */}
       <div className="mb-8">
         <span className="mb-4 inline-flex rounded-full bg-primary-soft px-3 py-1.5 text-xs font-semibold text-primary">
-          {t("auth.signUpLabel", "NEW ACCOUNT")}
+          {t("signUpLabel", "NEW ACCOUNT")}
         </span>
 
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          {t('auth.createAccount', 'Create an Account')}
+          {t('createAccount', 'Create an Account')}
         </h1>
         <p className="mt-3 text-sm leading-6 text-text-secondary">
-          {t('auth.enterDetailsToGetStarted', 'Please enter your details to get started')}
+          {t('enterDetailsToGetStarted', 'Please enter your details to get started')}
         </p>
       </div>
 
@@ -71,14 +71,14 @@ export const RegisterForm = () => {
               d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.15 2.68 1.15 6.62l4.12 3.14c.95-2.85 3.6-4.91 6.73-4.91z"
             />
           </svg>
-          {t("auth.continueWithGoogle", "Continue with Google")}
+          {t("continueWithGoogle", "Continue with Google")}
         </button>
 
         {/* Divider */}
         <div className="flex items-center gap-4">
           <div className="h-px flex-1 bg-border" />
           <span className="text-xs uppercase tracking-wider text-text-muted">
-            {t("auth.orContinueWith", "Or continue with")}
+            {t("orContinueWith", "Or continue with")}
           </span>
           <div className="h-px flex-1 bg-border" />
         </div>
@@ -87,7 +87,7 @@ export const RegisterForm = () => {
           {/* Full Name Field */}
           <div>
             <label htmlFor="register-name" className="mb-2 block text-sm font-medium">
-              {t('auth.fullName', 'Full Name')}
+              {t('fullName', 'Full Name')}
             </label>
             <div className="relative">
               <User
@@ -112,7 +112,7 @@ export const RegisterForm = () => {
           {/* Email Field */}
           <div>
             <label htmlFor="register-email" className="mb-2 block text-sm font-medium">
-              {t('auth.emailAddress', 'Email Address')}
+              {t('emailAddress', 'Email Address')}
             </label>
             <div className="relative">
               <Mail
@@ -137,7 +137,7 @@ export const RegisterForm = () => {
           {/* Phone Field */}
           <div>
             <label htmlFor="register-phone" className="mb-2 block text-sm font-medium">
-              {t('auth.phone', 'Phone Number')}
+              {t('phone', 'Phone Number')}
             </label>
             <div className="relative">
               <Phone
@@ -162,7 +162,7 @@ export const RegisterForm = () => {
           {/* Password Field */}
           <div>
             <label htmlFor="register-password" className="mb-2 block text-sm font-medium">
-              {t('auth.password', 'Password')}
+              {t('password', 'Password')}
             </label>
             <div className="relative">
               <LockKeyhole
@@ -197,7 +197,7 @@ export const RegisterForm = () => {
           {/* Confirm Password Field */}
           <div>
             <label htmlFor="register-confirm" className="mb-2 block text-sm font-medium">
-              {t('auth.confirmPassword', 'Confirm Password')}
+              {t('confirmPassword', 'Confirm Password')}
             </label>
             <div className="relative">
               <LockKeyhole
@@ -221,9 +221,9 @@ export const RegisterForm = () => {
 
           {/* Terms Notice */}
           <p className="text-xs text-text-secondary text-center">
-            {t('auth.termsNotice', 'By signing up, you agree to our')}{' '}
+            {t('termsNotice', 'By signing up, you agree to our')}{' '}
             <Link to="/terms" className="text-primary hover:underline font-semibold">
-              {t('auth.termsOfService', 'Terms of Service')}
+              {t('termsOfService', 'Terms of Service')}
             </Link>
           </p>
 
@@ -236,11 +236,11 @@ export const RegisterForm = () => {
             {isLoading ? (
               <>
                 <LoaderCircle size={18} className="animate-spin" />
-                <span>{t('auth.creatingAccount', 'Creating account...')}</span>
+                <span>{t('creatingAccount', 'Creating account...')}</span>
               </>
             ) : (
               <>
-                <span>{t('auth.signUp', 'Sign Up')}</span>
+                <span>{t('signUp', 'Sign Up')}</span>
                 <ArrowRight aria-hidden="true" size={18} className="rtl:rotate-180" />
               </>
             )}
@@ -249,12 +249,12 @@ export const RegisterForm = () => {
 
         {/* Switch to Login Link */}
         <p className="text-center text-sm text-text-secondary pt-2 border-t border-border">
-          {t('auth.alreadyHaveAccount', 'Already have an account?')}{' '}
+          {t('alreadyHaveAccount', 'Already have an account?')}{' '}
           <Link 
             to="/auth/login"
             className="font-semibold text-primary hover:underline"
           >
-            {t('auth.signIn', 'Sign In')}
+            {t('signIn', 'Sign In')}
           </Link>
         </p>
       </div>
