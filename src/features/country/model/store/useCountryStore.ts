@@ -47,7 +47,9 @@ export const useCountryStore =
 
     adapter: countryAdapter,
 
-    defaultFilters: {} as CountryFilters,
+    defaultFilters: {
+      page: 1
+    },
 
     defaultSortBy: "created_at",
 

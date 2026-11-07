@@ -1,3 +1,4 @@
+// /src/features/country/model/types/country.types.ts
 import type { City } from "@/features/city/model/types/city.types";
 import type { TranslatedText } from "@/shared/types/types";
 

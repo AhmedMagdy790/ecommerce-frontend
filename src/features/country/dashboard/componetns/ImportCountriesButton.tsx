@@ -11,7 +11,7 @@ interface ImportButtonProps {
 
 export default function ImportCountriesButton({ onSuccess }: ImportButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const { t } = useTranslation();
+  const { t } = useTranslation("countries");
 
    const { 
       fetch, 
@@ -21,7 +21,7 @@ export default function ImportCountriesButton({ onSuccess }: ImportButtonProps) 
 
 
   const handleImport = async () => {
-    if (!confirm(t("countries.confirm_import", "Are you sure you want to import/update countries and cities data?"))) {
+    if (!confirm(t("confirm_import", "Are you sure you want to import/update countries and cities data?"))) {
       return;
     }
 
@@ -33,13 +33,13 @@ export default function ImportCountriesButton({ onSuccess }: ImportButtonProps) 
 
       await fetch();
       
-      alert(t("countries.import_success", "Countries and cities imported successfully!"));
+      alert(t("import_success", "Countries and cities imported successfully!"));
       
       // // إعادة تحميل القائمة في الـ Store
       onSuccess?.();
     } catch (error) {
       console.error("Import failed:", error);
-      alert(t("countries.import_error", "Import failed. Please check server logs."));
+      alert(t("import_error", "Import failed. Please check server logs."));
     } finally {
       setIsLoading(false);
     }
@@ -54,7 +54,7 @@ export default function ImportCountriesButton({ onSuccess }: ImportButtonProps) 
       className="flex items-center gap-2"
     >
       <Download size={16} />
-      <span>{t("countries.import_button", "Import World Data")}</span>
+      <span>{t("import_button", "Import World Data")}</span>
     </Button>
   );
 }

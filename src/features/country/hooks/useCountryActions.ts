@@ -6,7 +6,8 @@ import { useCountryStore } from "../model/store/useCountryStore";
 import { useTranslation } from "react-i18next";
 
 export function useCountryActions() {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("countries");
+  const { t: tc } = useTranslation("common");
 
   const {
     delete: deleteCountry,
@@ -19,10 +20,10 @@ export function useCountryActions() {
   const handleDelete = useCallback(
     async (id: number | string) => {
       const result = await confirm({
-        title: t("countries.delete.title", "Delete Country"),
-        description: t("countries.delete.description", "Are you sure you want to delete this country? This action cannot be undone."),
-        confirmText: t("common.confirm", "Confirm"),
-        cancelText: t("common.cancel", "Cancel"),
+        title: t("delete.title", "Delete Country"),
+        description: t("delete.description", "Are you sure you want to delete this country? This action cannot be undone."),
+        confirmText: tc("confirm", "Confirm"),
+        cancelText: tc("cancel", "Cancel"),
       });
 
       if (!result || !id) return;

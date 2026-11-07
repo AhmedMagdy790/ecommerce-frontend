@@ -23,7 +23,8 @@ interface ICountryModal extends IModal {
 }
 
 export default function CountryModal({ isOpen, closeModal, country }: ICountryModal) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("countries");
+  const { t: tc } = useTranslation("common");
 
   const { currentLangCode, getCurrentLangName } = useLanguageStore();
 
@@ -55,9 +56,9 @@ export default function CountryModal({ isOpen, closeModal, country }: ICountryMo
   };
 
   const statusOptions = useMemo(() => [
-    { label: `🟢 ${t("status.active", "Active")}`, value: true },
-    { label: `🔴 ${t("status.inactive", "Inactive")}`, value: false },
-  ], [t]);
+    { label: `🟢 ${tc("status.active", "Active")}`, value: true },
+    { label: `🔴 ${tc("status.inactive", "Inactive")}`, value: false },
+  ], [tc]);
 
 
   const hasLanguageError = (lang: string) => {
@@ -80,10 +81,10 @@ export default function CountryModal({ isOpen, closeModal, country }: ICountryMo
       />}
       title={
         isEditMode
-          ? t("countries.editCountry", "Edit Country")
-          : t("countries.addNewCountry", "Add New Country")
+          ? t("editCountry", "Edit Country")
+          : t("addNewCountry", "Add New Country")
       }
-      description={t("countries.modalDescription", "Enter country details to manage shipping and regions")}
+      description={t("modalDescription", "Enter country details to manage shipping and regions")}
       maxWidth="max-w-xl"
     >
       <form ref={formRef} onSubmit={onSubmit} className="flex flex-col">
@@ -105,8 +106,8 @@ export default function CountryModal({ isOpen, closeModal, country }: ICountryMo
 
           <Input
             key={`name-${currentLangCode}`}
-            label={`${t("countries.countryName", "Country Name")} (${currentLangName})`}
-            placeholder={t("countries.namePlaceholder", "e.g. Egypt")}
+            label={`${t("countryName", "Country Name")} (${currentLangName})`}
+            placeholder={t("namePlaceholder", "e.g. Egypt")}
             error={getTranslatedError(errors.name, currentLangCode)}
             icon={<Globe size={16} />}
             {...registerTranslatedField("name", currentLangCode)}
@@ -114,14 +115,14 @@ export default function CountryModal({ isOpen, closeModal, country }: ICountryMo
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
-              label={t("countries.code", "Country Code (ISO)")}
+              label={t("code", "Country Code (ISO)")}
               placeholder="e.g. EG"
               error={errors.code?.message}
               {...register("code")}
             />
 
             <Input
-              label={t("countries.phoneCode", "Phone Code")}
+              label={t("phoneCode", "Phone Code")}
               placeholder="e.g. 20"
               error={errors.phone_code?.message}
               {...register("phone_code")}
@@ -130,7 +131,7 @@ export default function CountryModal({ isOpen, closeModal, country }: ICountryMo
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
-              label={t("countries.currency", "Currency")}
+              label={t("currency", "Currency")}
               placeholder="EYG"
               error={errors.currency?.message}
               {...register("currency")}
@@ -142,9 +143,9 @@ export default function CountryModal({ isOpen, closeModal, country }: ICountryMo
                 control={control}
                 render={({ field }) => (
                   <CustomSelect
-                    label={t("common.status", "Status")}
+                    label={tc("status.label", "Status")}
                     disabled={isSubmitting}
-                    placeholder={t("common.selectStatus", "Select Status...")}
+                    placeholder={tc("selectStatus", "Select Status...")}
                     options={statusOptions}
                     value={field.value}
                     onChange={field.onChange}
