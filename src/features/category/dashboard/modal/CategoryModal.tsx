@@ -20,14 +20,16 @@ import { ImageUploadField } from "@/shared/components/ImageUploadField";
 import { checkLanguageError, getTranslatedError } from "@/shared/utils/helper";
 import { LanguageOptions } from "@/shared/components/LanguageOptions";
 import { ActionButtons } from "@/shared/components/ActionButtons";
+import { useLang } from "@/shared/context/LanguageContext";
 
 interface ICategoryModal extends IModal {
   category?: Category<TranslatedText> | null;
 }
 
 export default function CategoryModal({ isOpen, closeModal, category }: ICategoryModal) {
-  const { t, i18n } = useTranslation();
-  const currentAppLang = i18n.language;
+  const { lang } = useLang();
+  const { t } = useTranslation("category");
+  const { t: tc } = useTranslation("common");
 
   const { currentLangCode, getCurrentLangName } = useLanguageStore();
 
@@ -63,10 +65,13 @@ export default function CategoryModal({ isOpen, closeModal, category }: ICategor
   };
 
 
-  const statusOptions = useMemo(() => [
-    { label: `🟢 ${t("status.active", "Active")}`, value: "active" },
-    { label: `🔴 ${t("status.inactive", "Inactive")}`, value: "inactive" },
-  ], [t]);
+  const statusOptions = useMemo(
+    () => [
+      { label: `🟢 ${tc("status.active", "Active")}`, value: "active" },
+      { label: `🔴 ${tc("status.inactive", "Inactive")}`, value: "inactive" },
+    ],
+    [tc],
+  );
 
   const categoryOptions = useMemo(() => {
   const options = (items || [])
@@ -74,27 +79,21 @@ export default function CategoryModal({ isOpen, closeModal, category }: ICategor
       (cat) => String(cat.id) !== String(category?.id)
     )
     .map((cat) => ({
-      label:
-        typeof cat.name === "object"
-          ? getLocalizedName(
+      label: getLocalizedName(
               cat.name,
-              currentAppLang
-            )
-          : String(cat.name),
+              lang
+            ),
       value: String(cat.id),
     }));
 
     return [
       {
-        label: t(
-          "categories.mainCategoryNone",
-          "Main Category (None)"
-        ),
+        label: t("categories.mainCategoryNone", "Main Category (None)"),
         value: "",
       },
       ...options,
     ];
-  }, [items, category, currentAppLang, t]);
+  }, [items, category, lang, t]);
 
   const hasLanguageError = (lang: string) => {
     return checkLanguageError(methods.formState.errors, lang, ["name", "description"]);
@@ -136,10 +135,7 @@ export default function CategoryModal({ isOpen, closeModal, category }: ICategor
 
           <LanguageOptions
             t={t}
-            title={t(
-              "modal.basic.section_title",
-              "بيانات المنتج الأساسية"
-            )}
+            title={t("modal.basic.section_title", "بيانات المنتج الأساسية")}
             hasLanguageError={hasLanguageError}
           />
 
@@ -172,9 +168,9 @@ export default function CategoryModal({ isOpen, closeModal, category }: ICategor
               control={control}
               render={({ field }) => (
                 <CustomSelect
-                  label={t("common.status", "Status")}
+                  label={tc("status.label", "Status")}
+                  placeholder={tc("selectStatus", "Select Status...")}
                   disabled={isSubmitting}
-                  placeholder={t("common.selectStatus", "Select Status...")}
                   options={statusOptions}
                   value={field.value?.toString() || "active"}
                   onChange={field.onChange}

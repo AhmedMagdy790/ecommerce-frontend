@@ -23,7 +23,8 @@ interface IShippingCourierModal extends IModal {
 }
 
 export default function ShippingCourierModal({ isOpen, closeModal, courier }: IShippingCourierModal) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("shipping");
+  const { t: tc } = useTranslation("common");
 
 
   const { currentLangCode, getCurrentLangName } = useLanguageStore();
@@ -50,15 +51,18 @@ export default function ShippingCourierModal({ isOpen, closeModal, courier }: IS
 
   const registerTranslatedField = createTranslatedFieldRegistrar(register);
 
-  const statusOptions = useMemo(() => [
-    { label: `🟢 ${t("status.active", "Active")}`, value: true },
-    { label: `🔴 ${t("status.inactive", "Inactive")}`, value: false },
-  ], [t]);
+  const statusOptions = useMemo(
+    () => [
+      { label: `🟢 ${t("status.active", "Active")}`, value: true },
+      { label: `🔴 ${t("status.inactive", "Inactive")}`, value: false },
+    ],
+    [t]
+  );
 
   const codOptions = useMemo(() => [
-    { label: t("common.yes", "Yes"), value: true },
-    { label: t("common.no", "No"), value: false },
-  ], [t]);
+    { label: tc("yes", "Yes"), value: true },
+    { label: tc("no", "No"), value: false },
+  ], [tc]);
 
 
   // التحقق من الأخطاء في اللغات المختلفة (يشمل الحقول الإجبارية والاختيارية المترجمة)
@@ -83,10 +87,10 @@ export default function ShippingCourierModal({ isOpen, closeModal, courier }: IS
       }
       title={
         isEditMode
-          ? t("shipping.editCourier", "Edit Shipping Courier")
-          : t("shipping.addNewCourier", "Add New Shipping Courier")
+          ? t("editCourier", "Edit Shipping Courier")
+          : t("addNewCourier", "Add New Shipping Courier")
       }
-      description={t("shipping.modalDescription", "Configure shipping provider details, endpoints, and credentials")}
+      description={t("modalDescription", "Configure shipping provider details, endpoints, and credentials")}
       maxWidth="max-w-2xl"
     >
       <form ref={formRef} onSubmit={onSubmit} className="flex flex-col">
@@ -106,8 +110,8 @@ export default function ShippingCourierModal({ isOpen, closeModal, courier }: IS
           {/* اسم شركة الشحن (حقل مترجم إجباري) */}
           <Input
             key={`name-${currentLangCode}`}
-            label={`${t("shipping.courierName", "Courier Name")} (${currentLangName})`}
-            placeholder={t("shipping.namePlaceholder", "e.g. DHL, Aramex")}
+            label={`${t("courierName", "Courier Name")} (${currentLangName})`}
+            placeholder={t("namePlaceholder", "e.g. DHL, Aramex")}
             error={getTranslatedError(errors.name, currentLangCode)}
             icon={<Globe size={16} />}
             {...registerTranslatedField("name", currentLangCode)}
@@ -116,8 +120,8 @@ export default function ShippingCourierModal({ isOpen, closeModal, courier }: IS
           {/* وصف شركة الشحن (حقل مترجم اختياري يدعم null/undefined بنجاح) */}
           <Input
             key={`description-${currentLangCode}`}
-            label={`${t("shipping.description", "Description")} (${currentLangName})`}
-            placeholder={t("shipping.descriptionPlaceholder", "Optional details or instructions...")}
+            label={`${t("description", "Description")} (${currentLangName})`}
+            placeholder={t("descriptionPlaceholder", "Optional details or instructions...")}
             error={getTranslatedError(errors.description, currentLangCode)}
             icon={<FileText size={16} />}
             {...registerTranslatedField("description", currentLangCode)}
@@ -128,7 +132,7 @@ export default function ShippingCourierModal({ isOpen, closeModal, courier }: IS
           {/* الحقول التقنية والأساسية غير المترجمة */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
-              label={t("shipping.code", "Courier Code")}
+              label={t("code", "Courier Code")}
               placeholder="e.g. dhl_express"
               error={errors.code?.message}
               icon={<Truck size={16} />}
@@ -136,7 +140,7 @@ export default function ShippingCourierModal({ isOpen, closeModal, courier }: IS
             />
 
             <Input
-              label={t("shipping.phone", "Phone Number")}
+              label={t("phone", "Phone Number")}
               placeholder="e.g. +201234567890"
               error={errors.phone?.message}
               icon={<Phone size={16} />}
@@ -146,7 +150,7 @@ export default function ShippingCourierModal({ isOpen, closeModal, courier }: IS
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
-              label={t("shipping.email", "Email Address")}
+              label={t("email", "Email Address")}
               placeholder="e.g. support@courier.com"
               error={errors.email?.message}
               icon={<Mail size={16} />}
@@ -154,7 +158,7 @@ export default function ShippingCourierModal({ isOpen, closeModal, courier }: IS
             />
 
             <Input
-              label={t("shipping.driver", "Driver Identifier")}
+              label={t("driver", "Driver Identifier")}
               placeholder="e.g. default_driver"
               error={errors.driver?.message}
               {...register("driver")}
@@ -163,7 +167,7 @@ export default function ShippingCourierModal({ isOpen, closeModal, courier }: IS
 
           <div className="grid grid-cols-1 gap-4">
             <Input
-              label={t("shipping.apiEndpoint", "API Endpoint")}
+              label={t("apiEndpoint", "API Endpoint")}
               placeholder="https://api.courier.com/v1"
               error={errors.api_endpoint?.message}
               icon={<LinkIcon size={16} />}
@@ -174,7 +178,7 @@ export default function ShippingCourierModal({ isOpen, closeModal, courier }: IS
           <div className="grid grid-cols-1 gap-4">
             <Input
               type="password"
-              label={t("shipping.apiKey", "API Key")}
+              label={t("apiKey", "API Key")}
               placeholder="Enter API secret key..."
               error={errors.api_key?.message}
               icon={<Key size={16} />}
@@ -188,9 +192,9 @@ export default function ShippingCourierModal({ isOpen, closeModal, courier }: IS
               control={control}
               render={({ field }) => (
                 <CustomSelect
-                  label={t("shipping.supportsCod", "Supports Cash on Delivery (COD)")}
+                  label={t("supportsCod", "Supports Cash on Delivery (COD)")}
                   disabled={isSubmitting}
-                  placeholder={t("common.selectOption", "Select...")}
+                  placeholder={tc("selectOption", "Select...")}
                   options={codOptions}
                   value={field.value}
                   onChange={field.onChange}
@@ -204,9 +208,9 @@ export default function ShippingCourierModal({ isOpen, closeModal, courier }: IS
               control={control}
               render={({ field }) => (
                 <CustomSelect
-                  label={t("common.status", "Status")}
+                  label={tc("status.label", "Status")}
                   disabled={isSubmitting}
-                  placeholder={t("common.selectStatus", "Select Status...")}
+                  placeholder={tc("selectStatus", "Select Status...")}
                   options={statusOptions}
                   value={field.value}
                   onChange={field.onChange}
@@ -218,7 +222,7 @@ export default function ShippingCourierModal({ isOpen, closeModal, courier }: IS
 
           <div className="grid grid-cols-1 gap-4">
             <Input
-              label={t("shipping.trackingUrl", "Tracking URL Template")}
+              label={t("trackingUrl", "Tracking URL Template")}
               placeholder="https://track.courier.com?id={tracking_number}"
               error={errors.tracking_url?.message}
               {...register("tracking_url")}

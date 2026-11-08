@@ -5,29 +5,80 @@ import type { EntityId } from "@/shared/types/entity";
 import type { AxiosRequestConfig } from "axios";
 import toast from "react-hot-toast";
 
-
-interface RequestOptions {
-  showSuccess?: boolean;
+interface CacheCallbacks<T> {
+  key: string;
+  get: (key: string) => T | undefined;
+  set: (key: string, data: T, ttlMs?: number) => void;
+  ttlMs?: number;
 }
+
+interface RequestOptions<T> {
+  showSuccess?: boolean;
+  cache?: CacheCallbacks<T>;
+}
+
+const pendingRequests = new Map<string, Promise<unknown>>();
 
 const request = async <T = unknown>(
   fn: () => Promise<{ data: T }>,
-  options?: RequestOptions
+  options?: RequestOptions<T>
 ): Promise<T> => {
-  try {
-    const response = await fn();
-    const payload = response.data as T & { message?: string };
+  const cache = options?.cache;
 
+  if (cache) {
+    // Check Cache
+    const cached = cache.get(cache.key);
 
-    if (options?.showSuccess && payload.message) {
-      toast.success(payload.message);
+    if (cached !== undefined) {
+      return cached;
     }
 
-    return response.data;
-  } catch (error) {
-    handleApiError(error);
-    throw error;
+    // Prevent duplicate requests
+    const pending = pendingRequests.get(cache.key);
+
+    if (pending) {
+      return pending as Promise<T>;
+    }
   }
+
+  const execute = async (): Promise<T> => {
+    try {
+      const response = await fn();
+      const payload = response.data as T & { message?: string };
+
+      // Save in Cache
+      if (cache) {
+        cache.set(
+          cache.key,
+          response.data,
+          cache.ttlMs
+        );
+      }
+
+      if (options?.showSuccess && payload.message) {
+        toast.success(payload.message);
+      }
+
+      return response.data;
+    } catch (error) {
+      handleApiError(error);
+      throw error;
+    }
+  };
+
+  if (!cache) {
+    return execute();
+  }
+
+  const promise = execute().finally(() => {
+    if (pendingRequests.get(cache.key) === promise) {
+      pendingRequests.delete(cache.key);
+    }
+  });
+
+  pendingRequests.set(cache.key, promise);
+
+  return promise;
 };
 
 
@@ -199,8 +250,7 @@ export const adminApi = {
   removeCityShippingRate: <T = any>(cityId: string | number, courierId: string | number) => request<T>(() => axiosInstance.delete(API_ENDPOINTS.admin.cities.removeShippingRate(cityId, courierId))),
 
   // Countries
- getCountries: <T = any>(params?: Record<string, any>) => 
-  request<T>(() => axiosInstance.get(API_ENDPOINTS.admin.countries.index, { params })),
+  getCountries: <T = any>(params?: Record<string, any>, options?: RequestOptions<T>) => request<T>(() => axiosInstance.get(API_ENDPOINTS.admin.countries.index, { params }), options),
   createCountry: <T = any, D = Record<string, any>>(data: D) => request<T>(() => axiosInstance.post(API_ENDPOINTS.admin.countries.store, data), { showSuccess: true }),
   updateCountry: <T = any, D = Record<string, any>>(id: string | number, data: D) => request<T>(() => axiosInstance.put(API_ENDPOINTS.admin.countries.update(id), data), { showSuccess: true }),
   deleteCountry: <T = any>(id: string | number) => request<T>(() => axiosInstance.delete(API_ENDPOINTS.admin.countries.destroy(id)), { showSuccess: true }),

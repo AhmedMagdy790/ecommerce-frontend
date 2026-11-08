@@ -19,6 +19,7 @@ function SectionForm({
   onSectionSaved,
 }: AddSectionModalProps) {
   const { t } = useTranslation("cms");
+  const { t: tc } = useTranslation("common");
   const [sectionType, setSectionType] = useState("hero");
   const [sectionName, setSectionName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -93,10 +94,10 @@ function SectionForm({
 
           <div className="flex justify-end gap-3 pt-4 border-t border-[var(--color-border)]">
             <Button type="button" variant="outline" onClick={onClose}>
-              {t("common.cancel", "Cancel")}
+              {tc("cancel", "Cancel")}
             </Button>
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? t("common.saving", "Saving...") : t("common.save", "Save")}
+              {isLoading ? tc("saving", "Saving...") : tc("save", "Save")}
             </Button>
           </div>
         </form>

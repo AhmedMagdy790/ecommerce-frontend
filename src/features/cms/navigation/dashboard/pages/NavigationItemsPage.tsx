@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { 
-  DndContext, 
-  closestCenter, 
-  KeyboardSensor, 
-  PointerSensor, 
-  useSensor, 
-  useSensors, 
-  type DragEndEvent 
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent
 } from "@dnd-kit/core";
-import { 
-  SortableContext, 
-  sortableKeyboardCoordinates, 
-  verticalListSortingStrategy, 
-  arrayMove 
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  arrayMove
 } from "@dnd-kit/sortable";
 import { Plus, ArrowLeft, Layers, Loader2 } from "lucide-react";
 
@@ -37,8 +37,9 @@ export default function NavigationItemsPage() {
     navigate("/admin/cms/navigation", { replace: true });
   }
 }, [menuId, navigate]);
-  
-  const { t, i18n } = useTranslation("cms");
+
+  const { t, i18n } = useTranslation("navigation");
+
   const currentLang = i18n.language;
 
   const {
@@ -50,7 +51,6 @@ export default function NavigationItemsPage() {
     handleUpdateItemOrder,
   } = useNavigationItemsManager(numericMenuId);
 
-  console.log("items", items)
 
   const {
     isOpen: isModalOpen,
@@ -93,7 +93,7 @@ export default function NavigationItemsPage() {
       const newIndex = items.findIndex((item) => item.id === over.id);
 
       arrayMove(items, oldIndex, newIndex);
-      
+
       if (handleUpdateItemOrder) {
         await handleUpdateItemOrder(active.id, newIndex + 1);
       }
@@ -122,17 +122,17 @@ export default function NavigationItemsPage() {
           </button>
           <div>
             <h1 className="text-xl font-bold text-[var(--color-text-primary)]">
-              {t("navigation.itemsManagement", "إدارة عناصر القائمة")}
+              {t("itemsManagement", "إدارة عناصر القائمة")}
             </h1>
             <span className="text-xs text-[var(--color-text-muted)]">
-              {t("navigation.itemsPageSubtitle", "إعادة ترتيب وإدارة روابط وصفحات القائمة")}
+              {t("itemsPageSubtitle", "إعادة ترتيب وإدارة روابط وصفحات القائمة")}
             </span>
           </div>
         </div>
 
         <Button onClick={() => openAddModal(null)} className="flex items-center gap-2">
           <Plus size={18} />
-          <span>{t("navigation.addItem", "إضافة عنصر")}</span>
+          <span>{t("addItem", "إضافة عنصر")}</span>
         </Button>
       </div>
 
@@ -147,13 +147,13 @@ export default function NavigationItemsPage() {
         <div className="flex items-center gap-2 mb-6 pb-4 border-b border-[var(--color-border)]">
           <Layers className="text-[var(--color-primary)]" size={22} />
           <h3 className="font-bold text-lg text-[var(--color-text-primary)]">
-            {t("navigation.itemsList", "عناصر القائمة")} ({items.length})
+            {t("itemsList", "عناصر القائمة")} ({items.length})
           </h3>
         </div>
 
         {items.length === 0 ? (
           <div className="text-center py-12 text-[var(--color-text-muted)]">
-            <p>{t("navigation.noItems", "لا توجد عناصر مضافة حتى الآن. ابدأ بإضافة أول عنصر.")}</p>
+            <p>{t("noItems", "لا توجد عناصر مضافة حتى الآن. ابدأ بإضافة أول عنصر.")}</p>
           </div>
         ) : (
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

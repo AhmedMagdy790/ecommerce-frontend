@@ -23,7 +23,8 @@ interface IManagerModal extends IModal {
 }
 
 export default function ManagerModal({ isOpen, closeModal, user }: IManagerModal) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("managers");
+  const { t: tc } = useTranslation("common");
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -67,8 +68,8 @@ export default function ManagerModal({ isOpen, closeModal, user }: IManagerModal
 
   const statusOptions = useMemo(
     () => [
-      { label: `🟢 ${t("status.active", "نشط")}`, value: "active" },
-      { label: `🔴 ${t("status.inactive", "غير نشط")}`, value: "inactive" },
+      { label: `🟢 ${tc("status.active", "نشط")}`, value: "active" },
+      { label: `🔴 ${tc("status.inactive", "غير نشط")}`, value: "inactive" },
     ],
     [t]
   );
@@ -93,10 +94,10 @@ export default function ManagerModal({ isOpen, closeModal, user }: IManagerModal
       }
       title={
         isEditMode
-          ? t("managers.editManager", "تعديل بيانات المشرف")
-          : t("managers.addNewManager", "إضافة مشرف")
+          ? t("editManager", "تعديل بيانات المشرف")
+          : t("addNewManager", "إضافة مشرف")
       }
-      description={t("managers.modalDescription", "أدخل بيانات المشرف والصلاحيات الموكلة له")}
+      description={t("modalDescription", "أدخل بيانات المشرف والصلاحيات الموكلة له")}
       maxWidth="max-w-xl"
     >
       <form ref={formRef} onSubmit={onSubmit} className="flex flex-col">
@@ -118,7 +119,7 @@ export default function ManagerModal({ isOpen, closeModal, user }: IManagerModal
               }`}
             >
               <UserCheck size={14} />
-              {t("managers.selectExistingUser", "اختيار من المستخدمين")}
+              {t("selectExistingUser", "اختيار من المستخدمين")}
             </button>
             <button
               type="button"
@@ -130,7 +131,7 @@ export default function ManagerModal({ isOpen, closeModal, user }: IManagerModal
               }`}
             >
               <UserPlus size={14} />
-              {t("managers.createNewUser", "إنشاء مستخدم جديد")}
+              {t("createNewUser", "إنشاء مستخدم جديد")}
             </button>
           </div>
         )}
@@ -140,7 +141,7 @@ export default function ManagerModal({ isOpen, closeModal, user }: IManagerModal
             <UserSelectField
               name="user_id"
               control={control}
-              label={t("managers.selectUserLabel", "اختيار المستخدم")}
+              label={t("selectUserLabel", "اختيار المستخدم")}
               onUserSelect={handleSelectUser}
               disabled={isSubmitting}
             />
@@ -154,8 +155,8 @@ export default function ManagerModal({ isOpen, closeModal, user }: IManagerModal
 
           <Input
             key={`name`}
-            label={t("managers.managerName", "اسم المشرف")}
-            placeholder={t("managers.namePlaceholder", "أدخل اسم المشرف...")}
+            label={t("managerName", "اسم المشرف")}
+            placeholder={t("namePlaceholder", "أدخل اسم المشرف...")}
             disabled={!isEditMode && creationMode === "select"}
             error={errors?.name?.message}
             icon={<User size={16} />}
@@ -182,7 +183,7 @@ export default function ManagerModal({ isOpen, closeModal, user }: IManagerModal
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
-              label={t("common.email", "البريد الإلكتروني")}
+              label={tc("email", "البريد الإلكتروني")}
               type="email"
               disabled={!isEditMode && creationMode === "select"}
               placeholder="example@domain.com"
@@ -192,7 +193,7 @@ export default function ManagerModal({ isOpen, closeModal, user }: IManagerModal
             />
 
             <Input
-              label={t("common.phone", "رقم الهاتف")}
+              label={tc("phone", "رقم الهاتف")}
               type="tel"
               disabled={!isEditMode && creationMode === "select"}
               placeholder="+20123456789"
@@ -207,8 +208,8 @@ export default function ManagerModal({ isOpen, closeModal, user }: IManagerModal
               <Input
                 label={
                   isEditMode
-                    ? t("managers.passwordOptional", "كلمة المرور (اختياري)")
-                    : t("common.password", "كلمة المرور")
+                    ? tc("passwordOptional", "كلمة المرور (اختياري)")
+                    : tc("password", "كلمة المرور")
                 }
                 type="password"
                 placeholder="••••••••"
@@ -218,7 +219,7 @@ export default function ManagerModal({ isOpen, closeModal, user }: IManagerModal
               />
 
               <Input
-                label={t("common.confirmPassword", "تأكيد كلمة المرور")}
+                label={tc("confirmPassword", "تأكيد كلمة المرور")}
                 type="password"
                 placeholder="••••••••"
                 error={errors.password_confirmation?.message}
@@ -235,9 +236,9 @@ export default function ManagerModal({ isOpen, closeModal, user }: IManagerModal
               control={control}
               render={({ field }) => (
                 <CustomSelect
-                  label={t("common.status", "الحالة")}
+                  label={tc("status.label", "الحالة")}
                   disabled={isSubmitting}
-                  placeholder={t("common.selectStatus", "اختر الحالة...")}
+                  placeholder={tc("selectStatus", "اختر الحالة...")}
                   options={statusOptions}
                   value={field.value?.toString() || "active"}
                   onChange={field.onChange}
@@ -251,9 +252,9 @@ export default function ManagerModal({ isOpen, closeModal, user }: IManagerModal
               control={control}
               render={({ field }) => (
                 <CustomSelect
-                  label={t("managers.role", "الدور / الصلاحيات")}
+                  label={t("role", "الدور / الصلاحيات")}
                   disabled={isSubmitting || isRolesLoading}
-                  placeholder={t("managers.selectRole", "اختر الدور...")}
+                  placeholder={t("selectRole", "اختر الدور...")}
                   options={roleOptions}
                   value={field.value}
                   onChange={(val) => field.onChange(val ? [val] : [])}

@@ -24,8 +24,8 @@ export function useCityActions() {
       const result = await confirm({
         title: t("city.delete.title", "حذف المدينة"),
         description: t("city.delete.description", "هل أنت متأكد من حذف هذه المدينة؟"),
-        confirmText: t("common.confirm", "تأكيد"),
-        cancelText: t("common.cancel", "إلغاء"),
+        confirmText: t("confirm", "تأكيد"),
+        cancelText: t("cancel", "إلغاء"),
       });
 
       if (!result || !id) return;

@@ -29,7 +29,8 @@ export function SectionItemModal({
   editingItem,
   onItemSaved,
 }: SectionItemModalProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("cms");
+  const { t: tc } = useTranslation("common");
    const currentLangCode = useLanguageStore((state) => state.currentLangCode);
    const getCurrentLangName = useLanguageStore((state) => state.getCurrentLangName);
 
@@ -59,8 +60,6 @@ export function SectionItemModal({
     formState: { errors }
   } = methods;
 
-  console.log("errors", errors)
-
 
   const registerTranslatedField = (
     field: "title" | "subtitle" | "description" | "button_text" | "action_text" | "float_title" | "float_subtitle" | "stat_number" | "stat_text",
@@ -87,7 +86,7 @@ export function SectionItemModal({
             onClick={closeModal} 
             className="px-4 py-2 border rounded-md text-sm font-medium hover:bg-muted"
           >
-            {t("common.cancel", "Cancel")}
+            {tc("cancel", "Cancel")}
           </button>
           <button 
             type="button" 
@@ -95,7 +94,7 @@ export function SectionItemModal({
             disabled={isSubmitting}
             className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 disabled:opacity-50"
           >
-            {isSubmitting ? t("common.saving", "Saving...") : isEditing ? t("common.update", "Update") : t("common.create", "Create")}
+            {isSubmitting ? tc("saving", "Saving...") : isEditing ? tc("update", "Update") : tc("create", "Create")}
           </button>
         </div>
       }

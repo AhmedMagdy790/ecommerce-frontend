@@ -32,8 +32,8 @@ export function useCategoryActions(showTrashed?: boolean) {
           ? t("category.forceDelete.description")
           : t("category.delete.description"),
 
-        confirmText: t("common.confirm"),
-        cancelText: t("common.cancel"),
+        confirmText: t("confirm"),
+        cancelText: t("cancel"),
       });
 
       if (!result || !id) return;

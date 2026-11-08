@@ -268,7 +268,7 @@ export default function OrderDetailsPage() {
                 />
 
                 <Row
-                  label={t("shipping", { defaultValue: lang === "ar" ? "رسوم الشحن" : "Shipping" })}
+                  label={t("shipping.costLabel", { defaultValue: lang === "ar" ? "رسوم الشحن" : "Shipping" })}
                   value={
                     order.isShippingFree ? (
                       <span className="rounded-card bg-emerald-500/10 px-2.5 py-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">

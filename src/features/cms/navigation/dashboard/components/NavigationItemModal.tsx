@@ -31,7 +31,8 @@ export default function NavigationItemModal({
   parentId = null, 
   item 
 }: INavigationItemModal) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("navigation");
+  const { t: tc } = useTranslation("common");
   const { currentLangCode, getCurrentLangName } = useLanguageStore();
   const currentLangName = getCurrentLangName();
 
@@ -63,9 +64,9 @@ export default function NavigationItemModal({
   const registerTranslatedField = createTranslatedFieldRegistrar(register);
 
   const statusOptions = useMemo(() => [
-    { label: `🟢 ${t("status.active", "Active")}`, value: true },
-    { label: `🔴 ${t("status.inactive", "Inactive")}`, value: false },
-  ], [t]);
+    { label: `🟢 ${tc("status.active", "Active")}`, value: true },
+    { label: `🔴 ${tc("status.inactive", "Inactive")}`, value: false },
+  ], [tc]);
 
   const pagesOptions = useMemo(() => {
     const options = (pagesList || []).map((page) => ({
@@ -75,7 +76,7 @@ export default function NavigationItemModal({
 
     return [
       {
-        label: t("navigation.noPage", "بدون صفحة (رابط مخصص فقط)"),
+        label: t("noPage", "بدون صفحة (رابط مخصص فقط)"),
         value: "",
       },
       ...options,
@@ -102,8 +103,8 @@ export default function NavigationItemModal({
       }
       title={
         isEditMode
-          ? t("navigation.editItem", "Edit Navigation Item")
-          : t("navigation.addNewItem", "Add New Navigation Item")
+          ? t("editItem", "Edit Navigation Item")
+          : t("addNewItem", "Add New Navigation Item")
       }
       description={t("navigation.itemModalDescription", "Configure navigation link, page reference, or dropdown child items")}
       maxWidth="max-w-xl"
@@ -125,8 +126,8 @@ export default function NavigationItemModal({
           {/* عنوان العنصر المترجم */}
           <Input
             key={`title-${currentLangCode}`}
-            label={`${t("navigation.itemTitle", "Item Title")} (${currentLangName})`}
-            placeholder={t("navigation.titlePlaceholder", "e.g. About Us, Services")}
+            label={`${t("itemTitle", "Item Title")} (${currentLangName})`}
+            placeholder={t("titlePlaceholder", "e.g. About Us, Services")}
             error={getTranslatedError(errors.title, currentLangCode)}
             icon={<Layers size={16} />}
             {...registerTranslatedField("title", currentLangCode)}
@@ -136,7 +137,7 @@ export default function NavigationItemModal({
 
           {/* رابط مخصص (Custom URL) */}
           <Input
-            label={t("navigation.customUrl", "Custom URL")}
+            label={t("customUrl", "Custom URL")}
             placeholder="e.g. /contact or https://example.com"
             error={errors.url?.message}
             icon={<LinkIcon size={16} />}
@@ -149,9 +150,9 @@ export default function NavigationItemModal({
             control={control}
             render={({ field }) => (
               <CustomSelect
-                label={t("navigation.pageId", "Internal Page (Optional)")}
+                label={t("pageId", "Internal Page (Optional)")}
                 disabled={isSubmitting}
-                placeholder={t("navigation.selectPage", "اختر صفحة داخلية...")}
+                placeholder={t("selectPage", "اختر صفحة داخلية...")}
                 options={pagesOptions}
                 value={field.value ?? ""}
                 onChange={(selectedOption) => {
@@ -167,7 +168,7 @@ export default function NavigationItemModal({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               type="number"
-              label={t("navigation.sortOrder", "Sort Order")}
+              label={t("sortOrder", "Sort Order")}
               placeholder="0"
               error={errors.sort_order?.message}
               icon={<Hash size={16} />}
@@ -179,9 +180,9 @@ export default function NavigationItemModal({
               control={control}
               render={({ field }) => (
                 <CustomSelect
-                  label={t("common.status", "Status")}
+                  label={tc("status.label", "Status")}
                   disabled={isSubmitting}
-                  placeholder={t("common.selectStatus", "Select Status...")}
+                  placeholder={tc("selectStatus", "Select Status...")}
                   options={statusOptions}
                   value={field.value ?? true}
                   onChange={field.onChange}

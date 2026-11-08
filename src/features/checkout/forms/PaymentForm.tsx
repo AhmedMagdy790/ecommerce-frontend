@@ -1,5 +1,3 @@
-// src/pages/Checkout/forms/PaymentForm.tsx
-
 import { useFormContext } from "react-hook-form";
 import { Button } from "@/shared/components/Button";
 import { useTranslation } from "react-i18next";
@@ -18,7 +16,7 @@ interface PaymentFormProps {
 
 export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
   const { t } = useTranslation("checkout");
-  const { isRTL, lang } = useLang();
+  const { isRTL } = useLang();
   const { register, watch, setValue, formState: { errors } } = useFormContext();
   const { gateways, loading, error: gatewayError } = usePaymentGateways(watch("country_id"));
 
@@ -113,7 +111,7 @@ export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
 
   const radioOptions: RadioOption[] = gateways.map((g) => {
     const labelText = g.name;
-    const descText = g.description || t("payment.methods.defaultDesc", { defaultValue: lang === "ar" ? "طريقة دفع آمنة ومشفرة." : "Secure payment method." });
+    const descText = g.description || t("payment.methods.defaultDesc");
 
     return {
       value: g.id,
@@ -130,16 +128,13 @@ export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
       className="rounded-panel border border-border bg-surface p-6 space-y-6 shadow-xs"
     >
       <div className="flex items-center justify-between border-b border-border pb-4">
-        <h2 
-          className="text-xl font-bold text-text-primary"
-          style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
-        >
-          {t("payment.title", { defaultValue: lang === "ar" ? "طريقة الدفع" : "Payment Method" })}
+        <h2 className="text-xl font-bold text-text-primary">
+          {t("payment.title")}
         </h2>
         <div className="flex items-center gap-1.5 text-xs text-text-secondary">
           <ShieldCheck size={16} className="text-primary" />
-          <span style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}>
-            {t("payment.secure", { defaultValue: lang === "ar" ? "دفع آمن ومحمي" : "Secure Checkout" })}
+          <span>
+            {t("payment.secure")}
           </span>
         </div>
       </div>
@@ -175,17 +170,14 @@ export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
       )}
 
       <div>
-        <label 
-          className="block text-sm font-semibold text-text-primary mb-1.5"
-          style={{ fontFamily: lang === "ar" ? "var(--font-arabic)" : "var(--font-sans)" }}
-        >
-          {t("payment.notes", { defaultValue: lang === "ar" ? "ملاحظات الطلب (اختياري)" : "Order Notes (Optional)" })}
+        <label className="block text-sm font-semibold text-text-primary mb-1.5">
+          {t("payment.notes")}
         </label>
         <textarea
           {...register("notes")}
           rows={3}
           className="w-full rounded-card border border-border bg-surface-secondary px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors resize-none"
-          placeholder={t("payment.notesPlaceholder", { defaultValue: lang === "ar" ? "ملاحظات بخصوص طلبك، مثال: توصيل في وقت محدد..." : "Notes regarding your order..." })}
+          placeholder={t("payment.notesPlaceholder")}
         />
         {errors.notes && (
           <p className="mt-1 text-xs text-red-600 dark:text-red-400 font-medium">
@@ -196,7 +188,7 @@ export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
 
       <div className="flex items-center justify-between pt-4 border-t border-border">
         <Button type="button" variant="secondary" onClick={onBack}>
-          {t("buttons.back", { defaultValue: lang === "ar" ? "السابق" : "Back" })}
+          {t("buttons.back")}
         </Button>
 
         <Button
@@ -204,7 +196,7 @@ export default function PaymentForm({ onNext, onBack }: PaymentFormProps) {
           onClick={onNext}
           disabled={!selectedGatewayId || loading}
         >
-          {t("buttons.next", { defaultValue: lang === "ar" ? "مراجعة الطلب" : "Review Order" })}
+          {t("buttons.reviewOrder")}
         </Button>
       </div>
     </section>

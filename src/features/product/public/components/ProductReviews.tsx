@@ -86,7 +86,7 @@ export default function ProductReviews({
                   ))}
                 </div>
                 <span className="text-xs text-text-secondary mt-0.5">
-                  {totalReviews} {t("reviews", { defaultValue: lang === "ar" ? "مراجعة إجمالية" : "total reviews" })}
+                  {totalReviews} {t("reviews.countLabel", { defaultValue: lang === "ar" ? "مراجعة إجمالية" : "total reviews" })}
                 </span>
               </div>
             </div>

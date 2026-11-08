@@ -267,7 +267,7 @@ export default function CustomSelect({
             "
           >
             {searchStatus && (
-              <div className="p-2 border-b border-[var(--color-border)]">
+              <div data-ignore-outside-click className="p-2 border-b border-[var(--color-border)]">
                 <input
                   type="text"
                   value={search}
@@ -295,6 +295,7 @@ export default function CustomSelect({
 
             <ul
               role="listbox"
+              data-ignore-outside-click
               className="max-h-60 overflow-y-auto p-1 scrollbar-thin scrollbar-thumb-[var(--color-border)] scrollbar-track-transparent"
             >
               {filteredOptions.length === 0 ? (

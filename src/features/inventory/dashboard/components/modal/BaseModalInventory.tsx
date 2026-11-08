@@ -60,7 +60,7 @@ export default function InventoryModal({ isOpen, closeModal, inventory }: IInven
     });
 
     return [
-      { label: t("inventory.selectVariant", "Select Product Variant..."), value: "" },
+      { label: t("selectVariant", "Select Product Variant..."), value: "" },
       ...options,
     ];
   }, [variants, currentAppLang, t]);
@@ -81,10 +81,10 @@ export default function InventoryModal({ isOpen, closeModal, inventory }: IInven
       }
       title={
         isEditMode
-          ? t("inventory.editInventory", "Edit Inventory Item")
-          : t("inventory.addNewInventory", "Add New Inventory Item")
+          ? t("editInventory", "Edit Inventory Item")
+          : t("addNewInventory", "Add New Inventory Item")
       }
-      description={t("inventory.modalDescription", "Enter inventory quantities and details")}
+      description={t("modalDescription", "Enter inventory quantities and details")}
       maxWidth="max-w-xl"
     >
       <form ref={formRef} onSubmit={onSubmit} className="flex flex-col">
@@ -101,9 +101,9 @@ export default function InventoryModal({ isOpen, closeModal, inventory }: IInven
             control={control}
             render={({ field }) => (
               <CustomSelect
-                label={t("inventory.productVariant", "Product Variant")}
+                label={t("productVariant", "Product Variant")}
                 disabled={isSubmitting || isEditMode}
-                placeholder={t("inventory.selectVariantPlaceholder", "Select variant...")}
+                placeholder={t("selectVariantPlaceholder", "Select variant...")}
                 options={variantOptions}
                 value={field.value !== undefined && field.value !== null ? String(field.value) : ""}
                 onChange={(val) => field.onChange(val ? Number(val) : "")}
@@ -115,7 +115,7 @@ export default function InventoryModal({ isOpen, closeModal, inventory }: IInven
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               type="number"
-              label={t("inventory.stockQuantity", "Stock Quantity")}
+              label={t("stockQuantity", "Stock Quantity")}
               placeholder="0"
               error={errors.stock_quantity?.message}
               icon={<Package size={16} />}
@@ -124,7 +124,7 @@ export default function InventoryModal({ isOpen, closeModal, inventory }: IInven
 
             <Input
               type="number"
-              label={t("inventory.reservedQuantity", "Reserved Quantity")}
+              label={t("reservedQuantity", "Reserved Quantity")}
               placeholder="0"
               error={errors.reserved_quantity?.message}
               icon={<Layers size={16} />}

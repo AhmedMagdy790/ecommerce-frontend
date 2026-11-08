@@ -24,18 +24,19 @@ interface IPaymentGatewayModal extends IModal {
 }
 
 export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPaymentGatewayModal) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("payment");
+  const { t: tc } = useTranslation("common");
   const { currentLangCode, getCurrentLangName } = useLanguageStore();
   const currentLangName = getCurrentLangName();
 
   const formRef = useRef<HTMLFormElement>(null);
 
-  const { 
-    methods, 
-    onSubmit, 
-    isSubmitting, 
-    submitError, 
-    isEditMode 
+  const {
+    methods,
+    onSubmit,
+    isSubmitting,
+    submitError,
+    isEditMode
   } = usePaymentGatewayForm(gateway, closeModal, isOpen);
 
   const { gatewayOptions, isGatewaysLoading } = usePaymentGatewayOptions();
@@ -66,20 +67,20 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
   ], [t]);
 
   const testModeOptions = useMemo(() => [
-    { label: `🧪 ${t("payment.test", "Test Mode")}`, value: true },
-    { label: `🚀 ${t("payment.live", "Live Mode")}`, value: false },
+    { label: `🧪 ${t("test", "Test Mode")}`, value: true },
+    { label: `🚀 ${t("live", "Live Mode")}`, value: false },
   ], [t]);
 
   const typeOptions = useMemo(() => [
-    { label: `🌐 ${t("payment.typeOnline", "Online")}`, value: "online" },
-    { label: `💵 ${t("payment.typeOffline", "Offline")}`, value: "offline" },
-    { label: `🏦 ${t("payment.typeTransfer", "Bank / Wallet Transfer")}`, value: "transfer" },
+    { label: `🌐 ${t("typeOnline", "Online")}`, value: "online" },
+    { label: `💵 ${t("typeOffline", "Offline")}`, value: "offline" },
+    { label: `🏦 ${t("typeTransfer", "Bank / Wallet Transfer")}`, value: "transfer" },
   ], [t]);
 
   const productTypeOptions = useMemo(() => [
-    { label: t("payment.allowsDigital", "Digital Products Only"), value: "digital" },
-    { label: t("payment.allowsPhysical", "Physical Products Only"), value: "physical" },
-    { label: t("payment.allowsBoth", "Both Digital & Physical"), value: "both" },
+    { label: t("allowsDigital", "Digital Products Only"), value: "digital" },
+    { label: t("allowsPhysical", "Physical Products Only"), value: "physical" },
+    { label: t("allowsBoth", "Both Digital & Physical"), value: "both" },
   ], [t]);
 
   void productTypeOptions;
@@ -104,10 +105,10 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
       }
       title={
         isEditMode
-          ? t("payment.editGateway", "Edit Payment Gateway")
-          : t("payment.addNewGateway", "Add New Payment Gateway")
+          ? t("editGateway", "Edit Payment Gateway")
+          : t("addNewGateway", "Add New Payment Gateway")
       }
-      description={t("payment.modalDescription", "Configure payment gateway credentials, limits, and country rules")}
+      description={t("modalDescription", "Configure payment gateway credentials, limits, and country rules")}
       maxWidth="max-w-3xl"
     >
       <form ref={formRef} onSubmit={onSubmit} className="flex flex-col">
@@ -128,8 +129,8 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
           {/* اسم البوابة (مترجم) */}
           <Input
             key={`name-${currentLangCode}`}
-            label={`${t("payment.gatewayName", "Gateway Name")} (${currentLangName})`}
-            placeholder={t("payment.namePlaceholder", "e.g. Stripe, PayPal")}
+            label={`${t("gatewayName", "Gateway Name")} (${currentLangName})`}
+            placeholder={t("namePlaceholder", "e.g. Stripe, PayPal")}
             error={getTranslatedError(errors.name, currentLangCode)}
             icon={<Globe size={16} />}
             {...registerTranslatedField("name", currentLangCode)}
@@ -138,8 +139,8 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
           {/* وصف البوابة (مترجم - اختياري) */}
           <Input
             key={`description-${currentLangCode}`}
-            label={`${t("payment.description", "Description")} (${currentLangName})`}
-            placeholder={t("payment.descriptionPlaceholder", "Gateway description...")}
+            label={`${t("description", "Description")} (${currentLangName})`}
+            placeholder={t("descriptionPlaceholder", "Gateway description...")}
             error={getTranslatedError(errors.description, currentLangCode)}
             icon={<FileText size={16} />}
             {...registerTranslatedField("description", currentLangCode)}
@@ -150,14 +151,14 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
             control={control}
             render={({ field }) => (
               <CustomSelect
-                label={t("payment.countries", "Supported Countries")}
+                label={t("countries", "Supported Countries")}
                 disabled={isSubmitting || isCountriesLoading}
                 placeholder={
-                  isCountriesLoading 
-                    ? t("common.loading", "Loading...") 
-                    : t("payment.selectCountries", "Select Countries...")
+                  isCountriesLoading
+                    ? tc("loading", "Loading...")
+                    : t("selectCountries", "Select Countries...")
                 }
-                isMulti 
+                isMulti
                 options={countryOptions}
                 value={field.value ?? []}
                 onChange={field.onChange}
@@ -171,9 +172,9 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
             control={control}
             render={({ field }) => (
               <CustomSelect
-                label={t("payment.supportedCurrencies", "Supported Currencies")}
+                label={t("supportedCurrencies", "Supported Currencies")}
                 disabled={isSubmitting}
-                placeholder={t("payment.selectCurrencies", "Select currencies (e.g. USD, EGP)...")}
+                placeholder={t("selectCurrencies", "Select currencies (e.g. USD, EGP)...")}
                 isMulti
                 options={[
                   { label: "🇺🇸 USD - US Dollar", value: "USD" },
@@ -197,9 +198,9 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
               control={control}
               render={({ field }) => (
                 <CustomSelect
-                  label={t("payment.gateway", "Payment Gateway")}
+                  label={t("gateway", "Payment Gateway")}
                   disabled={isSubmitting || isEditMode || isGatewaysLoading}
-                  placeholder={isGatewaysLoading ? t("common.loading", "Loading...") : t("payment.selectGateway", "Select Payment Gateway...")}
+                  placeholder={isGatewaysLoading ? tc("loading", "Loading...") : t("selectGateway", "Select Payment Gateway...")}
                   options={gatewayOptions}
                   value={field.value}
                   onChange={field.onChange}
@@ -213,9 +214,9 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
               control={control}
               render={({ field }) => (
                 <CustomSelect
-                  label={t("payment.type", "Gateway Type")}
+                  label={t("type", "Gateway Type")}
                   disabled={isSubmitting}
-                  placeholder={t("payment.selectType", "Select Type...")}
+                  placeholder={t("selectType", "Select Type...")}
                   options={typeOptions}
                   value={field.value}
                   onChange={field.onChange}
@@ -230,7 +231,7 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
             <Input
               type="number"
               step="0.01"
-              label={t("payment.minAmount", "Minimum Amount")}
+              label={t("minAmount", "Minimum Amount")}
               placeholder="0.00"
               error={errors.min_amount?.message}
               icon={<DollarSign size={16} />}
@@ -240,7 +241,7 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
             <Input
               type="number"
               step="0.01"
-              label={t("payment.maxAmount", "Maximum Amount")}
+              label={t("maxAmount", "Maximum Amount")}
               placeholder="No limit"
               error={errors.max_amount?.message}
               icon={<DollarSign size={16} />}
@@ -253,7 +254,7 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
             <Input
               type="number"
               step="0.01"
-              label={t("payment.extraFees", "Extra Fees")}
+              label={t("extraFees", "Extra Fees")}
               placeholder="0.00"
               error={errors.extra_fees?.message}
               icon={<DollarSign size={16} />}
@@ -261,7 +262,7 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
             />
 
             <Input
-              label={t("payment.iconName", "Icon Name")}
+              label={t("iconName", "Icon Name")}
               placeholder="e.g. credit-card, stripe-icon"
               error={errors.icon_name?.message}
               icon={<Smile size={16} />}
@@ -272,7 +273,7 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
           {/* رفع الشعار */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-[var(--color-text-secondary)]">
-              {t("payment.logo", "Gateway Logo")}
+              {t("logo", "Gateway Logo")}
             </label>
             <input
               type="file"
@@ -296,18 +297,18 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
           {!hideCredentials && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-[var(--color-background-secondary)] rounded-[var(--radius-md)] border border-[var(--color-border)]">
               <div className="md:col-span-2 text-xs font-semibold text-[var(--color-text-primary)]">
-                {t("payment.credentialsTitle", "إعدادات الاعتماد والربط (API Keys)")}
+                {t("credentialsTitle", "إعدادات الاعتماد والربط (API Keys)")}
               </div>
 
               <Input
-                label={t("payment.publicKey", "Public Key / API Key")}
+                label={t("publicKey", "Public Key / API Key")}
                 placeholder="e.g. pk_test_..."
                 error={errors.credentials?.public_key?.message ? String(errors.credentials.public_key.message) : undefined}
                 {...register("credentials.public_key")}
               />
 
               <Input
-                label={t("payment.secretKey", "Secret Key")}
+                label={t("secretKey", "Secret Key")}
                 placeholder="e.g. sk_test_..."
                 error={errors.credentials?.secret_key?.message ? String(errors.credentials.secret_key.message) : undefined}
                 {...register("credentials.secret_key")}
@@ -322,9 +323,9 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
               control={control}
               render={({ field }) => (
                 <CustomSelect
-                  label={t("common.status", "Status")}
+                  label={tc("status.label", "Status")}
                   disabled={isSubmitting}
-                  placeholder={t("common.selectStatus", "Select Status...")}
+                  placeholder={tc("selectStatus", "Select Status...")}
                   options={statusOptions}
                   value={field.value}
                   onChange={field.onChange}
@@ -338,9 +339,9 @@ export default function PaymentGatewayModal({ isOpen, closeModal, gateway }: IPa
               control={control}
               render={({ field }) => (
                 <CustomSelect
-                  label={t("payment.mode", "Mode")}
+                  label={t("mode", "Mode")}
                   disabled={isSubmitting}
-                  placeholder={t("payment.selectMode", "Select Mode...")}
+                  placeholder={t("selectMode", "Select Mode...")}
                   options={testModeOptions}
                   value={field.value}
                   onChange={field.onChange}

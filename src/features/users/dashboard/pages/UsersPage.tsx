@@ -48,9 +48,9 @@ export default function UsersPage() {
 
     <HeaderDashboard
         t={t}
-        title={t("user.title", "Users Management")}
+        title={t("title", "Users Management")}
         openCreateModal={openCreateModal}
-        createButtonLabel={t("user.add", "Add new user")}
+        createButtonLabel={t("add", "Add new user")}
         // حذفنا openCreateModal من هنا
     />
 

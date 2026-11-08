@@ -49,10 +49,10 @@ export default function UserModal({ isOpen, closeModal, user }: IUserModal) {
       }
       title={
         isEditMode
-          ? t("user.editUser", "Edit User")
-          : t("user.addNewUser", "Add New User")
+          ? t("editUser", "Edit User")
+          : t("addNewUser", "Add New User")
       }
-      description={t("user.modalDescription", "Enter user account details and credentials")}
+      description={t("modalDescription", "Enter user account details and credentials")}
       maxWidth="max-w-xl"
     >
       <form ref={formRef} onSubmit={onSubmit} className="flex flex-col">
@@ -65,8 +65,8 @@ export default function UserModal({ isOpen, closeModal, user }: IUserModal) {
         <div className="space-y-4 py-3">
           <Input
             type="text"
-            label={t("user.name", "Name")}
-            placeholder={t("user.namePlaceholder", "Enter full name...")}
+            label={t("name", "Name")}
+            placeholder={t("namePlaceholder", "Enter full name...")}
             error={errors.name?.message}
             icon={<UserIcon size={16} />}
             {...register("name")}
@@ -74,7 +74,7 @@ export default function UserModal({ isOpen, closeModal, user }: IUserModal) {
 
           <Input
             type="email"
-            label={t("user.email", "Email")}
+            label={t("email", "Email")}
             placeholder="name@example.com"
             error={errors.email?.message}
             icon={<Mail size={16} />}
@@ -83,7 +83,7 @@ export default function UserModal({ isOpen, closeModal, user }: IUserModal) {
 
           <Input
             type="text"
-            label={t("user.phone", "Phone")}
+            label={t("phone", "Phone")}
             placeholder="+20..."
             error={errors.phone?.message}
             icon={<Phone size={16} />}
@@ -93,7 +93,7 @@ export default function UserModal({ isOpen, closeModal, user }: IUserModal) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               type="password"
-              label={t("user.password", "Password")}
+              label={t("password", "Password")}
               placeholder="••••••••"
               error={errors.password?.message}
               icon={<Lock size={16} />}
@@ -102,7 +102,7 @@ export default function UserModal({ isOpen, closeModal, user }: IUserModal) {
 
             <Input
               type="password"
-              label={t("user.passwordConfirmation", "Confirm Password")}
+              label={t("passwordConfirmation", "Confirm Password")}
               placeholder="••••••••"
               error={errors.password_confirmed?.message}
               icon={<Lock size={16} />}

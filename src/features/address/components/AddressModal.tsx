@@ -21,7 +21,7 @@ interface AddressModalProps extends IModal {
 }
 
 export default function AddressModal({ isOpen, closeModal, address }: AddressModalProps) {
-  const { t } = useTranslation("addressess");
+  const { t } = useTranslation("address");
   const { lang } = useLang();
   const formRef = useRef<HTMLFormElement>(null);
 

@@ -10,10 +10,10 @@ export const getInventoryFilters = (
 ): FilterField<InventoryFilters>[] => [
   {
     key: "low_stock",
-    label: t("inventory.filters.low_stock", "حالة المخزون"),
+    label: t("filters.low_stock", "حالة المخزون"),
     type: "select",
     placeholder: t(
-      "inventory.filters.low_stock_placeholder",
+      "filters.low_stock_placeholder",
       "تصفية حسب المخزون المنخفض"
     ),
     options: [
@@ -22,7 +22,7 @@ export const getInventoryFilters = (
         value: "",
       },
       {
-        label: t("inventory.filters.low", "مخزون منخفض"),
+        label: t("filters.low", "مخزون منخفض"),
         value: "true",
       },
     ],

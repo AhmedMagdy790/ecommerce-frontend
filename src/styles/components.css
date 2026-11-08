@@ -41,7 +41,7 @@
   }
 
   .submenu-container.open {
-    max-height: 300px; /* ضع رقماً أكبر قليلاً من أقصى طول محتمل للقائمة الفرعية */
+    max-height: 300px;
     opacity: 1;
     visibility: visible;
   }

@@ -85,7 +85,7 @@ export default function InventoryPage() {
                     return (
                         <div>
                             <p className="font-bold text-[var(--color-text-primary)]">
-                                {productName || t("inventory.item", "Inventory Item")}
+                                {productName || t("item", "Inventory Item")}
                             </p>
                             <p className="text-sm text-[var(--color-text-secondary)]">
                                 SKU: {sku} — Stock: {item.stock_quantity}

@@ -12,7 +12,7 @@ import type { TranslatedText } from "@/shared/types/types";
 import type { Page } from "../../model/types/page.types";
 
 export default function PagePage() {
-  const { t } = useTranslation("cms"); 
+  const { t } = useTranslation();
   const { lang } = useLang();
 
   const {

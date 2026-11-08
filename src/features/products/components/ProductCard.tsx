@@ -1,5 +1,3 @@
-// src/components/ProductCard.tsx
-
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -7,6 +5,8 @@ import { ShoppingBag, Eye, Heart } from "lucide-react";
 
 import type { Product } from "@/features/product/model/types/product.types";
 import type { ProductVariant } from "@/features/product-variants/model/types/productVariant.types";
+import { formatPrice } from "@/shared/utils/formatPrice";
+import { useLang } from "@/shared/context/LanguageContext";
 
 interface ProductCardProps {
   product: Product<string>;
@@ -32,18 +32,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   onToggleWishlist,
   isWishlisted = false,
 }) => {
-  const { t, i18n } = useTranslation("productCard");
-
-  const locale = i18n.language?.startsWith("ar") ? "ar-EG" : "en-EG";
-
-  const formatPrice = useMemo(() => {
-    const formatter = new Intl.NumberFormat(locale, {
-      style: "currency",
-      currency: "EGP",
-      maximumFractionDigits: 2,
-    });
-    return (amount: number) => formatter.format(amount);
-  }, [locale]);
+  const { t } = useTranslation("productCard");
+  const { lang } = useLang();
 
   const {
     primaryVariant,
@@ -98,7 +88,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const handleAddToCart = () => {
     if (!inStock) return;
 
-    // أكتر من variant: خلّي المستخدم يختار
     if (hasMultipleVariants && onQuickView) {
       onQuickView(product);
       return;
@@ -114,8 +103,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     "transition-colors duration-200 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
   const wishlistLabel = isWishlisted
-    ? t("removeFromWishlist", "Remove from wishlist")
-    : t("addToWishlist", "Add to wishlist");
+    ? t("removeFromWishlist")
+    : t("addToWishlist");
 
   return (
     <article
@@ -137,7 +126,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         ) : (
           <div
             className="flex h-full w-full items-center justify-center text-text-muted"
-            aria-label={t("imageUnavailable", "Image unavailable")}
+            aria-label={t("imageUnavailable")}
           >
             <ShoppingBag className="h-10 w-10" />
           </div>
@@ -148,13 +137,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <div className="flex flex-col items-start gap-1.5">
             {product.is_featured && (
               <span className="rounded-card bg-primary px-2.5 py-1 text-xs font-bold text-white shadow-sm">
-                {t("featured", "Featured")}
+                {t("featured")}
               </span>
             )}
 
             {!inStock && (
               <span className="rounded-card bg-neutral-800 px-2.5 py-1 text-xs font-bold text-white shadow-sm">
-                {t("outOfStock", "Out of stock")}
+                {t("outOfStock")}
               </span>
             )}
           </div>
@@ -184,8 +173,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 type="button"
                 onClick={() => onQuickView(product)}
                 className={actionButtonClass}
-                title={t("quickView", "Quick view")}
-                aria-label={t("quickView", "Quick view")}
+                title={t("quickView")}
+                aria-label={t("quickView")}
               >
                 <Eye className="h-4 w-4" />
               </button>
@@ -224,16 +213,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               <>
                 {hasPriceRange && (
                   <span className="text-xs font-medium text-text-muted">
-                    {t("startingFrom", "Starting from")}
+                    {t("startingFrom")}
                   </span>
                 )}
                 <span className="text-base font-bold text-primary">
-                  {formatPrice(price)}
+                  {formatPrice(price, { currency: "EGP", lang: lang })}
                 </span>
               </>
             ) : (
               <span className="text-sm text-text-muted">
-                {t("priceUnavailable", "Price unavailable")}
+                {t("priceUnavailable")}
               </span>
             )}
           </div>
@@ -246,17 +235,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-card bg-primary px-3.5 py-2 text-xs font-bold text-white shadow-xs transition-all duration-200 hover:opacity-90 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100"
               aria-label={
                 inStock
-                  ? t("addToCart", "Add to cart")
-                  : t("outOfStock", "Out of stock")
+                  ? t("addToCart")
+                  : t("outOfStock")
               }
             >
               <ShoppingBag className="h-4 w-4" />
               <span>
                 {!inStock
-                  ? t("outOfStock", "Out of stock")
+                  ? t("outOfStock")
                   : hasMultipleVariants && onQuickView
-                    ? t("selectOptions", "Options")
-                    : t("add", "Add")}
+                    ? t("selectOptions")
+                    : t("add")}
               </span>
             </button>
           )}

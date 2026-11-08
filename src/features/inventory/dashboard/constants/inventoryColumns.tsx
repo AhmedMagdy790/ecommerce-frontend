@@ -16,7 +16,7 @@ export function getInventoryColumns({
   return [
     {
       id: "product",
-      header: t("inventory.product_variant", "Product / Variant"),
+      header: t("product_variant", "Product / Variant"),
       // استخدام render بدلاً من accessor لنتمكن من إرجاع عناصر تفاعلية (JSX)
       render: (_, row) => {
         const productName = getLocalizedName(row?.product_variant?.product_name ?? "", lang);
@@ -35,7 +35,7 @@ export function getInventoryColumns({
     },
     {
       id: "stock_quantity",
-      header: t("inventory.stock_quantity", "Stock Quantity"),
+      header: t("stock_quantity", "Stock Quantity"),
       accessor: "stock_quantity",
       render: (value) => (
         <span className="font-semibold text-[var(--color-text-primary)]">
@@ -45,7 +45,7 @@ export function getInventoryColumns({
     },
     {
       id: "reserved_quantity",
-      header: t("inventory.reserved_quantity", "Reserved Quantity"),
+      header: t("reserved_quantity", "Reserved Quantity"),
       accessor: "reserved_quantity",
       render: (value) => (
         <span className="text-[var(--color-text-secondary)]">
@@ -55,7 +55,7 @@ export function getInventoryColumns({
     },
     {
       id: "available_stock",
-      header: t("inventory.available_quantity", "Available Quantity"),
+      header: t("available_quantity", "Available Quantity"),
       accessor: (row) => row.available_stock ?? (row.stock_quantity - (row.reserved_quantity ?? 0)),
       render: (value) => {
         const qty = Number(value) || 0;

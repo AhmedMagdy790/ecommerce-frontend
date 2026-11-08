@@ -22,7 +22,8 @@ interface INavigationModal extends IModal {
 }
 
 export default function NavigationModal({ isOpen, closeModal, menu }: INavigationModal) {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation("navigation");
+  const { t: tc } = useTranslation("common");
   const currentLang = i18n.language; // اللغة الحالية
   const { currentLangCode, getCurrentLangName } = useLanguageStore();
   const currentLangName = getCurrentLangName();
@@ -66,9 +67,9 @@ export default function NavigationModal({ isOpen, closeModal, menu }: INavigatio
   const registerTranslatedField = createTranslatedFieldRegistrar(register);
 
   const statusOptions = useMemo(() => [
-    { label: `🟢 ${t("status.active", "Active")}`, value: true },
-    { label: `🔴 ${t("status.inactive", "Inactive")}`, value: false },
-  ], [t]);
+    { label: `🟢 ${tc("status.active", "Active")}`, value: true },
+    { label: `🔴 ${tc("status.inactive", "Inactive")}`, value: false },
+  ], [tc]);
 
   const hasLanguageError = (lang: string) => {
     return checkLanguageError(methods.formState.errors, lang, ["name"]);
@@ -90,10 +91,10 @@ export default function NavigationModal({ isOpen, closeModal, menu }: INavigatio
       }
       title={
         isEditMode
-          ? t("navigation.editMenu", "Edit Navigation Menu")
-          : t("navigation.addNewMenu", "Add New Navigation Menu")
+          ? t("editMenu", "Edit Navigation Menu")
+          : t("addNewMenu", "Add New Navigation Menu")
       }
-      description={t("navigation.modalDescription", "Enter navigation menu details and select its location")}
+      description={t("modalDescription", "Enter navigation menu details and select its location")}
       maxWidth="max-w-xl"
     >
       <form ref={formRef} onSubmit={onSubmit} className="flex flex-col">
@@ -114,8 +115,8 @@ export default function NavigationModal({ isOpen, closeModal, menu }: INavigatio
           {/* حقل اسم القائمة المترجم حسب اللغة الحالية */}
           <Input
             key={`name-${currentLangCode}`}
-            label={`${t("navigation.menuName", "Menu Name")} (${currentLangName})`}
-            placeholder={t("navigation.namePlaceholder", "e.g. Main Header Menu")}
+            label={`${t("menuName", "Menu Name")} (${currentLangName})`}
+            placeholder={t("namePlaceholder", "e.g. Main Header Menu")}
             error={getTranslatedError(errors.name, currentLangCode)}
             icon={<Menu size={16} />}
             {...registerTranslatedField("name", currentLangCode)}
@@ -127,9 +128,9 @@ export default function NavigationModal({ isOpen, closeModal, menu }: INavigatio
             control={control}
             render={({ field }) => (
               <CustomSelect
-                label={t("navigation.locationKey", "Location Key (Identifier)")}
+                label={t("locationKey", "Location Key (Identifier)")}
                 disabled={isSubmitting || isLoadingLocations}
-                placeholder={isLoadingLocations ? t("common.loading", "Loading...") : t("navigation.locationPlaceholder", "Select location...")}
+                placeholder={isLoadingLocations ? t("common.loading", "Loading...") : t("locationPlaceholder", "Select location...")}
                 options={locationOptions}
                 value={field.value ?? ""}
                 onChange={field.onChange}

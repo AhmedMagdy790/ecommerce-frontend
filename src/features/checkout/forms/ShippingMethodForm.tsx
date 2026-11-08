@@ -1,5 +1,3 @@
-// src/pages/Checkout/forms/ShippingMethodForm.tsx
-
 import { useFormContext } from "react-hook-form";
 import { Button } from "@/shared/components/Button";
 import { useTranslation } from "react-i18next";
@@ -17,7 +15,7 @@ interface ShippingMethodFormProps {
 
 export default function ShippingMethodForm({ onNext, onBack }: ShippingMethodFormProps) {
   const { t } = useTranslation("checkout");
-  const { isRTL, lang } = useLang();
+  const { isRTL } = useLang();
   const { watch, setValue, formState: { errors } } = useFormContext();
 
   const currentCityId = watch("city_id");
@@ -125,7 +123,7 @@ export default function ShippingMethodForm({ onNext, onBack }: ShippingMethodFor
 
       <div className="flex items-center justify-between gap-4 pt-4 border-t border-border">
         <Button type="button" variant="secondary" onClick={onBack}>
-          {t("buttons.back", { defaultValue: lang === "ar" ? "السابق" : "Back" })}
+          {t("buttons.back")}
         </Button>
 
         <Button
@@ -133,7 +131,7 @@ export default function ShippingMethodForm({ onNext, onBack }: ShippingMethodFor
           onClick={onNext}
           disabled={!selectedShippingId}
         >
-          {t("buttons.next", { defaultValue: lang === "ar" ? "المتابعة إلى الدفع" : "Continue to Payment" })}
+          {t("buttons.continueToPayment")}
         </Button>
       </div>
     </div>

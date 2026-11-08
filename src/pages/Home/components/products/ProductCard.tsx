@@ -1,8 +1,8 @@
-// src/pages/Home/components/products/ProductCard.tsx
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import type { CmsProductCardViewModel } from "@/features/product/adapters/cmsProductCardAdapter";
+import { formatPrice } from "@/shared/utils/formatPrice";
+import { useLang } from "@/shared/context/LanguageContext";
 
 interface ProductCardProps {
   product: CmsProductCardViewModel;
@@ -12,7 +12,8 @@ interface ProductCardProps {
 const PLACEHOLDER_IMAGE = "/images/placeholders/product.webp";
 
 export default function ProductCard({ product, badge }: ProductCardProps) {
-  // استخراج القيم بأمان سواء جاء الكائن مباشرة كـ ViewModel أو كـ Raw Product Object
+  const { lang } = useLang();
+
   const title = product.name || "";
   const rawImage = product.image || PLACEHOLDER_IMAGE;
   const link = product.link || (product.slug ? `/products/${product.slug}` : `/products/${product.id}`);
@@ -21,12 +22,10 @@ export default function ProductCard({ product, badge }: ProductCardProps) {
 
   const [imgSrc, setImgSrc] = useState(rawImage);
 
-  // تنسيق السعر بعملة الجنيه المصري (EGP) بالاعتماد على التنسيق الافتراضي للمتصفح
-  const formattedPrice = new Intl.NumberFormat("ar-EG", {
-    style: "currency",
+  const formattedPrice = formatPrice(numericPrice, {
     currency: "EGP",
-    minimumFractionDigits: 2,
-  }).format(numericPrice);
+    lang: lang,
+  });
 
   return (
     <Link

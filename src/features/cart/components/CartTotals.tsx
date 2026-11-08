@@ -37,7 +37,7 @@ export default function CartTotals({
       />
 
       <Row
-        label={t("shipping", { defaultValue: lang === "ar" ? "الشحن" : "Shipping" })}
+        label={t("summary.shipping", { defaultValue: lang === "ar" ? "الشحن" : "Shipping" })}
         value={formatPrice(shipping)}
       />
 

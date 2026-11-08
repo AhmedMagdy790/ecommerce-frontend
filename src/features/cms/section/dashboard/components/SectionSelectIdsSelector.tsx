@@ -42,7 +42,8 @@ export function SectionSelectIdsSelector({
   search,
   onSearchChange,
 }: SectionSelectIdsProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("cms");
+  const { t: tc } = useTranslation("common");
 
   const contentLabel = CONTENT_LABELS[type];
 
@@ -142,7 +143,7 @@ export function SectionSelectIdsSelector({
         <Input
           value={search}
           onChange={(event) => onSearchChange(event.target.value)}
-          placeholder={t("common.search", "Search by name...")}
+          placeholder={tc("search.placeholder", "Search by name...")}
           disabled={disabled}
         />
         {search && (
@@ -169,7 +170,7 @@ export function SectionSelectIdsSelector({
           }
           className="text-xs font-medium text-primary hover:underline disabled:opacity-40 disabled:no-underline"
         >
-          {t("common.selectAll", "Select all visible")}
+          {tc("selectAll", "Select all visible")}
         </button>
 
         <button
@@ -179,7 +180,7 @@ export function SectionSelectIdsSelector({
           className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors disabled:opacity-40"
         >
           <X size={12} />
-          {t("common.clearSelection", "Clear selection")}
+          {tc("clearSelection", "Clear selection")}
         </button>
       </div>
 
@@ -188,13 +189,13 @@ export function SectionSelectIdsSelector({
         {isLoading ? (
           <div className="flex flex-col items-center justify-center gap-2 p-8 text-muted-foreground">
             <Loader2 size={18} className="animate-spin text-primary" />
-            <span className="text-xs">{t("common.loading", "Loading items...")}</span>
+            <span className="text-xs">{tc("loading", "Loading items...")}</span>
           </div>
         ) : serverOptions.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-1.5 p-8 text-center text-muted-foreground">
             <Package size={22} className="opacity-40" />
             <span className="text-xs font-medium">
-              {t("common.noResults", "No items found")}
+              {tc("noResults", "No items found")}
             </span>
           </div>
         ) : (

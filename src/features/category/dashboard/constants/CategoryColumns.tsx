@@ -51,7 +51,7 @@ export function getCategoryColumns({
     },
     {
       id: "status",
-      header: t("common.status", "Status"),
+      header: t("status", "Status"),
       accessor: "status",
       render: (value, row) => {
         const isActive = value === "active";

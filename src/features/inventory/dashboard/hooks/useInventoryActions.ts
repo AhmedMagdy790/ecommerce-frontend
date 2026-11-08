@@ -4,7 +4,8 @@ import { useTranslation } from "react-i18next";
 import { useInventoryStore } from "../../model/store/useInvntoryStore";
 
 export function useInventoryActions() {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("inventory");
+  const { t: tc } = useTranslation("common");
 
   const {
     delete: deleteInventory,
@@ -13,17 +14,17 @@ export function useInventoryActions() {
   const handleDelete = useCallback(
     async (id: number | string) => {
       const result = await confirm({
-        title: t("inventory.delete.title", "حذف عنصر المخزون"),
-        description: t("inventory.delete.description", "هل أنت متأكد من حذف عنصر المخزون هذا؟"),
-        confirmText: t("common.confirm", "تأكيد"),
-        cancelText: t("common.cancel", "إلغاء"),
+        title: t("delete.title", "حذف عنصر المخزون"),
+        description: t("delete.description", "هل أنت متأكد من حذف عنصر المخزون هذا؟"),
+        confirmText: tc("confirm", "تأكيد"),
+        cancelText: tc("cancel", "إلغاء"),
       });
 
       if (!result || !id) return;
 
       await deleteInventory(id);
     },
-    [deleteInventory, t]
+    [deleteInventory, t, tc]
   );
 
   return {

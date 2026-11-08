@@ -22,12 +22,12 @@ export function getPageColumns({
   return [
     {
       id: "title",
-      header: t("page.title", "Page Title"),
+      header: t("cms.page.title", "Page Title"),
       accessor: (row) => getLocalizedName(row.title, lang),
     },
     {
       id: "slug",
-      header: t("page.slug", "Slug"),
+      header: t("cms.page.slug", "Slug"),
       accessor: "slug",
     },
     {
@@ -76,7 +76,7 @@ export function getPageColumns({
     },
     {
       id: "builder",
-      header: t("page.builder", "Page Builder"),
+      header: t("cms.page.builder", "Page Builder"),
       accessor: (row) => row.id,
       render: (_, row) => (
         <Link
@@ -84,7 +84,7 @@ export function getPageColumns({
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-md)] text-xs font-medium bg-[var(--color-primary)] text-white hover:opacity-90 transition-opacity"
         >
           <Layers size={14} />
-          <span>{t("page.buildPage", "Build Page")}</span>
+          <span>{t("cms.page.buildPage", "Build Page")}</span>
         </Link>
       ),
     },

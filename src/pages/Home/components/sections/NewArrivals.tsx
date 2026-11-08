@@ -1,5 +1,3 @@
-// src/pages/Home/components/sections/NewArrivals.tsx
-
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useLang } from "@/shared/context/LanguageContext";
@@ -18,13 +16,12 @@ export default function NewArrivals({ section }: NewArrivalsProps) {
 
   const rawItems = Array.isArray(section?.data) ? section.data : [];
   
-  // تحويل البيانات باستخدام Adapter
   const products = mapCmsProducts(rawItems, lang);
 
   if (!products.length) return null;
 
-  const sectionTitle = section.name || (lang === "ar" ? "وصل حديثاً" : "New Arrivals");
-  const badgeText = lang === "ar" ? "جديد" : "NEW";
+  const sectionTitle = section.name || t("newArrivals.title");
+  const badgeText = t("newArrivals.badge");
 
   return (
     <section 
@@ -47,7 +44,7 @@ export default function NewArrivals({ section }: NewArrivalsProps) {
             to="/products?sort=newest"
             className="text-sm font-semibold text-primary transition-colors hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-control"
           >
-            {t("newArrivals.viewAll", lang === "ar" ? "عرض الكل" : "View All")}
+            {t("newArrivals.viewAll")}
           </Link>
         </div>
 

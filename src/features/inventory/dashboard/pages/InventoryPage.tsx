@@ -37,7 +37,7 @@ export default function InventoryPage() {
         <div className="p-6 lg:p-8 space-y-8">
             <HeaderDashboard 
                 t={t}
-                title={t("inventory.title", "Inventory Management")}
+                title={t("title", "Inventory Management")}
                 // حذفنا openCreateModal من هنا
             />
 
@@ -60,7 +60,7 @@ export default function InventoryPage() {
                         <div>
                             <p className="font-bold text-[var(--color-text-primary)]">{variantName}</p>
                             <p className="text-sm text-[var(--color-text-secondary)]">
-                                {t("inventory.stock", "Stock")}: {item.stock_quantity}
+                                {t("stock", "Stock")}: {item.stock_quantity}
                             </p>
                         </div>
                     );

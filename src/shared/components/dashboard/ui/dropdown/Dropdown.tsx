@@ -193,7 +193,11 @@ export const Dropdown: React.FC<DropdownProps> = ({
       const insideMenu = dropdownRef.current?.contains(target);
       const insideTrigger = triggerRef?.current?.contains(target);
 
-      if (!insideMenu && !insideTrigger) {
+      const isExempted = (target as HTMLElement).closest?.(
+        "[data-ignore-outside-click], [role='listbox']"
+      );
+
+      if (!insideMenu && !insideTrigger && !isExempted) {
         onClose();
       }
     };

@@ -22,7 +22,7 @@ export default function ChangeStatusModal({
   isLoading = false,
   onConfirm,
 }: ChangeStatusModalProps) {
-  const { t } = useTranslation();
+  const { t: tc } = useTranslation("common");
 
   const [prevStatus, setPrevStatus] = useState<UserStatus>(currentStatus);
   const [selectedStatus, setSelectedStatus] = useState<UserStatus>(currentStatus);
@@ -33,9 +33,9 @@ export default function ChangeStatusModal({
   }
 
   const statusOptions = [
-    { label: `🟢 ${t("status.active", "نشط")}`, value: "active" },
-    { label: `🟡 ${t("status.pending", "قيد الانتظار")}`, value: "pending" },
-    { label: `🔴 ${t("status.suspended", "معلق / محظور")}`, value: "suspended" },
+    { label: `🟢 ${tc("status.active", "نشط")}`, value: "active" },
+    { label: `🟡 ${tc("status.pending", "قيد الانتظار")}`, value: "pending" },
+    { label: `🔴 ${tc("statuses.suspended", "معلق / محظور")}`, value: "suspended" },
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -50,13 +50,13 @@ export default function ChangeStatusModal({
       isOpen={isOpen}
       isLoading={isLoading}
       closeModal={closeModal}
-      title={t("status.changeTitle", "تغيير حالة المشرف")}
-      description={t("status.changeDescription", "اختر الحالة الجديدة لتطبيقها على المشرف")}
+      title={tc("statuses.changeTitle", "تغيير حالة المشرف")}
+      description={tc("statuses.changeDescription", "اختر الحالة الجديدة لتطبيقها على المشرف")}
       maxWidth="max-w-md"
     >
       <form onSubmit={handleSubmit} className="space-y-4 py-2">
         <CustomSelect
-          label={t("common.status", "الحالة")}
+          label={tc("status.label", "الحالة")}
           options={statusOptions}
           value={selectedStatus}
           onChange={(val) => setSelectedStatus(val as UserStatus)}
@@ -68,14 +68,14 @@ export default function ChangeStatusModal({
             onClick={closeModal}
             className="px-4 py-2 text-xs font-medium rounded-md border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
           >
-            {t("common.cancel", "إلغاء")}
+            {tc("cancel", "إلغاء")}
           </button>
           <button
             type="submit"
             disabled={isLoading || selectedStatus === currentStatus}
             className="px-4 py-2 text-xs font-medium text-white bg-[var(--color-primary)] rounded-md hover:opacity-90 disabled:opacity-50"
           >
-            {isLoading ? t("common.saving", "جاري الحفظ...") : t("common.save", "حفظ")}
+            {isLoading ? tc("saving", "جاري الحفظ...") : tc("save", "حفظ")}
           </button>
         </div>
       </form>

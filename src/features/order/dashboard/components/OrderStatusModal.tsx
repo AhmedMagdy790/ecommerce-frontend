@@ -59,7 +59,7 @@ export default function OrderStatusModal({ isOpen, closeModal, order }: IOrderSt
             onClick={closeModal}
             className="px-4 py-2 border rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
           >
-            {t("common.cancel", "Cancel")}
+            {t("buttons.cancel", "Cancel")}
           </button>
           <button
             type="button"

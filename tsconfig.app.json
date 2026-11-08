@@ -25,5 +25,5 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "src/features/managers/api/managers.service.ts"]
+  "include": ["src", "src/features/managers/api/managers.service.ts", "scripts"]
 }

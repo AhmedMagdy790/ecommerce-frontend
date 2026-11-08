@@ -40,7 +40,8 @@ export function SectionModal({
   editingSection,
   onSectionSaved,
 }: SectionModalProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("cms");
+  const { t: tc } = useTranslation("common");
 
 
   const formRef = useRef<HTMLFormElement>(null);
@@ -109,7 +110,7 @@ export function SectionModal({
             disabled={isSubmitting}
             className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 disabled:opacity-50"
           >
-            {isSubmitting ? t("common.saving", "Saving...") : isEditing ? t("common.update", "Update") : t("common.create", "Create")}
+            {isSubmitting ? tc("saving", "Saving...") : isEditing ? tc("update", "Update") : tc("create", "Create")}
           </button>
         </div>
       }

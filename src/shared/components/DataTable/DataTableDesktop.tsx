@@ -72,7 +72,7 @@ export function DataTableDesktop<T extends { id: string | number }>({
             })}
             {hasActions && (
               <th className="p-4 text-center text-xs uppercase tracking-wider font-semibold text-[var(--color-text-muted)]">
-                {t("actions", "Actions")}
+                {t("actionsLabel", "Actions")}
               </th>
             )}
           </tr>

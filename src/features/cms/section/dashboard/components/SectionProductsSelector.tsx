@@ -14,7 +14,8 @@ export function SectionProductsSelector({
   onChange,
   error,
 }: SectionProductsSelectorProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("cms");
+  const { t: tc } = useTranslation("common");
   const { productOptions, isProductsLoading } = useProductOptions();
 
   const handleCheckboxChange = (id: number | string, checked: boolean) => {
@@ -33,7 +34,7 @@ export function SectionProductsSelector({
           {t("sections.selectProducts", "Select Products (Manual)")}
         </Label>
         <span className="text-xs text-muted-foreground">
-          {selectedIds.length} {t("common.selected", "selected")}
+          {selectedIds.length} {tc("selected", "selected")}
         </span>
       </div>
       
@@ -46,7 +47,7 @@ export function SectionProductsSelector({
 
       {isProductsLoading ? (
         <div className="text-xs text-muted-foreground py-4 text-center">
-          {t("common.loading", "Loading products...")}
+          {tc("loading", "Loading products...")}
         </div>
       ) : productOptions.length === 0 ? (
         <div className="text-xs text-muted-foreground py-4 text-center border rounded-md">
@@ -81,7 +82,7 @@ export function SectionProductsSelector({
                   <div className="flex flex-col">
                     <span className="font-medium text-foreground">{option.label}</span>
                     <span className="text-xs text-muted-foreground">
-                      {option.price} {t("common.currency", "EGP")}
+                      {option.price} {tc("currency", "EGP")}
                       {option.variantsCount > 0 && ` • (${option.variantsCount} variants)`}
                     </span>
                   </div>

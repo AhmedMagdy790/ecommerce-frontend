@@ -25,7 +25,8 @@ interface ICityModal extends IModal {
 }
 
 export default function CityModal({ isOpen, closeModal, city }: ICityModal) {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation("city");
+  const { t: tc } = useTranslation("common");
 
   const currentAppLang = i18n.language;
 
@@ -93,10 +94,10 @@ export default function CityModal({ isOpen, closeModal, city }: ICityModal) {
       }
       title={
         isEditMode
-          ? t("cities.editCity", "Edit City")
-          : t("cities.addNewCity", "Add New City")
+          ? t("editCity", "Edit City")
+          : t("addNewCity", "Add New City")
       }
-      description={t("cities.modalDescription", "Enter city details to manage it in store")}
+      description={t("modalDescription", "Enter city details to manage it in store")}
       maxWidth="max-w-xl"
     >
       <form ref={formRef} onSubmit={onSubmit} className="flex flex-col">
@@ -118,8 +119,8 @@ export default function CityModal({ isOpen, closeModal, city }: ICityModal) {
 
           <Input
             key={`name-${currentLangCode}`}
-            label={`${t("cities.cityName", "City Name")} (${currentLangName})`}
-            placeholder={t("cities.namePlaceholder", "e.g. Cairo")}
+            label={`${t("cityName", "City Name")} (${currentLangName})`}
+            placeholder={t("namePlaceholder", "e.g. Cairo")}
             error={getTranslatedError(errors.name, currentLangCode)}
             icon={<Building2 size={16} />}
             {...registerTranslatedField("name", currentLangCode)}
@@ -131,9 +132,9 @@ export default function CityModal({ isOpen, closeModal, city }: ICityModal) {
               control={control}
               render={({ field }) => (
                 <CustomSelect
-                  label={t("common.status", "Status")}
+                  label={tc("status.label", "Status")}
                   disabled={isSubmitting}
-                  placeholder={t("common.selectStatus", "Select Status...")}
+                  placeholder={tc("selectStatus", "Select Status...")}
                   options={statusOptions}
                   value={field.value !== undefined ? String(field.value) : "true"}
                   onChange={(val) => field.onChange(val === "true")}
@@ -147,9 +148,9 @@ export default function CityModal({ isOpen, closeModal, city }: ICityModal) {
               control={control}
               render={({ field }) => (
                 <CustomSelect
-                  label={t("cities.country", "Country")}
+                  label={t("country", "Country")}
                   disabled={isSubmitting}
-                  placeholder={t("cities.selectCountry", "Select Country...")}
+                  placeholder={t("selectCountry", "Select Country...")}
                   options={countryOptions}
                   value={field.value !== null && field.value !== undefined ? String(field.value) : ""}
                   onChange={(val) => {

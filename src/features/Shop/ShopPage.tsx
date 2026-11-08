@@ -107,11 +107,8 @@ export const ShopPage: React.FC = () => {
         />
                 
         <PageHeader
-          title={t("title", "متجر المنتجات")}
-          description={t(
-            "subtitle",
-            "تصفح تشكيلتنا الشاملة واستخدم الفلاتر للحصول على المنتج المناسب لك",
-          )}
+          title={t("title")}
+          description={t("subtitle")}
           actions={
             <DebouncedSearchInput
               value={filters.search ?? ""}
